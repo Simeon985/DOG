@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.5d.2020-02-07.CD-548-0-3d61c58" icon="Mine.png">
+    <title>My Parts</title>
+    <instances>
+        <instance moduleIdRef="jetson_nano_7eff133ef6a9041c14c0020453c8b1b7_6" modelIndex="5776" path="C:/Users/robin/Documents/Fritzing/parts/user/jetson_nano_7eff133ef6a9041c14c0020453c8b1b7_6.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="adafruit_9a4ae3187ff9cf8dabbd6d3535bb2380_7" modelIndex="5785" path="C:/Users/robin/Documents/Fritzing/parts/user/adafruit_9a4ae3187ff9cf8dabbd6d3535bb2380_7.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="seeed-HCHO-sensor_1" modelIndex="5787" path="C:/Users/robin/Documents/Fritzing/parts/user/seeed-HCHO-sensor_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="8x8 LED Modul mit MAX7219_51b9a6ce740cc4cd4350f7299c78f477_2" modelIndex="5828" path="C:/Users/robin/Documents/Fritzing/parts/user/8x8 LED Modul mit MAX7219_51b9a6ce740cc4cd4350f7299c78f477_2.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="adafruit_bb7246dc1f9fb642b554dfdbcf82e47c_1" modelIndex="5878" path="C:/Users/robin/Documents/Fritzing/parts/user/adafruit_bb7246dc1f9fb642b554dfdbcf82e47c_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1" modelIndex="5888" path="C:/Users/robin/Documents/Fritzing/parts/user/adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ESP32_DevKitc_V4_1" modelIndex="7401" path="C:/Users/robin/Documents/Fritzing/parts/user/ESP32_DevKitc_V4_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PAA5100JE_7db16f79d92a9a7971481e1d4c1aa06a_1" modelIndex="8028" path="C:/Users/robin/Documents/Fritzing/parts/user/PAA5100JE_7db16f79d92a9a7971481e1d4c1aa06a_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

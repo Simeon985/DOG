@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.5d.2020-02-07.CD-548-0-3d61c58" icon="Search.png" search="wire">
+    <title>Search</title>
+    <instances>
+        <instance moduleIdRef="Taiway-100-SP-X-T1-X-X-B1-M1_SPDT_miniature_toggle_switch_body" modelIndex="10830" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Taiway-100-SP-X-T1-X-X-B1-M1_SPDT_miniature_toggle_switch_body.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="MIDI Music Shield-v13" modelIndex="10831" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/MIDI Music Shield-v13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="sx1509-breakout" modelIndex="10832" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/sx1509-breakout.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ludusProtoShieldWireless" modelIndex="10833" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/ludusProtoShieldWireless.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino-Pro-Mini-v13-a4+5" modelIndex="10834" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-Pro-Mini-v13-a4+5.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino Voice Shield-v16" modelIndex="10835" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino Voice Shield-v16.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Wireless_SD_v3" modelIndex="10836" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Wireless_SD_v3.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun_Soil_Moisture_Sensor" modelIndex="10837" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/SparkFun_Soil_Moisture_Sensor.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="FTDI Basic-v13" modelIndex="10838" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/FTDI Basic-v13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Taiway-100-SP-X-T1-X-X-B1-M1_SPDT_miniature_toggle_switch_actuator" modelIndex="10839" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Taiway-100-SP-X-T1-X-X-B1-M1_SPDT_miniature_toggle_switch_actuator.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino Pro" modelIndex="10840" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino_Pro.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="EasyDriver_v44" modelIndex="10841" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/EasyDriver_v44.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Dagu_DGServo_9g_Top_view" modelIndex="10842" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Dagu DGServo 9g (Top view).fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="xbeeshield-v13" modelIndex="10843" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/xbeeshield-v13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ProtoShield-v25" modelIndex="10844" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/ProtoShield-v25.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Taiway-100-SP-X-T1-X-X-B1-M1_SPDT_miniature_toggle_switch" modelIndex="10845" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Taiway-100-SP-X-T1-X-X-B1-M1_SPDT_miniature_toggle_switch.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="arduinoXbeere" modelIndex="10846" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/arduinoXbeere.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7d0bc366bcac9395c747f3a92e2ff843leg" modelIndex="10847" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/stepper_motor_bipolar.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="HMC5883L_Breakout-v11" modelIndex="10848" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/HMC5883L_Breakout-v11.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino-Pro-Mini3.3V" modelIndex="10849" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-Pro-Mini_3.3v-v14.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-RF-ATMEGA128RFA1-" modelIndex="10850" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/sparkfun-rf-atmega128rfa1-.fzp" flippedSMD="true">
+            <views/>
+        </instance>
+        <instance moduleIdRef="USBHostShield-v13" modelIndex="10851" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/USBHostShield-v13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Calliope_mini_18e1f312913c8c9c43b618584bd40d02_10" modelIndex="10852" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Calliope_mini_V_1_0.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="bf73a00d2ecd04be25675ebfb2d130c0" modelIndex="10853" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Humidity_Sensor_SHT15.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino-Fio-v22(fix)" modelIndex="10854" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-Fio-v22(fix).fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Taiway-100-SP-X-T1-X-X-B1-M2_SPDT_miniature_toggle_switch" modelIndex="10855" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Taiway-100-SP-X-T1-X-X-B1-M2_SPDT_miniature_toggle_switch.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-RF-TRF-24G-" modelIndex="10856" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/sparkfun-rf-trf-24g-.fzp" flippedSMD="true">
+            <views/>
+        </instance>
+        <instance moduleIdRef="RioRand_LM2596_94ce9810d0922bc731e2f315085d46ab_1" modelIndex="10857" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/RioRand_LM2596_94ce9810d0922bc731e2f315085d46ab_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino_bt07" modelIndex="10858" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino_bt07.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Dagu_DGServo_9g_Pan_and_tilt" modelIndex="10859" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Dagu DGServo 9g (Pan and tilt).fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ArduinoBluetoothMatev13" modelIndex="10860" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/ArduinoBluetoothMatev13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-RF-GS1011-GS1011MXX" modelIndex="10861" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/sparkfun-rf-gs1011-gs1011mxx.fzp" flippedSMD="true">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino-Pro-Mini.5v" modelIndex="10862" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-Pro-Mini_5v-v14.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Dagu_DGServo_9g_End_view" modelIndex="10863" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Dagu DGServo 9g (End view).fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Electromechanical-MOTOR-10MM" modelIndex="10864" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/sparkfun-electromechanical-motor-10mm.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-RF-WLANMODULE-" modelIndex="10865" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/sparkfun-rf-wlanmodule-.fzp" flippedSMD="true">
+            <views/>
+        </instance>
+        <instance moduleIdRef="intel_edison_minibreakout_bottom_fix" modelIndex="10866" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/intel_edison_minibreakout-bottom_fix.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="1a4bfb87a0f0fd2c59be43f3497d72e6" modelIndex="10867" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/xbee.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="gs1011_breakout-v11" modelIndex="10868" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/gs1011_breakout-v11.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="blueIOT_Rc1-final" modelIndex="10869" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/blueIOT_Rc1-final.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="FTDI Basic-v13_3.3v" modelIndex="10870" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/FTDI Basic-v13_3.3v.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="TMP102_Breakout-v11" modelIndex="10871" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/TMP102_Breakout-v11.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="intel_edison_minibreakout_fix" modelIndex="10872" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/intel_edison_minibreakout_fix.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SHT1x-Breakout" modelIndex="10873" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/SHT1x-Breakout.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="xbee_pro_rf_module_47f5ea101911229f01cccb5b78c24973_20" modelIndex="10874" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/xbee_pro_rf_module.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Shield_Eth06-PoE" modelIndex="10875" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Shield_Eth06-PoE.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="WireModuleID" modelIndex="10876" path=":/resources/parts/core/wire.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Real_Time_Clock_Module___DS1307_RTC_Breakout_Board" modelIndex="10877" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Real_Time_Clock_Module___DS1307_RTC_Breakout_Board.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="HC-05-male_fix" modelIndex="10878" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/HC-05-male_fix.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SPARKCORE_v1_fix" modelIndex="10879" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/SPARKCORE_v1_fix.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="blueIOT_RevB" modelIndex="10880" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-BLE-LowPower-RevB-final_5.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ADXL345-BreakoutBoard-v13" modelIndex="10881" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/ADXL345-BreakoutBoard-v13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino-Fio-v22(fix)_bottom" modelIndex="10882" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-Fio-v22(fix)-bottom.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Bean_revE" modelIndex="10883" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Bean_revE.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SI4735 Shield-v13" modelIndex="10884" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/SI4735 Shield-v13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="PHOTON_fix" modelIndex="10885" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/PHOTON_fix.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="5DOF-v25" modelIndex="10886" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/5DOF-v25.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Dagu_DGServo_9g_header_connector_female" modelIndex="10887" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Dagu DGServo 9g header connector (female).fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="LilyPad-XBee-v15" modelIndex="10888" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/LilyPad-XBee-v15.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="FTDI Basic-v13_lily" modelIndex="10889" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/FTDI Basic-v13_lily.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino-Fio-v22(icsp+)_bottom" modelIndex="10890" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-Fio-v22(iscp+)-bottom.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="FINALWEIO_ff7656622014dbb325626f2fefde52eb_1" modelIndex="10891" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/WeIO.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="6d07f5eae4523283f5da4171f9c54e25" modelIndex="10892" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Antenna.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="WiFly_Shield-v17" modelIndex="10893" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/WiFly_Shield-v17.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="jlpcb-128" modelIndex="10894" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/jlpcb-128.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="XBee-Regulated-v12" modelIndex="10895" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/XBee-Regulated-v12.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="MonsterMoto-Shield-v12" modelIndex="10896" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/MonsterMoto-Shield-v12.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="JST-B3P-VH" modelIndex="10897" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/JST-B3P-VH.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun Load Sensor Combinator" modelIndex="10898" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/SparkFun Load Sensor Combinator.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ArduPilotMega_v15" modelIndex="10899" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/ArduPilotMega_v15.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="BMP085 Breakout-v13" modelIndex="10900" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/BMP085 Breakout-v13.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Trackballer-v12" modelIndex="10901" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Trackballer-v12.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="ITG-3200-v11" modelIndex="10902" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/ITG-3200-v11.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="DS18B20_fixed" modelIndex="10903" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/DS18B20.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="RN41-v14" modelIndex="10904" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/RN41-v14.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="Arduino-Fio-v22(icsp+)" modelIndex="10905" path="C:/Users/robin/Downloads/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.windows.64/forzip/fritzing-3d61c58421bdb63ca903bb5d11310a257f1ec0ed-develop-548.64.pc/fritzing-parts/core/Arduino-Fio-v22(iscp+).fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1" modelIndex="10906" path="C:/Users/robin/Documents/Fritzing/parts/user/adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

@@ -1,0 +1,354 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<module fritzingVersion="0.5.2b.02.18.4756" referenceFile="BNO055 Rev D1.fzp" moduleId="adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1">
+ <version>4</version>
+ <date>Thu Jun 25 2020</date>
+ <author>kattni</author>
+ <description>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">If you've ever ordered and wire up a 9-DOF sensor, chances are you've also realized the challenge of turning the sensor data from an accelerometer, gyroscope, and magnetometer into actual &amp;quot;3D space orientation&amp;quot;! Orientation is a hard problem to solve. The sensor fusion algorithms (the secret sauce that blends accelerometer, magnetometer, and gyroscope data into stable three-axis orientation output) can be mind-numbingly difficult to get right and implement on low-cost real-time systems.&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Bosch is the first company to get this right by taking a MEMS accelerometer, magnetometer and gyroscope and putting them on a single die with a high-speed ARM Cortex-M0 based processor to digest all the sensor data, abstract the sensor fusion and real-time requirements away, and spit out data you can use in quaternions, Euler angles or vectors.&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Behold the &lt;span style=" font-weight:600;">Adafruit 9-DOF Absolute Orientation IMU Fusion Breakout - BNO055 in Stemma QT format! &lt;/span>&lt;a href="https://www.adafruit.com/product/2472">&lt;span style=" text-decoration: underline; color:#0000ff;">We also have this breakout in a non-Stemma shape and size&lt;/span>&lt;/a>.&lt;span style=" font-weight:600;"> The use is identical between the two breakouts&lt;/span>: same library and software will work on both. The QT version is a bit smaller and has plug-and-play I2C connectors on either side for no-solder-required uses!&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Rather than spending weeks or months fiddling with algorithms of varying accuracy and complexity, you can have meaningful sensor data in minutes thanks to the BNO055 - a smart 9-DOF sensor that does the sensor fusion all on its own!  You can read the data right over I2C and Bob's yer uncle.&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">The BNO055 can output the following sensor data:&lt;/p>
+&lt;ul style="margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;">&lt;li style=" margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Absolute Orientation&lt;/span> (Euler Vector, 100Hz) Three axis orientation data based on a 360° sphere&lt;/li>
+&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Absolute Orientation&lt;/span> (Quatenrion, 100Hz) Four point quaternion output for more accurate data manipulation&lt;/li>
+&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Angular Velocity Vector&lt;/span> (100Hz) Three axis of 'rotation speed' in rad/s&lt;/li>
+&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Acceleration Vector &lt;/span>(100Hz) Three axis of acceleration (gravity + linear motion) in m/s^2&lt;/li>
+&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Magnetic Field Strength Vector&lt;/span> (20Hz) Three axis of magnetic field sensing in micro Tesla (uT)&lt;/li>
+&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Linear Acceleration Vector&lt;/span> (100Hz) Three axis of linear acceleration data (acceleration minus gravity) in m/s^2&lt;/li>
+&lt;li style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Gravity Vector&lt;/span> (100Hz) Three axis of gravitational acceleration (minus any movement) in m/s^2&lt;/li>
+&lt;li style=" margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Temperature&lt;/span> (1Hz) Ambient temperature in degrees celsius&lt;/li>&lt;/ul>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Use is simple, with I2C support that is 3 or 5 Volt logic safe. We also break out the interrupt pins and address-selection jumpers in case you want two BNO-055's on one I2C bus. We've got both Arduino (C/C++) and CircuitPython libraries available so you can use it with any microcontroller or computer board and get data readings in under 5 minutes. Four mounting holes make for a secure connection.&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Additionally, since it speaks I2C you can easily connect it up with two wires (plus power and ground!).  We've even included &lt;a href="https://www.sparkfun.com/qwiic">&lt;span style=" text-decoration: underline; color:#0000ff;">SparkFun qwiic&lt;/span>&lt;/a> compatible&lt;span style=" font-weight:600;"> &lt;/span>&lt;a href="https://learn.adafruit.com/introducing-adafruit-stemma-qt">&lt;span style=" font-weight:600; text-decoration: underline; color:#0000ff;">STEMMA QT&lt;/span>&lt;/a> connectors for the I2C bus so &lt;span style=" font-weight:600;">you don't even need to solder!&lt;/span> Use a a plug-and-play STEMMA QT cable to get 9 DoF data ASAP.&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Comes assembled and tested, with a small piece of header. Some soldering is required to attach the header to the breakout PCB if you want to use it in a breadboard, but it's pretty easy work.&lt;/p>
+&lt;p style=" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;a href="https://learn.adafruit.com/adafruit-bno055-absolute-orientation-sensor/overview">&lt;span style=" font-weight:600; text-decoration: underline; color:#0000ff;">Best of all  you can get started in 10 minutes with our handy tutorial on assembly, wiring, CircuitPython &amp;amp; Arduino libraries, and Processing graphical interface, and more!&lt;/span>&lt;/a>&lt;/p>&lt;/body>&lt;/html></description>
+ <title>Adafruit BNO055 STEMMA QT</title>
+ <tags/>
+ <properties>
+  <property name="variant">variant 1</property>
+  <property name="family">BNO055 STEMMA QT</property>
+  <property name="layer"></property>
+  <property name="part number">Adafruit #4646</property>
+ </properties>
+ <views>
+  <breadboardView>
+   <layers image="breadboard/adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1_breadboard.svg">
+    <layer layerId="breadboard"/>
+   </layers>
+  </breadboardView>
+  <schematicView>
+   <layers image="schematic/adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1_schematic.svg">
+    <layer layerId="schematic"/>
+   </layers>
+  </schematicView>
+  <pcbView>
+   <layers image="pcb/adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1_pcb.svg">
+    <layer layerId="copper1"/>
+    <layer layerId="silkscreen"/>
+    <layer layerId="copper0"/>
+   </layers>
+  </pcbView>
+  <iconView>
+   <layers image="icon/adafruit_eb1b00a1502b0e71da29129cf5d9a01b_1_icon.svg">
+    <layer layerId="icon"/>
+   </layers>
+  </iconView>
+ </views>
+ <connectors>
+  <connector name="VCC" id="connector39" type="male">
+   <description>VCC</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector39pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector39pin" layer="schematic" terminalId="connector39terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector39pad" layer="copper0"/>
+     <p svgId="connector39pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="3.3V" id="connector40" type="male">
+   <description>3.3V</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector40pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector40pin" layer="schematic" terminalId="connector40terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector40pad" layer="copper0"/>
+     <p svgId="connector40pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="VCC" id="connector18" type="male">
+   <description>VCC</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector18pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector18pin" layer="schematic" terminalId="connector18terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector18pad" layer="copper0"/>
+     <p svgId="connector18pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="VCC" id="connector24" type="male">
+   <description>VCC</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector24pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector24pin" layer="schematic" terminalId="connector24terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector24pad" layer="copper0"/>
+     <p svgId="connector24pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="SCL" id="connector42" type="male">
+   <description>SCL</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector42pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector42pin" layer="schematic" terminalId="connector42terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector42pad" layer="copper0"/>
+     <p svgId="connector42pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="SCL" id="connector20" type="male">
+   <description>SCL</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector20pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector20pin" layer="schematic" terminalId="connector20terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector20pad" layer="copper0"/>
+     <p svgId="connector20pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="SCL" id="connector26" type="male">
+   <description>SCL</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector26pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector26pin" layer="schematic" terminalId="connector26terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector26pad" layer="copper0"/>
+     <p svgId="connector26pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="SDA" id="connector43" type="male">
+   <description>SDA</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector43pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector43pin" layer="schematic" terminalId="connector43terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector43pad" layer="copper0"/>
+     <p svgId="connector43pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="SDA" id="connector19" type="male">
+   <description>SDA</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector19pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector19pin" layer="schematic" terminalId="connector19terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector19pad" layer="copper0"/>
+     <p svgId="connector19pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="SDA" id="connector25" type="male">
+   <description>SDA</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector25pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector25pin" layer="schematic" terminalId="connector25terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector25pad" layer="copper0"/>
+     <p svgId="connector25pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="RESET" id="connector44" type="male">
+   <description>RESET</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector44pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector44pin" layer="schematic" terminalId="connector44terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector44pad" layer="copper0"/>
+     <p svgId="connector44pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="INT_3V" id="connector35" type="male">
+   <description>INT_3V</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector35pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector35pin" layer="schematic" terminalId="connector35terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector35pad" layer="copper0"/>
+     <p svgId="connector35pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="I2CADDR_3V" id="connector36" type="male">
+   <description>I2CADDR_3V</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector36pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector36pin" layer="schematic" terminalId="connector36terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector36pad" layer="copper0"/>
+     <p svgId="connector36pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="PS0_3V" id="connector37" type="male">
+   <description>PS0_3V</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector37pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector37pin" layer="schematic" terminalId="connector37terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector37pad" layer="copper0"/>
+     <p svgId="connector37pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="PS1_3V" id="connector38" type="male">
+   <description>PS1_3V</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector38pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector38pin" layer="schematic" terminalId="connector38terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector38pad" layer="copper0"/>
+     <p svgId="connector38pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="GND" id="connector41" type="male">
+   <description>GND</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector41pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector41pin" layer="schematic" terminalId="connector41terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector41pad" layer="copper0"/>
+     <p svgId="connector41pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="GND" id="connector17" type="male">
+   <description>GND</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector17pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector17pin" layer="schematic" terminalId="connector17terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector17pad" layer="copper0"/>
+     <p svgId="connector17pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+  <connector name="GND" id="connector23" type="male">
+   <description>GND</description>
+   <views>
+    <breadboardView>
+     <p svgId="connector23pin" layer="breadboard"/>
+    </breadboardView>
+    <schematicView>
+     <p svgId="connector23pin" layer="schematic" terminalId="connector23terminal"/>
+    </schematicView>
+    <pcbView>
+     <p svgId="connector23pad" layer="copper0"/>
+     <p svgId="connector23pad" layer="copper1"/>
+    </pcbView>
+   </views>
+  </connector>
+ </connectors>
+ <buses>
+  <bus id="gnd">
+   <nodeMember connectorId="connector41"/>
+   <nodeMember connectorId="connector17"/>
+   <nodeMember connectorId="connector23"/>
+  </bus>
+  <bus id="vcc">
+   <nodeMember connectorId="connector39"/>
+   <nodeMember connectorId="connector18"/>
+   <nodeMember connectorId="connector24"/>
+  </bus>
+  <bus id="sda">
+   <nodeMember connectorId="connector43"/>
+   <nodeMember connectorId="connector19"/>
+   <nodeMember connectorId="connector25"/>
+  </bus>
+  <bus id="scl">
+   <nodeMember connectorId="connector42"/>
+   <nodeMember connectorId="connector20"/>
+   <nodeMember connectorId="connector26"/>
+  </bus>
+ </buses>
+ <url>https://www.adafruit.com/product/4646</url>
+</module>
