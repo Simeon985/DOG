@@ -9,13 +9,13 @@
 #define PIN_MISO_OFS_1 19
 #define PIN_MOSI_OFS_1 23
 #define PIN_CS_OFS_1   5
-#define PIN_TRIG_US_1 9
-#define PIN_ECHO_US_1 10
+#define PIN_TRIG_US_1 17
+#define PIN_ECHO_US_1 16
 #define PIN_SDA_IMU 21
 #define PIN_SCL_IMU 22
 #define IMU_SENSOR_ID 55
 
-// put function declarations here:
+//put function declarations here:
 Optical_Flow_Sensor flow(PIN_SCK_OFS_1, PIN_MISO_OFS_1, PIN_MOSI_OFS_1, PIN_CS_OFS_1, PAA5100);
 Ultrasone_sensor ultra(PIN_TRIG_US_1, PIN_ECHO_US_1);
 Adafruit_BNO055 bno = Adafruit_BNO055(IMU_SENSOR_ID);
@@ -44,7 +44,7 @@ float distance;
 void loop() {
 
   // put your main code here, to run repeatedly:
-  // Get motion count since last call
+  //Get motion count since last call
   flow.readMotionCount(&deltaX, &deltaY);
 
   Serial.print("X: ");
