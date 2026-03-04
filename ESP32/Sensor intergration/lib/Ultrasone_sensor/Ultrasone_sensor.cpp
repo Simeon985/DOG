@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Ultrasone_sensor.h>
 
-float Ultrasone_sensor::read_distance(float &distance){
+void Ultrasone_sensor::read_distance(float &distance){
   digitalWrite(trig, LOW);
   delayMicroseconds(2);
   digitalWrite(trig, HIGH);
