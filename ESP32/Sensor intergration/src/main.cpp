@@ -64,23 +64,17 @@ void setup() {
   // timerAlarmWrite(timer, ticks, repeat)
   timerAlarmWrite(timer, 100000, true);  // 1/10 000 µs = 100 Hz
   timerAlarmEnable(timer);
-<<<<<<< HEAD
 
   //initialize the LED displays
   if (!mx.begin()){
     Serial.println("\nMD_MAX72XX initialization failed");
   }
-}
-
-int16_t deltaX1,deltaY1;
-int16_t deltaX2,deltaY2;
-=======
+  
   Serial.println("Timing flow\n");
 }
 
 int16_t deltaX1, deltaY1;
 int16_t deltaX2, deltaY2;
->>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 unsigned long previous_time = micros();
 unsigned long current_time;
 float distance;
@@ -98,29 +92,13 @@ void loop() {
   if (timerFired){
     timerFired = false;
 
-<<<<<<< HEAD
-    // reading data optical flow sensors
-    flow1.readMotionCount(&deltaX1, &deltaY1);
-    flow2.readMotionCount(&deltaX2, &deltaY2);
-=======
   // reading data optical flow sensors
   flow1.readMotionCount(&deltaX1, &deltaY1);
   flow2.readMotionCount(&deltaX2, &deltaY2);
->>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 
     // reading data ultrasone sensors
     ultra.read_distance(distance);
 
-<<<<<<< HEAD
-    //reading data IMU
-    euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-    gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-    lin_acc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
-    heading = euler.x();
-    gyro_x = gyro.x();
-    lin_acc_x = lin_acc.x();
-    lin_acc_y = lin_acc.y();
-=======
   //reading data IMU
   euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
   gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
@@ -129,49 +107,16 @@ void loop() {
   gyro_x = gyro.z();
   lin_acc_x = lin_acc.x();
   lin_acc_y = lin_acc.y();
->>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 
     // printing all the data
 
-<<<<<<< HEAD
-    // data OFS
-    Serial.print("X: ");
-    Serial.print(deltaX1);
-    Serial.print(", Y: ");
-    Serial.print(deltaY1);
-    Serial.print(", time:");
-    current_time = micros();
-    Serial.print(current_time - previous_time);
-    Serial.print("micros \n");
-=======
-  // data OFS
-  // Serial.print("X: ");
-  // Serial.print(deltaX);
-  // Serial.print(", Y: ");
-  // Serial.print(deltaY);
-  // Serial.print(", time:");
   current_time = micros();
   // Serial.print(current_time - previous_time);
   // Serial.print("micros \n");
->>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 
     // // data US
-    Serial.print("Distance: ");
-    Serial.println(distance);
-
-<<<<<<< HEAD
-    //data IMU
-    Serial.print("Heading: ");
-    Serial.print(heading);
-    Serial.println("°");
-    Serial.print("Gyro: ");
-    Serial.println(gyro_x);
-    Serial.print("linear acceleration in x direction: ");
-    Serial.print(lin_acc_x);
-    Serial.println("m/s²");
-    Serial.print("linear acceleration in y direction: ");
-    Serial.print(lin_acc_y);
-    Serial.println("m/s²");
+    //Serial.print("Distance: ");
+    //Serial.println(distance);
 
     //driver for the LED screens
     for (u_int8_t i=0; i < 3; i++){
@@ -182,8 +127,6 @@ void loop() {
       mx.setRow(i, 255);
     }
 
-    previous_time = current_time;
-=======
   //data IMU
   //print everything in one line
   Serial.print(current_time-previous_time);
@@ -206,7 +149,6 @@ void loop() {
   Serial.print("   ");
   Serial.println(distance);
   previous_time = current_time;
->>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
   }
 }
 
