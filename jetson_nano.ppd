@@ -1,0 +1,141 @@
+<document type="ProfiCAD ppd" version="12" fG="16081fb6-4fa6-4c97-9d5a-dac53683c16d" lG="b38009cc-ddbd-4c5c-b8bf-f8db4840dae0">
+<repo>
+<ppd name="house electrical symbols\others\consumers terminal.ppd" n="EN 60617: 11-12-06" fG="03655dd0-b583-40c7-b354-1cd9b6ee57b9" lG="10b222ac-de2c-46fb-892a-adf6c142feb2">
+<layers current="0">
+<layer name="0" v="1">
+<rect left="-20" top="-20" right="20" bottom="20"/>
+<ellipse left="-2" top="-2" right="2" bottom="2" op-lw="4"/>
+<outlet x="-20" y="0"/>
+<outlet x="0" y="20"/>
+<outlet x="20" y="0"/>
+<outlet x="0" y="-20"/>
+</layer>
+</layers>
+</ppd>
+<ppd name="electronics\mechanical parts\connectors\USB.ppd" fG="5278cd16-258a-4352-9dd5-874baedf9f81" lG="7b9512aa-e008-4f5a-b4b9-0367ac5faac2">
+<layers current="0">
+<layer name="0" v="1">
+<rect left="-20" top="-50" right="20" bottom="50" op-lw="4"/>
+<rect left="-10" top="-35" right="-5" bottom="-25"/>
+<rect left="-10" top="25" right="-5" bottom="35"/>
+<rect left="-10" top="5" right="-5" bottom="15"/>
+<rect left="-10" top="-15" right="-5" bottom="-5"/>
+<rect left="5" top="-35" right="10" bottom="35" op-fd="1" op-fc="0"/>
+<outlet x="-8" y="-30"/>
+<outlet x="-8" y="-10"/>
+<outlet x="-8" y="10"/>
+<outlet x="-8" y="30"/>
+<outlet x="21" y="0"/>
+</layer>
+</layers>
+</ppd>
+<ppd name="electronics\mechanical parts\connectors\HDMI.ppd" fG="32d21282-6084-4ddf-8777-02d5fedd3666" lG="7caa011f-16b4-4d73-8bca-6f7eb55fd470">
+<layers current="0">
+<layer name="0" v="1">
+<rect left="-12" top="-4" right="-10" bottom="4"/>
+<rect left="-2" top="-66" right="3" bottom="64" op-fd="1" op-fc="0"/>
+<outlet x="21" y="0"/>
+<polyline op-lw="3" pts="20,-80,20,80,"/>
+<rect left="-12" top="-16" right="-10" bottom="-8"/>
+<rect left="-12" top="-28" right="-10" bottom="-20"/>
+<rect left="-12" top="-40" right="-10" bottom="-32"/>
+<rect left="-12" top="-52" right="-10" bottom="-44"/>
+<rect left="-12" top="8" right="-10" bottom="16"/>
+<rect left="-12" top="20" right="-10" bottom="28"/>
+<rect left="-12" top="32" right="-10" bottom="40"/>
+<rect left="-12" top="44" right="-10" bottom="52"/>
+<rect left="10" top="-10" right="12" bottom="-2"/>
+<rect left="10" top="2" right="12" bottom="10"/>
+<rect left="10" top="14" right="12" bottom="22"/>
+<rect left="10" top="26" right="12" bottom="34"/>
+<rect left="10" top="38" right="12" bottom="46"/>
+<rect left="10" top="50" right="12" bottom="58"/>
+<rect left="10" top="-22" right="12" bottom="-14"/>
+<rect left="10" top="-34" right="12" bottom="-26"/>
+<rect left="10" top="-46" right="12" bottom="-38"/>
+<rect left="10" top="-58" right="12" bottom="-50"/>
+<polyline op-lw="3" pts="20,-80,-10,-80,"/>
+<polyline op-lw="3" pts="-10,-80,-10,-70,"/>
+<polyline op-lw="3" pts="-10,-70,-20,-60,"/>
+<polyline op-lw="3" pts="20,80,-10,80,"/>
+<polyline op-lw="3" pts="-10,80,-10,70,"/>
+<polyline op-lw="3" pts="-10,70,-20,60,"/>
+<outlet x="-12" y="0"/>
+<outlet x="-12" y="12"/>
+<outlet x="-12" y="24"/>
+<outlet x="-12" y="-12"/>
+<outlet x="-12" y="36"/>
+<outlet x="-12" y="-24"/>
+<outlet x="-12" y="-36"/>
+<outlet x="-12" y="-48"/>
+<outlet x="-12" y="48"/>
+<outlet x="12" y="54"/>
+<outlet x="12" y="42"/>
+<outlet x="12" y="30"/>
+<outlet x="12" y="18"/>
+<outlet x="12" y="6"/>
+<outlet x="12" y="-6"/>
+<outlet x="12" y="-18"/>
+<outlet x="12" y="-30"/>
+<outlet x="12" y="-42"/>
+<outlet x="12" y="-54"/>
+<polyline op-lw="3" pts="-20,60,-20,-60,"/>
+</layer>
+</layers>
+</ppd>
+</repo>
+<layers current="0">
+<layer name="0" v="1">
+<rect left="-450" top="-470" right="290" bottom="480"/>
+<text x="-270" y="-450" f="100,0,0,0,Lucida Sans Unicode,000000" l="1" al="9">Jetson Orin Nano</text>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-390"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-350"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-390"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-350"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-310"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-270"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-310"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-270"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-230"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-190"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-230"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-190"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-150"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-110"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-150"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-110"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-70"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="-30"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-70"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="-30"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="10"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="50"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="10"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="50"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="90"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="130"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="90"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="130"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="170"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="210"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="170"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="210"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="250"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="290"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="250"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="290"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="330"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="250" y="370"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="330"/>
+<elem lG="10b222ac-de2c-46fb-892a-adf6c142feb2" x="210" y="370"/>
+<elem lG="7b9512aa-e008-4f5a-b4b9-0367ac5faac2" x="-130" y="440" a="-900"/>
+<elem lG="7b9512aa-e008-4f5a-b4b9-0367ac5faac2" x="-130" y="390" a="-900"/>
+<elem lG="7b9512aa-e008-4f5a-b4b9-0367ac5faac2" x="-20" y="440" a="-900"/>
+<elem lG="7b9512aa-e008-4f5a-b4b9-0367ac5faac2" x="-20" y="390" a="-900"/>
+<elem lG="7caa011f-16b4-4d73-8bca-6f7eb55fd470" x="-280" y="440" a="900"/>
+<roundRect left="150" top="440" right="240" bottom="460" rX="40" rY="40"/>
+<text x="200" y="451" f="40,0,0,0,Lucida Sans Unicode,000000" l="1" al="9">USB-C</text>
+<ellipse left="-430" top="420" right="-380" bottom="470"/>
+</layer>
+</layers>
+</document>

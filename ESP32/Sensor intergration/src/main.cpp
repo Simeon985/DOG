@@ -39,7 +39,7 @@ MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, DATA_PIN_LED, CLK_PIN_LED, CS_PIN_LED,
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  Serial.begin(921600);
   delay(1000);
   if (!flow1.begin()) {
     while(true){
@@ -62,8 +62,9 @@ void setup() {
   timer = timerBegin(0, 80, true);  // 80MHz / 80 = 1MHz (1 tick = 1µs)
   timerAttachInterrupt(timer, &onTimer, true);
   // timerAlarmWrite(timer, ticks, repeat)
-  timerAlarmWrite(timer, 1000000, true);  // 1/10 000 µs = 100 Hz
+  timerAlarmWrite(timer, 100000, true);  // 1/10 000 µs = 100 Hz
   timerAlarmEnable(timer);
+<<<<<<< HEAD
 
   //initialize the LED displays
   if (!mx.begin()){
@@ -73,6 +74,13 @@ void setup() {
 
 int16_t deltaX1,deltaY1;
 int16_t deltaX2,deltaY2;
+=======
+  Serial.println("Timing flow\n");
+}
+
+int16_t deltaX1, deltaY1;
+int16_t deltaX2, deltaY2;
+>>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 unsigned long previous_time = micros();
 unsigned long current_time;
 float distance;
@@ -90,13 +98,20 @@ void loop() {
   if (timerFired){
     timerFired = false;
 
+<<<<<<< HEAD
     // reading data optical flow sensors
     flow1.readMotionCount(&deltaX1, &deltaY1);
     flow2.readMotionCount(&deltaX2, &deltaY2);
+=======
+  // reading data optical flow sensors
+  flow1.readMotionCount(&deltaX1, &deltaY1);
+  flow2.readMotionCount(&deltaX2, &deltaY2);
+>>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 
     // reading data ultrasone sensors
     ultra.read_distance(distance);
 
+<<<<<<< HEAD
     //reading data IMU
     euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
     gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
@@ -105,9 +120,20 @@ void loop() {
     gyro_x = gyro.x();
     lin_acc_x = lin_acc.x();
     lin_acc_y = lin_acc.y();
+=======
+  //reading data IMU
+  euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+  lin_acc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+  heading = euler.x();
+  gyro_x = gyro.z();
+  lin_acc_x = lin_acc.x();
+  lin_acc_y = lin_acc.y();
+>>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 
     // printing all the data
 
+<<<<<<< HEAD
     // data OFS
     Serial.print("X: ");
     Serial.print(deltaX1);
@@ -117,11 +143,23 @@ void loop() {
     current_time = micros();
     Serial.print(current_time - previous_time);
     Serial.print("micros \n");
+=======
+  // data OFS
+  // Serial.print("X: ");
+  // Serial.print(deltaX);
+  // Serial.print(", Y: ");
+  // Serial.print(deltaY);
+  // Serial.print(", time:");
+  current_time = micros();
+  // Serial.print(current_time - previous_time);
+  // Serial.print("micros \n");
+>>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
 
     // // data US
     Serial.print("Distance: ");
     Serial.println(distance);
 
+<<<<<<< HEAD
     //data IMU
     Serial.print("Heading: ");
     Serial.print(heading);
@@ -145,6 +183,30 @@ void loop() {
     }
 
     previous_time = current_time;
+=======
+  //data IMU
+  //print everything in one line
+  Serial.print(current_time-previous_time);
+  Serial.print(" ");
+  Serial.print(heading);
+  Serial.print(" ");
+  Serial.print(gyro_x);
+  Serial.print("   ");
+  Serial.print(lin_acc_x);
+  Serial.print(" ");
+  Serial.print(lin_acc_y);
+  Serial.print("   ");
+  Serial.print(deltaX1);
+  Serial.print(" ");
+  Serial.print(deltaY1);
+  Serial.print("   ");
+  Serial.print(deltaX2);
+  Serial.print(" ");
+  Serial.print(deltaY2);
+  Serial.print("   ");
+  Serial.println(distance);
+  previous_time = current_time;
+>>>>>>> cffaabfa95cae5f3243df7ce54070f00d3d6f529
   }
 }
 
