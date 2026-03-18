@@ -42,7 +42,7 @@ void setup() {
   Serial.begin(921600);
   delay(1000);
 
-  
+
   if (!bno.begin()) {
     while (true){
     Serial.println("BNO055 niet gevonden");
