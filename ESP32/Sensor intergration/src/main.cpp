@@ -6,6 +6,20 @@
 #include <Adafruit_Sensor.h>
 #include <MD_MAX72xx.h>
 
+#define  DEBUG  1
+
+#if  DEBUG
+#define PRINT(s, x) { Serial.print(F(s)); Serial.print(x); }
+#define PRINTS(x) Serial.print(F(x))
+#define PRINTD(x) Serial.println(x, DEC)
+
+#else
+#define PRINT(s, x)
+#define PRINTS(x)
+#define PRINTD(x)
+
+#endif
+
 #define PIN_SCK_OFS  18
 #define PIN_MISO_OFS 19
 #define PIN_MOSI_OFS 23
@@ -39,7 +53,9 @@ MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, DATA_PIN_LED, CLK_PIN_LED, CS_PIN_LED,
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(921600);
+  #if DEBUG
+    Serial.begin(921600);
+  #endif
   delay(1000);
   // if (!flow1.begin()) {
   //   while(true){
@@ -71,6 +87,8 @@ void setup() {
   }
   
   Serial.println("Timing flow\n");
+  mx.clear();
+  mx.update();
 }
 
 int16_t deltaX1, deltaY1;
@@ -111,6 +129,8 @@ void loop() {
     // printing all the data
 
   current_time = micros();
+  mx.setPoint(0,0,1);
+  mx.update();
   // Serial.print(current_time - previous_time);
   // Serial.print("micros \n");
 
@@ -119,11 +139,11 @@ void loop() {
     //Serial.println(distance);
 
     //driver for the LED screens
-    for (u_int8_t i = 3; i < 5; i++){
-      mx.setRow(i, 255);
-      mx.setColumn(i, 255);
-    }
-
+    // for (u_int8_t i = 3; i < 5; i++){
+    //   mx.setRow(i, 255);
+    //   mx.setColumn(i, 255);
+    // }
+  //mx.setPoint(0,0,1);
   //data IMU
   //print everything in one line
   // Serial.print(current_time-previous_time);
