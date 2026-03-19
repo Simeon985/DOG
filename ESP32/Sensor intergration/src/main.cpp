@@ -40,10 +40,10 @@
 #define CS_PIN_LED    26  // or SS
 
 //put function declarations here:
-// Optical_Flow_Sensor flow1(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_1, PAA5100);
-// Optical_Flow_Sensor flow2(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_2, PAA5100);
-// Ultrasone_sensor ultra(PIN_TRIG_US_1, PIN_ECHO_US_1);
-// Adafruit_BNO055 bno = Adafruit_BNO055(IMU_SENSOR_ID);
+Optical_Flow_Sensor flow1(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_1, PAA5100);
+Optical_Flow_Sensor flow2(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_2, PAA5100);
+Ultrasone_sensor ultra(PIN_TRIG_US_1, PIN_ECHO_US_1);
+Adafruit_BNO055 bno = Adafruit_BNO055(IMU_SENSOR_ID);
 hw_timer_t *timer = NULL;
 volatile bool timerFired = false;
 void IRAM_ATTR onTimer() {
@@ -57,27 +57,38 @@ void setup() {
     Serial.begin(921600);
   #endif
   delay(1000);
-  // if (!flow1.begin()) {
-  //   while(true){
-  //     Serial.println("Initialization of the flow sensor 1 failed");
-  //   }
-  // }
-  // if (!flow2.begin()) {
-  //   while(true){
-  //     Serial.println("Initialization of the flow sensor 2 failed");
-  //   }
-  // }
-  // ultra.begin();
-  // Wire.begin(PIN_SDA_IMU, PIN_SCL_IMU);
-  // if (!bno.begin()) {
-  //   Serial.println("BNO055 niet gevonden");
-  //   while (1);
-  // }
-  // bno.setExtCrystalUse(true);
-  // timerBegin(timer number, prescaler, count up)
+
+
+  if (!bno.begin()) {
+    while (true){
+    Serial.println("BNO055 niet gevonden");
+    }
+  }
+  Serial.println("BNO055 initialized");
+
+
+
+  if (!flow1.begin()) {
+    while(true){
+      Serial.println("Initialization of the flow sensor 1 failed");
+    }
+  }
+  Serial.println("Flow sensor 1 initialized");
+
+  if (!flow2.begin()) {
+    while(true){
+      Serial.println("Initialization of the flow sensor 2 failed");
+    }
+  }
+  Serial.println("Flow sensor 2 initialized");
+
+
+  ultra.begin();
+  Wire.begin(PIN_SDA_IMU, PIN_SCL_IMU);
+
+  bno.setExtCrystalUse(true);
   timer = timerBegin(0, 80, true);  // 80MHz / 80 = 1MHz (1 tick = 1µs)
   timerAttachInterrupt(timer, &onTimer, true);
-  // timerAlarmWrite(timer, ticks, repeat)
   timerAlarmWrite(timer, 100000, true);  // 1/10 000 µs = 100 Hz
   timerAlarmEnable(timer);
 
@@ -85,7 +96,7 @@ void setup() {
   if (!mx.begin()){
     Serial.println("\nMD_MAX72XX initialization failed");
   }
-  
+  Serial.println("\nMD_MAX72XX initialization succeeded");
   Serial.println("Timing flow\n");
   mx.clear();
   mx.update();
@@ -103,69 +114,69 @@ float heading;
 float gyro_x;
 float lin_acc_x;
 float lin_acc_y;
-void loop() {
 
+
+
+void loop() {
   // put your main code here, to run repeatedly:
   //Get motion count since last call
   if (timerFired){
     timerFired = false;
 
   // reading data optical flow sensors
-  // flow1.readMotionCount(&deltaX1, &deltaY1);
-  // flow2.readMotionCount(&deltaX2, &deltaY2);
+  flow1.readMotionCount(&deltaX1, &deltaY1);
+  flow2.readMotionCount(&deltaX2, &deltaY2);
 
-  //   // reading data ultrasone sensors
-  //   ultra.read_distance(distance);
+  // reading data ultrasone sensors
+  ultra.read_distance(distance);
 
   // //reading data IMU
-  // euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
-  // gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-  // lin_acc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
-  // heading = euler.x();
-  // gyro_x = gyro.z();
-  // lin_acc_x = lin_acc.x();
-  // lin_acc_y = lin_acc.y();
+  euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+  gyro = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+  lin_acc = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+  heading = euler.x();
+  gyro_x = gyro.z();
+  lin_acc_x = lin_acc.x();
+  lin_acc_y = lin_acc.y();
+current_time = micros();
+const u_int8_t heart[8] = {
+  0b00000000,  // Row 0: ........
+  0b01100110,  // Row 1: .XX..XX.
+  0b11111111,  // Row 2: XXXXXXXX
+  0b11111111,  // Row 3: XXXXXXXX
+  0b01111110,  // Row 4: .XXXXXX.
+  0b00111100,  // Row 5: ..XXXX..
+  0b00011000,  // Row 6: ...XX...
+  0b00000000   // Row 7: ........
+};
 
-    // printing all the data
+// Display the heart
+for (u_int8_t row = 0; row < 8; row++) {
+  mx.setRow(row, heart[row]);
+}
 
-  current_time = micros();
-  mx.setPoint(0,0,1);
-  mx.update();
-  // Serial.print(current_time - previous_time);
-  // Serial.print("micros \n");
-
-    // // data US
-    //Serial.print("Distance: ");
-    //Serial.println(distance);
-
-    //driver for the LED screens
-    // for (u_int8_t i = 3; i < 5; i++){
-    //   mx.setRow(i, 255);
-    //   mx.setColumn(i, 255);
-    // }
-  //mx.setPoint(0,0,1);
   //data IMU
   //print everything in one line
-  // Serial.print(current_time-previous_time);
-  // Serial.print(" ");
-  // Serial.print(heading);
-  // Serial.print(" ");
-  // Serial.print(gyro_x);
-  // Serial.print("   ");
-  // Serial.print(lin_acc_x);
-  // Serial.print(" ");
-  // Serial.print(lin_acc_y);
-  // Serial.print("   ");
-  // Serial.print(deltaX1);
-  // Serial.print(" ");
-  // Serial.print(deltaY1);
-  // Serial.print("   ");
-  // Serial.print(deltaX2);
-  // Serial.print(" ");
-  // Serial.print(deltaY2);
-  // Serial.print("   ");
-  // Serial.println(distance);
-  // previous_time = current_time;
+  Serial.print(current_time-previous_time);
+  Serial.print(" ");
+  Serial.print(heading);
+  Serial.print(" ");
+  Serial.print(gyro_x);
+  Serial.print("   ");
+  Serial.print(lin_acc_x);
+  Serial.print(" ");
+  Serial.print(lin_acc_y);
+  Serial.print("   ");
+  Serial.print(deltaX1);
+  Serial.print(" ");
+  Serial.print(deltaY1);
+  Serial.print("   ");
+  Serial.print(deltaX2);
+  Serial.print(" ");
+  Serial.print(deltaY2);
+  Serial.print("   ");
+  Serial.println(distance);
+  previous_time = current_time;
   }
 }
 
