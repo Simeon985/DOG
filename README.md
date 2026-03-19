@@ -1,10 +1,8 @@
-images/IMG_20260319_111907.jpg
-
 # Social Dog Robot
 
 An autonomous social robot that recognizes a person, plays fetch, and expresses emotions using LED eyes.
 
-<img src="./images/IMG_20260319_111907.jpg" width=300/> <img src="./images/lekiwi-DOG.png" width=300/>
+<img src="./images/IMG_20260319_111907.jpg" width=300 height=300/> <img src="./images/lekiwi-DOG.png" width=300 height=300/>
 
 ## Overview
 
@@ -43,7 +41,7 @@ Main platform:
 
 Additional components:
 
-- Raspberry Pi / Jetson (main processing unit)
+- Jetson Orin Nano (main processing unit)
 - Camera module for vision tasks
 - Motor drivers and omni wheels
 - Servo-based gripper
@@ -84,19 +82,3 @@ This robot serves as a platform to investigate:
 - Emotional recognizability on low-resolution displays
 - User response timing to robot emotions
 - Perceived intelligence and engagement during interaction
-
----
-
-## Media
-
-Add demonstration content here:
-
-- Robot driving GIF
-- Fetch sequence GIF
-- LED eye expression photos
-
----
-
-## Running the Project
-
-Clone the repository:
