@@ -17,7 +17,7 @@ Different emotional patterns were shown, including variations in size and alignm
 
 ---
 
-### 2. “Bear Face” Pattern
+### 2. Sad Pattern
 
 - Interpretation: bear with ears, cute appearance
 - Perceived emotion: friendliness / cuteness
