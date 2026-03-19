@@ -4,7 +4,7 @@ images/IMG_20260319_111907.jpg
 
 An autonomous social robot that recognizes a person, plays fetch, and expresses emotions using LED eyes.
 
-<img src="./images/IMG_20260319_111907.jpg" width=300/>
+<img src="./images/IMG_20260319_111907.jpg" width=300/> <img src="./images/lekiwi-DOG.png" width=300/>
 
 ## Overview
 
