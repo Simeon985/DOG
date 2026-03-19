@@ -9,7 +9,7 @@ Different emotional patterns were shown, including variations in size and alignm
 
 ## Observations
 
-### 1. Basic Eye Pattern
+### 1. Heart Pattern
 
 - Interpretation: two staring eyes, uncomfortable feeling
 - Perceived emotion: neutral / awkward
