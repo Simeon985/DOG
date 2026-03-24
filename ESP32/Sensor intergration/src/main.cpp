@@ -165,7 +165,7 @@ for (u_int8_t row = 0; row < 8; row++) {
   Serial.print(" ");
   Serial.print(lin_acc_y);
   Serial.print(" ");
-  Serial.println(distance);
+  Serial.print(distance);
   Serial.print(" ");
   Serial.print(deltaX1);
   Serial.print(" ");
@@ -175,7 +175,7 @@ for (u_int8_t row = 0; row < 8; row++) {
   Serial.print(" ");
   Serial.print(deltaY2);
   Serial.print(" ");
-  Serial.print(current_time-previous_time);
+  Serial.println(current_time-previous_time);
   previous_time = current_time;
   }
 }

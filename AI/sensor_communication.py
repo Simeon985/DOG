@@ -23,8 +23,7 @@ def get_sensor_data(ser: serial.Serial):
     data = ser.readline()
     data_list = data.split()
     for i in range(5):
-        data_array[i] = float(data_list)      
+        data_array[i] = float(data_list[i])      
     for i in range(5,10):
-        data_array[i] = int(data_list)
+        data_array[i] = int(data_list[i])
     return data_array
-
