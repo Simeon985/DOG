@@ -21,6 +21,7 @@
  * SOFTWARE.
  */
 
+ 
 #include "Optical_flow_sensor.h"
 #include <SPI.h>
 
@@ -97,16 +98,16 @@ void Optical_Flow_Sensor::enableFrameBuffer()
   registerWrite(0x40, 0x80);
   registerWrite(0x4D, 0x11);
 
-  registerWrite(0x70, 0x00);   //More magic? 
+  registerWrite(0x70, 0x00);   //More magic?
   registerWrite(0x58, 0xFF);
 
-  int temp = registerRead(0x58); //Read status register 
+  int temp = registerRead(0x58); //Read status register
   int check = temp>>6; //rightshift 6 bits so only top two stay
 
   while(check == 0x03){ //while bits aren't set denoting ready state
-    temp = registerRead(0x58); //keep reading and testing 
-    check = temp>>6; //shift again 
-  }  
+    temp = registerRead(0x58); //keep reading and testing
+    check = temp>>6; //shift again
+  }
   delayMicroseconds(50);
 }
 
@@ -141,16 +142,16 @@ void Optical_Flow_Sensor::readFrameBuffer(char *FBuffer)
     }
     else {}
   }
-  registerWrite(0x70, 0x00);   //More magic? 
+  registerWrite(0x70, 0x00);   //More magic?
   registerWrite(0x58, 0xFF);
 
-  int temp = registerRead(0x58); //Read status register 
+  int temp = registerRead(0x58); //Read status register
   int check = temp>>6; //rightshift 6 bits so only top two stay
 
   while(check == 0x03){ //while bits aren't set denoting ready state
-    temp = registerRead(0x58); //keep reading and testing 
-    check = temp>>6; //shift again 
-  }  
+    temp = registerRead(0x58); //keep reading and testing
+    check = temp>>6; //shift again
+  }
 }
 
 // Low level register access
@@ -198,7 +199,7 @@ uint8_t Optical_Flow_Sensor::registerRead(uint8_t reg) {
 //here happens magic, don't ask...
 void Optical_Flow_Sensor::secrectSauce()
 {
-  
+
     registerWrite(0x7f, 0x00);
     registerWrite(0x55, 0x01);
     registerWrite(0x50, 0x07);
@@ -212,13 +213,13 @@ void Optical_Flow_Sensor::secrectSauce()
     else{
         registerWrite(0x48, 0x02);
     }
-            
+
     registerWrite(0x7f, 0x00);
     registerWrite(0x51, 0x7b);
     registerWrite(0x50, 0x00);
     registerWrite(0x55, 0x00);
     registerWrite(0x7f, 0x0E);
-    
+
     temp = registerRead(0x73);
     if (temp == 0x00){
         int c1 = registerRead(0x70);
@@ -276,13 +277,13 @@ void Optical_Flow_Sensor::initRegistersPMW3901()
   registerWrite(0x45, 0x60);
   registerWrite(0x7F, 0x00);
   registerWrite(0x4D, 0x11);
-  
+
   registerWrite(0x55, 0x80);
   registerWrite(0x74, 0x1F);
   registerWrite(0x75, 0x1F);
   registerWrite(0x4A, 0x78);
   registerWrite(0x4B, 0x78);
-  
+
   registerWrite(0x44, 0x08);
   registerWrite(0x45, 0x50);
   registerWrite(0x64, 0xFF);
@@ -296,7 +297,7 @@ void Optical_Flow_Sensor::initRegistersPMW3901()
   registerWrite(0x7F, 0x07);
   registerWrite(0x41, 0x0D);
   registerWrite(0x43, 0x14);
-  
+
   registerWrite(0x4B, 0x0E);
   registerWrite(0x45, 0x0F);
   registerWrite(0x44, 0x42);
