@@ -12,7 +12,24 @@ void Ultrasone_sensor::read_distance(float &distance){
   distance = (duration*.0343)/2;
 }
 
-void Ultrasone_sensor::begin(){
+bool Ultrasone_sensor::begin() {
+
   pinMode(trig, OUTPUT);
   pinMode(echo, INPUT);
+
+  digitalWrite(trig, LOW);
+  delay(50);   // let sensor settle
+
+  // test measurement
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
+
+  long testDuration = pulseIn(echo, HIGH, 30000); // 30ms timeout
+
+  if (testDuration == 0) {
+    return false;   // no echo -> problem
+  }
+
+  return true;
 }
