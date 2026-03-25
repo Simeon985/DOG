@@ -10,7 +10,34 @@ app.prepare(ctx_id=-1, det_size=(640, 640))
 # Load known faces from images
 known_faces = {}  # Dictionary to store name -> embedding
 images_dir = 'images'
-threshold = 0.6  # Similarity threshold for recognition
+threshold = 0.6  # Similarity threshold for recognitiongi
+def gstreamer_pipeline(
+    sensor_id=0,
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=0,
+):
+    return (
+        "nvarguscamerasrc sensor-id=%d ! "
+        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink"
+        % (
+            sensor_id,
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
+
 
 print("Loading known faces...")
 for filename in ['robin.jpg', 'thomas.jpg', 'jorien.jpg', 'Wannes.jpg']:
@@ -35,7 +62,7 @@ for filename in ['robin.jpg', 'thomas.jpg', 'jorien.jpg', 'Wannes.jpg']:
 print(f"Loaded {len(known_faces)} known faces")
 print("Starting webcam...")
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(gstreamer_pipeline(flip_method = 0))
 
 while True:
     ret, frame = cap.read()

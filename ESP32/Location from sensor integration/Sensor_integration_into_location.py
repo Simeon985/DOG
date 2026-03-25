@@ -148,12 +148,12 @@ def locations_Kalman(data, scale_factor_1, scale_factor_2, angle_1, angle_2):
             self.angle_2_cos = math.cos(math.radians(angle_2))
             self.angle_2_sin = math.sin(math.radians(angle_2))
 
-            T_X_1, T_Y_1 = 0.0916, -.0514
+
+            T_X_1, T_Y_1 = 0.0916, .0514
             self.R_1 = np.sqrt(T_X_1**2 + T_Y_1**2)
             alpha_1 = np.arctan2(T_Y_1, T_X_1)
             self.angle_term_1 = np.pi/2+ math.radians(angle_1)+alpha_1 # 5 * np.pi / 4 - alpha_1
-
-            T_X_2, T_Y_2 = -0.0730, 0.0739
+            T_X_2, T_Y_2 = -0.0730, -0.0739
             self.R_2 = np.sqrt(T_X_2**2 + T_Y_2**2)
             alpha_2 = np.arctan2(T_Y_2, T_X_2)
             self.angle_term_2 = np.pi/2+math.radians(angle_2)+alpha_2  # 5 * np.pi / 4 - alpha_2
@@ -204,18 +204,18 @@ def locations_Kalman(data, scale_factor_1, scale_factor_2, angle_1, angle_2):
         def observation_function(self, state, noise):
             p_x, p_y, p_a, v_x, v_y, v_a = state
             sqrt2_over_2 = np.sqrt(2) / 2.0
-            v_x_mobi = v_x * np.cos(p_a) + v_y * np.sin(p_a)
-            v_y_mobi = -v_x * np.sin(p_a) + v_y * np.cos(p_a)
+            v_x_rel = v_x * np.cos(p_a) + v_y * np.sin(p_a)
+            v_y_rel = -v_x * np.sin(p_a) + v_y * np.cos(p_a)
 
 
-            flow_x1 = (v_x_mobi*self.angle_1_cos - v_y_mobi*self.angle_1_sin +
-                    self.R_1 * v_a * np.cos(self.angle_term_1)) * self.dt_val
-            flow_y1 = (v_x_mobi*self.angle_1_sin + v_y_mobi*self.angle_1_cos -
-                    self.R_1 * v_a * np.sin(self.angle_term_1)) * self.dt_val
-            flow_x2 = (v_x_mobi*self.angle_2_cos - v_y_mobi*self.angle_2_sin +
-                    self.R_2 * v_a * np.cos(self.angle_term_2)) * self.dt_val
-            flow_y2 = (v_x_mobi*self.angle_2_sin + v_y_mobi*self.angle_2_cos -
-                    self.R_2 * v_a * np.sin(self.angle_term_2)) * self.dt_val
+            flow_x1 = ((v_x_rel*self.angle_1_cos + v_y_rel*self.angle_1_sin)*self.dt_val -
+                    self.R_1 * np.cos(v_a * self.dt_val))
+            flow_y1 = ((-v_x_rel*self.angle_1_sin + v_y_rel*self.angle_1_cos)*self.dt_val -
+                    self.R_1 * np.sin(v_a * self.dt_val))
+            flow_x2 = ((v_x_rel*self.angle_2_cos + v_y_rel*self.angle_2_sin)*self.dt_val -
+                    self.R_1 * np.cos(v_a * self.dt_val))
+            flow_y2 = ((-v_x_rel*self.angle_2_sin + v_y_rel*self.angle_2_cos)*self.dt_val -
+                    self.R_1 * np.sin(v_a * self.dt_val))
 
             return np.array([flow_x1, flow_y1, flow_x2, flow_y2, p_a]) + noise
 
@@ -376,7 +376,8 @@ def main(filename, recalibrate):
     data = locations_Kalman(data, scale_factor_1, scale_factor_2, angle_1, angle_2)
 
     #plot_trajectories(data)
-    plot_trajectories_temp(data)
+
+    plot_trajectories(data)
 
 if __name__ == "__main__":
     # Set up command line argument parsing
