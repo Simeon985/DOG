@@ -4,8 +4,8 @@ from insightface.app import FaceAnalysis
 import os
 
 # Load model
-app = FaceAnalysis(name='buffalo_l')
-app.prepare(ctx_id=-1, det_size=(640, 640))
+app = FaceAnalysis(name='buffalo_sc')
+app.prepare(ctx_id=0, det_size=(640, 640))
 
 # Load known faces from images
 known_faces = {}  # Dictionary to store name -> embedding
