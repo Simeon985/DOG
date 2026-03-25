@@ -20,6 +20,7 @@ def initialize_esp(baudrate=921600):
 
 def get_sensor_data(ser: serial.Serial):
     data_array = np.zeros(10)
+    ser.reset_input_buffer()
     data = ser.readline()
     data_list = data.split()
     for i in range(5):
