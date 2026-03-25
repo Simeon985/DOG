@@ -6,20 +6,6 @@
 #include <Adafruit_Sensor.h>
 #include <MD_MAX72xx.h>
 
-#define  DEBUG  1
-
-#if  DEBUG
-#define PRINT(s, x) { Serial.print(F(s)); Serial.print(x); }
-#define PRINTS(x) Serial.print(F(x))
-#define PRINTD(x) Serial.println(x, DEC)
-
-#else
-#define PRINT(s, x)
-#define PRINTS(x)
-#define PRINTD(x)
-
-#endif
-
 #define PIN_SCK_OFS  18
 #define PIN_MISO_OFS 19
 #define PIN_MOSI_OFS 23
@@ -40,6 +26,7 @@
 #define CS_PIN_LED    26  // or SS
 
 //put function declarations here:
+
 Optical_Flow_Sensor flow1(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_1, PAA5100);
 Optical_Flow_Sensor flow2(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_2, PAA5100);
 Ultrasone_sensor ultra(PIN_TRIG_US_1, PIN_ECHO_US_1);
@@ -53,6 +40,7 @@ MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, DATA_PIN_LED, CLK_PIN_LED, CS_PIN_LED,
 
 void setup() {
   // put your setup code here, to run once:
+
   #if DEBUG
     Serial.begin(921600);
   #endif
@@ -114,8 +102,6 @@ float heading;
 float gyro_x;
 float lin_acc_x;
 float lin_acc_y;
-
-
 
 void loop() {
   // put your main code here, to run repeatedly:

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+# DOG
+Make a robot dog
+=======
 # Social Dog Robot
 
 An autonomous social robot that recognizes a person, plays fetch, and expresses emotions using LED eyes.
@@ -82,3 +86,4 @@ This robot serves as a platform to investigate:
 - Emotional recognizability on low-resolution displays
 - User response timing to robot emotions
 - Perceived intelligence and engagement during interaction
+>>>>>>> 2a0def340b13786e4bb48cb49e5f686ad0823a85
