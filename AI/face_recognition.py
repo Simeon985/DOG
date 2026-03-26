@@ -2,15 +2,56 @@ import cv2
 import numpy as np
 from insightface.app import FaceAnalysis
 import os
+import time
+
+#fps counter
+fps_counter = 0
 
 # Load model
-app = FaceAnalysis(name='buffalo_l')
-app.prepare(ctx_id=-1, det_size=(640, 640))
+app = FaceAnalysis(
+    name='buffalo_sc',
+    providers=[
+        ('TensorrtExecutionProvider', {
+            'trt_engine_cache_enable': True,
+            'trt_engine_cache_path': '/home/dog/.insightface/trt_cache'
+        }),
+        'CUDAExecutionProvider',
+        'CPUExecutionProvider'
+    ]
+)
+app.prepare(ctx_id=0, det_size=(640, 640))
 
 # Load known faces from images
 known_faces = {}  # Dictionary to store name -> embedding
-images_dir = 'images'
-threshold = 0.6  # Similarity threshold for recognition
+images_dir = 'AI/images'
+threshold = 0.6  # Similarity threshold for recognitiongi
+def gstreamer_pipeline(
+    sensor_id=0,
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=0,
+):
+    return (
+        "nvarguscamerasrc sensor-id=%d ! "
+        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink"
+        % (
+            sensor_id,
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
+
 
 print("Loading known faces...")
 for filename in ['robin.jpg', 'thomas.jpg', 'jorien.jpg', 'Wannes.jpg']:
@@ -35,13 +76,18 @@ for filename in ['robin.jpg', 'thomas.jpg', 'jorien.jpg', 'Wannes.jpg']:
 print(f"Loaded {len(known_faces)} known faces")
 print("Starting webcam...")
 
-cap = cv2.VideoCapture(0)
-
+cap = cv2.VideoCapture(gstreamer_pipeline(flip_method = 0))
+fps_time = time.time()
+fps = 0
 while True:
     ret, frame = cap.read()
     if not ret:
         break
-    
+    fps_counter += 1
+    if fps_counter == 30:
+        fps = 30/(time.time()-fps_time)
+        fps_counter = 0
+        fps_time = time.time()
     faces = app.get(frame)
 
     for face in faces:
@@ -75,7 +121,9 @@ while True:
                      (box[0] + label_size[0], box[1]), color, -1)
         cv2.putText(frame, label, (box[0], box[1] - 5), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
-
+	# Draw fps counter
+    cv2.putText(frame, f"FPS: {fps:.1f}", (10, 30),
+        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow("Face Recognition", frame)
     if cv2.waitKey(1) == 27:  # ESC to exit
         break

@@ -21,6 +21,7 @@
  * SOFTWARE.
  */
 
+
 #ifndef __OPTICAL_FLOW_SENSOR_H__
 #define __OPTICAL_FLOW_SENSOR_H__
 
@@ -34,7 +35,7 @@
 
 class Optical_Flow_Sensor {
 public:
-  Optical_Flow_Sensor(uint8_t sck_pin, uint8_t miso_pin, uint8_t mosi_pin, uint8_t cs_pin, uint8_t sensor) 
+  Optical_Flow_Sensor(uint8_t sck_pin, uint8_t miso_pin, uint8_t mosi_pin, uint8_t cs_pin, uint8_t sensor)
     : _sck{sck_pin}, _miso{miso_pin}, _mosi{mosi_pin}, _cs{cs_pin}, _sensor{sensor}{}
 
   boolean begin(void);
