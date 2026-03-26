@@ -116,8 +116,6 @@ void loop() {
   animation.update(current_time,distance);
 
   //print everything in one line
-  Serial.print(current_time-previous_time);
-  Serial.print(" ");
   Serial.print(heading);
   Serial.print(" ");
   Serial.print(gyro_x);
@@ -126,6 +124,8 @@ void loop() {
   Serial.print(" ");
   Serial.print(lin_acc_y);
   Serial.print("   ");
+  Serial.print(distance);
+  Serial.print(" ");
   Serial.print(deltaX1);
   Serial.print(" ");
   Serial.print(deltaY1);
@@ -134,7 +134,7 @@ void loop() {
   Serial.print(" ");
   Serial.print(deltaY2);
   Serial.print("   ");
-  Serial.println(distance);
+  Serial.println(current_time-previous_time);
   previous_time = current_time;
   }
 }
