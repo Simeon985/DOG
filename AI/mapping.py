@@ -41,7 +41,7 @@ class PeripheralEstimator:
         # Update position using current heading (p_a)
         self.pose[0] += (v_x * math.cos(p_a) - v_y * math.sin(p_a)) * dt
         self.pose[1] += (v_x * math.sin(p_a) + v_y * math.cos(p_a)) * dt
-        self.history.append(self.pose[0], self.pose[1], p_a, self.history[-1][-1] + dt)
+        return self.pose[0], self.pose[1], p_a, self.history[-1][-1] + dt
     
     def start_mission(self):
         self.mission = True
@@ -51,33 +51,3 @@ class PeripheralEstimator:
 
     def clear_history(self):
         self.history.clear()
-
-def main(estimator):
-    ser = initialize_esp()
-    scale_1, scale_2, angle_1, angle_2 = 0.0, 0.0 #Calculated using specific hardware specifications
-    est = None
-    data = np.zeros(10)
-    if estimator == "Peripheral":
-        est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)
-    elif estimator == "Kalman":
-        raise RuntimeError("Kalman is not implemented yet")
-    else:
-        raise RuntimeError("Provided estimator isn't implemented")
-    while True:
-        while not est.mission and not est.returning:
-            None
-        while est.mission:
-            get_sensor_data(ser, data)
-            est.update(data)
-        while not est.mission and est.returning:
-            None
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Process sensor data from text file')
-    parser.add_argument('estimator', 
-                       nargs='?',  # Makes it optional
-                       default='Peripheral',  # Default value
-                       help='selected type of position estimator. options: Peripheral(default), Kalman')
-    args = parser.parse_args()
-    main(args.estimator)
