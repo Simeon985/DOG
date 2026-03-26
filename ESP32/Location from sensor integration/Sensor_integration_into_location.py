@@ -148,7 +148,6 @@ def locations_Kalman(data, scale_factor_1, scale_factor_2, angle_1, angle_2):
             self.angle_2_cos = math.cos(math.radians(angle_2))
             self.angle_2_sin = math.sin(math.radians(angle_2))
 
-
             T_X_1, T_Y_1 = 0.0916, .0514
             self.R_1 = np.sqrt(T_X_1**2 + T_Y_1**2)
             alpha_1 = np.arctan2(T_Y_1, T_X_1)
@@ -376,7 +375,6 @@ def main(filename, recalibrate):
     data = locations_Kalman(data, scale_factor_1, scale_factor_2, angle_1, angle_2)
 
     #plot_trajectories(data)
-
     plot_trajectories(data)
 
 if __name__ == "__main__":
