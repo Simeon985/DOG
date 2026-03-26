@@ -25,6 +25,7 @@ def get_sensor_data(ser: serial.Serial, data_array):
     """
     ser.reset_input_buffer()
     data = ser.readline()
+    print(data)
     data_list = data.split()
     for i in range(5):
         data_array[i] = float(data_list[i])      
