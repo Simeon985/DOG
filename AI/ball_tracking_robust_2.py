@@ -23,6 +23,35 @@ k1 = ball_radius/(2*tan_horizontal)*pixels_width
 k2 = ball_radius/(2*tan_vertical)*pixels_height
 k = (k1+k2)/2
 
+def gstreamer_pipeline(
+    sensor_id=0,
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=0,
+):
+    return (
+        "nvarguscamerasrc sensor-id=%d ! "
+        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink"
+        % (
+            sensor_id,
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
+
+pipeline = gstreamer_pipeline(flip_method=0)
+
 def calculate_depth(radius):
     if radius > 0:
         # k wordt nu hierboven berekend, al juist voor onze camera
@@ -90,6 +119,7 @@ ap.add_argument("-v", "--video",
 	help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=64,
 	help="max buffer size")
+ap.add_argument("--jetson",action = "store_true", help= "Set to true if the file is run on the jetson")
 args = vars(ap.parse_args())
 
 # define the lower and upper boundaries of the "green" ball in the HSV color space
@@ -102,7 +132,9 @@ param2 = 20
 pts = deque(maxlen=args["buffer"])
 
 # if a video path was not supplied, grab the reference to the webcam
-if not args.get("video", False):
+if args["jetson"]:
+	vs = VideoStream(src=pipeline, usePiCamera=False).start()
+elif not args.get("video", False):
 	vs = VideoStream(src=0).start()
 # otherwise, grab a reference to the video file
 else:
