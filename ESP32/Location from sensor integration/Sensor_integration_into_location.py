@@ -152,7 +152,6 @@ def locations_Kalman(data, scale_factor_1, scale_factor_2, angle_1, angle_2):
             self.R_1 = np.sqrt(T_X_1**2 + T_Y_1**2)
             alpha_1 = np.arctan2(T_Y_1, T_X_1)
             self.angle_term_1 = np.pi/2+ math.radians(angle_1)+alpha_1 # 5 * np.pi / 4 - alpha_1
-
             T_X_2, T_Y_2 = -0.0730, -0.0739
             self.R_2 = np.sqrt(T_X_2**2 + T_Y_2**2)
             alpha_2 = np.arctan2(T_Y_2, T_X_2)
@@ -216,7 +215,6 @@ def locations_Kalman(data, scale_factor_1, scale_factor_2, angle_1, angle_2):
                     self.R_1 * np.cos(v_a * self.dt_val))
             flow_y2 = ((-v_x_rel*self.angle_2_sin + v_y_rel*self.angle_2_cos)*self.dt_val -
                     self.R_1 * np.sin(v_a * self.dt_val))
-
 
             return np.array([flow_x1, flow_y1, flow_x2, flow_y2, p_a]) + noise
 
