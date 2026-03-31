@@ -8,8 +8,8 @@ import imutils
 import time
 
 #------------- MAGIC NUMBERS -------------
-camera_angle_horizontal = 62.2 #degrees - dit is al juist voor onze camera
-camera_angle_vertical = 48.8 #degrees - dit is al juist voor onze camera
+camera_angle_horizontal = 62.2 #degrees - dit is al juist voor onze camera   - voor webcam Thomas: 66
+camera_angle_vertical = 48.8 #degrees - dit is al juist voor onze camera    - voor webcam Thomas: 40
 
 tan_horizontal = np.tan(np.radians(camera_angle_horizontal/2))
 tan_vertical = np.tan(np.radians(camera_angle_vertical/2))
