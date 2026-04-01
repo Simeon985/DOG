@@ -1,2 +1,8 @@
 .venv
 .venv-li
+*.engine
+*.cache
+*.onnx
+*.deb
+*.tar.xz
+libcusparse_lt-linux-aarch64-0.7.1.0-archive
