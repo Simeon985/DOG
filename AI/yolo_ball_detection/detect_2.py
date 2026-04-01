@@ -1,13 +1,31 @@
+import argparse
 from ultralytics import YOLO
 import cv2
 
-# Load your custom model
-model = YOLO("./balls.pt")
+# ── CLI args ──────────────────────────────────────────────────────────────────
+parser = argparse.ArgumentParser()
+parser.add_argument("--jetson", action="store_true", help="Use TensorRT engine on Jetson")
+args = parser.parse_args()
+
+# ── Model loading ─────────────────────────────────────────────────────────────
+if args.jetson:
+    import os
+    ENGINE_PATH = "./balls.engine"
+    if not os.path.exists(ENGINE_PATH):
+        print("No TensorRT engine found. Exporting from balls.pt ...")
+        model = YOLO("./balls.pt")
+        model.export(format="engine", half=True, device=0)
+        print("Export complete. Restart the script with --jetson.")
+        exit(0)
+    model = YOLO(ENGINE_PATH)
+    print("Running with TensorRT engine (FP16)")
+else:
+    model = YOLO("./balls.pt")
+    print("Running with PyTorch model")
 
 CONF_THRESHOLD = 0
-GREEN_CLASS_INDEX = 2  # index in `colors` that corresponds to "green"
-CAMERA_H_FOV_DEG = 95  # adjust to your camera's horizontal field of view
-
+GREEN_CLASS_INDEX = 2
+CAMERA_H_FOV_DEG = 95
 
 
 def gstreamer_pipeline(
@@ -37,37 +55,32 @@ def gstreamer_pipeline(
         )
     )
 
+
 def calculate_depth(radius):
     if radius > 0:
-        # Als r = 11, dan is de afstand 156 cm
-        # Depth moet kleiner worden als de radius groter is (omgekeerd evenredig)
-        # Bijvoorbeeld: depth = k / radius, waarbij k een kalibratieconstante is
-        # Gegeven: als r = 11, dan is de afstand 156 cm -> k = 11 * 156 = 1716
         depth = 1716 / radius
         return round(depth, 1)
 
 
 def compute_rotation_angle(frame_width, target_x):
-    """
-    Compute platform rotation angle so that the camera center points toward target_x.
-    Positive angle => rotate right, negative => rotate left (convention can be adapted).
-    """
     center_x = frame_width / 2.0
-    pixel_offset = target_x - center_x  # >0 if ball is to the right of center
-    norm_offset = pixel_offset / (frame_width / 2.0)  # -1 .. 1
+    pixel_offset = target_x - center_x
+    norm_offset = pixel_offset / (frame_width / 2.0)
     angle = norm_offset * (CAMERA_H_FOV_DEG / 2.0)
     return angle
 
 
 def rotate_platform(angle):
-    """
-    Stub for platform rotation. Replace with actual motor control implementation.
-    """
     print(f"rotate_platform({angle:.2f} deg)")
 
 
-# Open webcam (0 = default camera)
-cap = cv2.VideoCapture(0)
+# ── Camera source ─────────────────────────────────────────────────────────────
+if args.jetson:
+    cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
+    print("Using GStreamer pipeline (Jetson CSI camera)")
+else:
+    cap = cv2.VideoCapture(0)
+    print("Using default webcam")
 
 while True:
     ret, frame = cap.read()
