@@ -14,8 +14,8 @@ camera_angle_vertical = 48.8 #degrees - dit is al juist voor onze camera
 tan_horizontal = np.tan(np.radians(camera_angle_horizontal/2))
 tan_vertical = np.tan(np.radians(camera_angle_vertical/2))
 
-pixels_width = 600 # max 3280 pixels in onze camera
-pixels_height = 450 # max 2468 pixels in onze camera
+pixels_width = 3280 # max 3280 pixels in onze camera
+pixels_height = 2468 # max 2468 pixels in onze camera
 
 ball_radius = 5.7/2 # centimeter
 
@@ -84,7 +84,6 @@ def white_balance(frame):
 	result[:, :, 2] = result[:, :, 2] - ((avg_b - 128) * (result[:, :, 0] / 255.0) * 1.1)
 	return cv2.cvtColor(result, cv2.COLOR_LAB2BGR)
 
-
 def add_trackbars(): # for HSV boundaries
 	def nothing(x):
 		pass
@@ -119,7 +118,7 @@ ap.add_argument("-v", "--video",
 	help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=64,
 	help="max buffer size")
-ap.add_argument("--jetson",action = "store_true", help= "Set to true if the file is run on the jetson")
+ap.add_argument("-j","--jetson",action = "store_true", help= "Set to true if the file is run on the jetson")
 args = vars(ap.parse_args())
 
 # define the lower and upper boundaries of the "green" ball in the HSV color space
@@ -160,7 +159,7 @@ while True:
 		break
 	print(frame.shape)
 	# resize the frame
-	frame = imutils.resize(frame, width=pixels_width)
+	#frame = imutils.resize(frame, width=pixels_width)
 	print(frame.shape)
 	# --- Lighting normalization pipeline ---
 	# Step 1: White balance to fix color casts from light sources
@@ -242,17 +241,17 @@ while True:
 		print(x, y)
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 		# only proceed if the radius meets a minimum size
-		if radius > 5:
+		if radius > 10:
 			# draw the circle and centroid on the frame,
 			# then update the list of tracked points
 			cv2.circle(frame, (int(x), int(y)), int(radius),
 				(0, 255, 255), 2)
-			cv2.circle(frame, center, 5, (0, 0, 255), -1)
+			cv2.circle(frame, center, 30, (0, 0, 255), -1)
 			x_pos,y_pos,z_pos = calculate_3D_coordinates(x,y,radius)
 			cv2.putText(frame, f"x: {int(x_pos)} cm ; y: {int(y_pos)} cm ; z: {int(z_pos)} cm", (int(x)+20, int(y)+10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
 
-
+	"""
 			padding = 20
 			roi = mask[max(int(y-(radius+padding)),0):min(int(y+(radius+padding)),frame.shape[0]), max(int(x-(radius+padding)),0):min(int(x+(radius+padding)),frame.shape[1])]
 
@@ -294,7 +293,7 @@ while True:
 			#cv2.circle(frame, (x, y), r, (0, 255, 0), 4)
 			pass
 
-
+	"""
 
 
 	# update the points queue
@@ -317,6 +316,8 @@ while True:
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 150), 1)
 
 	# show the frame and mask
+	frame = imutils.resize(frame, width=600)
+	mask = imutils.resize(mask, width=600)
 	cv2.imshow("Frame", frame)
 	cv2.imshow("Mask", mask)
 
