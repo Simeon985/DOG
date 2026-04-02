@@ -51,8 +51,67 @@ Gtk-Message: 15:45:28.451: Failed to load module "canberra-gtk-module"
   File "/home/dog/Documents/ESP/DOG/dog_venv/lib/python3.10/site-packages/ultralytics/nn/autobackend.py", line 273, in forward
     y = self.backend.forward(im, **forward_kwargs)
   File "/home/dog/Documents/ESP/DOG/dog_venv/lib/python3.10/site-packages/ultralytics/nn/backends/tensorrt.py", line 143, in forward
-    self.context.execute_v2(list(self.binding_addrs.values()))
-KeyboardInterrupt
-FATAL: exception not rethrown
-Aborted (core dumped)
-(dog_venv) (base) dog@dog:~/Documents/ESP/DOG/AI/yolo_ball_detection$ 
+    self.context.execute_v2(list(self.binding_addrs.values()
+
+
+
+python3 -c "
+import cv2
+
+def gstreamer_pipeline(
+    sensor_id=0,
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=0,
+):
+    return (
+        'nvarguscamerasrc sensor-id=%d ! '
+        'video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! '
+        'nvvidconv flip-method=%d ! '
+        'video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! '
+        'videoconvert ! '
+        'video/x-raw, format=(string)BGR ! appsink drop=1 max-buffers=1'
+        % (sensor_id, capture_width, capture_height, framerate, flip_method, display_width, display_height)
+    )
+
+cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
+ret, frame = cap.read()
+frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+cv2.imwrite('debug_frame.jpg', frame)
+cap.release()
+print('Saved debug_frame.jpg')
+"
+
+
+
+python3 -c "
+import cv2
+
+def gstreamer_pipeline(sensor_id=0, capture_width=1920, capture_height=1080,
+    display_width=960, display_height=540, framerate=30, flip_method=0):
+    return (
+        'nvarguscamerasrc sensor-id=%d ! '
+        'video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! '
+        'nvvidconv flip-method=%d ! '
+        'video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! '
+        'videoconvert ! '
+        'video/x-raw, format=(string)BGR ! appsink drop=1 max-buffers=1'
+        % (sensor_id, capture_width, capture_height, framerate, flip_method, display_width, display_height)
+    )
+
+cap = cv2.VideoCapture(gstreamer_pipeline(), cv2.CAP_GSTREAMER)
+ret, frame = cap.read()
+cap.release()
+
+# Save all conversions
+cv2.imwrite('frame_original.jpg', frame)
+cv2.imwrite('frame_rgb.jpg', cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+cv2.imwrite('frame_rbg.jpg', frame[:, :, [0, 2, 1]])  # swap G and B
+cv2.imwrite('frame_grb.jpg', frame[:, :, [1, 0, 2]])  # swap R and G
+cv2.imwrite('frame_brg.jpg', frame[:, :, [2, 0, 1]])  # 
+cv2.imwrite('frame_gbr.jpg', frame[:, :, [1, 2, 0]])  # 
+print('Saved all frames - check which one has correct colors')
+"
