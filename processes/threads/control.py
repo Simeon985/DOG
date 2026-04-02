@@ -120,6 +120,7 @@ def control(
     returning  = False
 
     while not stop_event.is_set():
+        print(shared_array)
         time.sleep(0.1)
         continue
         counter[0] += 1
