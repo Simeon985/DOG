@@ -14,8 +14,8 @@ camera_angle_vertical = 48.8 #degrees - dit is al juist voor onze camera    - vo
 tan_horizontal = np.tan(np.radians(camera_angle_horizontal/2))
 tan_vertical = np.tan(np.radians(camera_angle_vertical/2))
 
-pixels_width = 600 # max 3280 pixels in onze camera
-pixels_height = 450 # max 2468 pixels in onze camera
+pixels_width = 3280 # max 3280 pixels in onze camera
+pixels_height = 2468 # max 2468 pixels in onze camera
 
 ball_radius = 5.7/2 # centimeter
 
@@ -84,7 +84,6 @@ def white_balance(frame):
 	result[:, :, 2] = result[:, :, 2] - ((avg_b - 128) * (result[:, :, 0] / 255.0) * 1.1)
 	return cv2.cvtColor(result, cv2.COLOR_LAB2BGR)
 
-
 def add_trackbars(): # for HSV boundaries
 	def nothing(x):
 		pass
@@ -119,7 +118,7 @@ ap.add_argument("-v", "--video",
 	help="path to the (optional) video file")
 ap.add_argument("-b", "--buffer", type=int, default=64,
 	help="max buffer size")
-ap.add_argument("--jetson",action = "store_true", help= "Set to true if the file is run on the jetson")
+ap.add_argument("-j","--jetson",action = "store_true", help= "Set to true if the file is run on the jetson")
 args = vars(ap.parse_args())
 
 # define the lower and upper boundaries of the "green" ball in the HSV color space
@@ -297,7 +296,6 @@ if args["jetson"]:
 
 
 
-
 		# update the points queue
 		pts.appendleft(center)
 
@@ -318,6 +316,8 @@ if args["jetson"]:
 					cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 150), 1)
 
 		# show the frame and mask
+		frame = imutils.resize(frame, width=600)
+		mask = imutils.resize(mask, width=600)
 		cv2.imshow("Frame", frame)
 		cv2.imshow("Mask", mask)
 
