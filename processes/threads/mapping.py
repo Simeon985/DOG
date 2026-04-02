@@ -1,7 +1,7 @@
 import numpy as np
 import argparse
 import math
-from sensor_communication import *
+from processes.threads.sensor_communication import *
 import numpy.typing as npt
 import threading
 
