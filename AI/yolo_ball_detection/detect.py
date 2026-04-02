@@ -114,7 +114,6 @@ while True:
     ret, frame = cap.read()
     if not ret or frame is None:
         continue
-
     results = model(frame, verbose=False)
 
     best_conf = -1.0
