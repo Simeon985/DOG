@@ -25,10 +25,10 @@
 
 
 //put function declarations here:
-Optical_Flow_Sensor flow1(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_1, PAA5100);
-Optical_Flow_Sensor flow2(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_2, PAA5100);
-Ultrasone_sensor ultra(PIN_TRIG_US_1, PIN_ECHO_US_1);
-Adafruit_BNO055 bno = Adafruit_BNO055(IMU_SENSOR_ID);
+//Optical_Flow_Sensor flow1(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_1, PAA5100);
+//Optical_Flow_Sensor flow2(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_2, PAA5100);
+//Ultrasone_sensor ultra(PIN_TRIG_US_1, PIN_ECHO_US_1);
+//Adafruit_BNO055 bno = Adafruit_BNO055(IMU_SENSOR_ID);
 Matrix_LED animation;
 hw_timer_t *timer = NULL;
 volatile bool timerFired = false;
@@ -48,7 +48,7 @@ void setup() {
   Serial.begin(921600);
   delay(1000);
 
-  if (!bno.begin()) { print_error("BNO055 sensor)");}
+/*   if (!bno.begin()) { print_error("BNO055 sensor)");}
   Serial.println("BNO055 initialized");
 
   if (!flow1.begin()) { print_error("Flow sensor 1)");}
@@ -63,7 +63,7 @@ void setup() {
   Serial.println("BNO055 wire initialized");
 
 
-  bno.setExtCrystalUse(true);
+  bno.setExtCrystalUse(true); */
   timer = timerBegin(0, 80, true);  // 80MHz / 80 = 1MHz (1 tick = 1µs)
   timerAttachInterrupt(timer, &onTimer, true);
   timerAlarmWrite(timer, TIMER_INTERVAL, true);  // 1/10 000 µs = 100 Hz
@@ -94,7 +94,7 @@ void loop() {
     timerFired = false;
 
   // reading data optical flow sensors
-  flow1.readMotionCount(&deltaX1, &deltaY1);
+/*   flow1.readMotionCount(&deltaX1, &deltaY1);
   flow2.readMotionCount(&deltaX2, &deltaY2);
 
   // reading data ultrasone sensors
@@ -107,16 +107,16 @@ void loop() {
   heading = euler.x();
   gyro_x = gyro.z();
   lin_acc_x = lin_acc.x();
-  lin_acc_y = lin_acc.y();
+  lin_acc_y = lin_acc.y(); */
 
   // updating time
   current_time = micros();
 
   // updating animation
-  animation.update(current_time,distance);
+  animation.render();
 
   //print everything in one line
-  Serial.print(heading);
+/*   Serial.print(heading);
   Serial.print(" ");
   Serial.print(gyro_x);
   Serial.print("   ");
@@ -134,7 +134,7 @@ void loop() {
   Serial.print(" ");
   Serial.print(deltaY2);
   Serial.print("   ");
-  Serial.println(current_time-previous_time);
+  Serial.println(current_time-previous_time); */
   previous_time = current_time;
   }
 }

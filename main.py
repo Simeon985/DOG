@@ -1,47 +1,37 @@
 import time
-import threading
-from sensor.mapping import *
-from control.control import *
-from multiprocessing import process, Array
+import argparse
+from multiprocessing import Process, Array
+from processes.sensor_control import sensor_control_process
+from processes.camera import camera_process
 
-def main(estimator):
-    ser = initialize_esp()
-    scale_1, scale_2, angle_1, angle_2 = 1.0, 1.0, 0.0, 0.0 #Calculated using specific hardware specifications
-    est = None
-    data = np.zeros(10)
-    if estimator == "Peripheral":
-        est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)
-    elif estimator == "Kalman":
-        raise RuntimeError("Kalman is not implemented yet")
-    else:
-        raise RuntimeError("Provided estimator isn't implemented")
-    stop_event = threading.Event()
-    test_counter = [0]
-    t1 = threading.Thread(target= control, args=(stop_event, test_counter))
-    t2 = threading.Thread(target= est.update, args=(ser, data, stop_event))
 
-    t1.start()
-    t2.start()
+def main(estimator: str) -> None:
+    shared_array = Array('d', [0.0] * 11)
+
+    p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control")
+    p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
+
+    p_sensor.start()
+    p_camera.start()
 
     try:
         while True:
             time.sleep(0.1)
     except KeyboardInterrupt:
-        stop_event.set()  # This affects both threads simultaneously
-    
-    t1.join()
-    t2.join()
-    print(f"counter={test_counter}")
-    print(f"x = {est.pose[0]}, y = {est.pose[1]}")
-    print(f"history = {est.history[-5]}")
-    print("main thread closing")
+        print("Shutting down...")
+
+    p_sensor.join()
+    p_camera.join()
+    print("All processes closed")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process sensor data from text file')
-    parser.add_argument('estimator', 
-                       nargs='?',  # Makes it optional
-                       default='Peripheral',  # Default value
-                       help='selected type of position estimator. options: Peripheral(default), Kalman')
+    parser.add_argument(
+        'estimator',
+        nargs='?',
+        default='Peripheral',
+        help='selected type of position estimator. options: Peripheral (default), Kalman'
+    )
     args = parser.parse_args()
     main(args.estimator)
