@@ -6,6 +6,8 @@ import argparse
 import cv2
 import imutils
 import time
+from pykalman import KalmanFilter
+
 
 #------------- MAGIC NUMBERS -------------
 camera_angle_horizontal = 62.2 #degrees - dit is al juist voor onze camera   - voor webcam Thomas: 66
@@ -57,6 +59,12 @@ def calculate_depth(radius):
         # k wordt nu hierboven berekend, al juist voor onze camera
         depth = k / radius
         return depth
+def from_depth_to_radius(depth):
+	if depth > 0:
+		radius = k / depth
+		return radius
+	else:
+		return 1
 
 def calculate_3D_coordinates(M_x,M_y,radius):
 	"""
@@ -67,13 +75,27 @@ def calculate_3D_coordinates(M_x,M_y,radius):
 	z = - loodrechte afstand van bal tot camera (dus altijd negatief)
 	"""
 	depth = calculate_depth(radius)
+	z = -depth
 
 	centimeters_width = 2*depth*tan_horizontal
 	centimeters_height = 2*depth*tan_vertical
+
 	x = (M_x - pixels_width/2)*centimeters_width/pixels_width
 	y = -(M_y - pixels_height/2)*centimeters_height/pixels_height
-	z = -depth
+
 	return x, y, z
+
+def from_3D_coordinates_to_pixels(x,y,z):
+	depth = max(abs(z),1)
+	radius = from_depth_to_radius(depth)
+	
+	centimeters_width = 2*depth*tan_horizontal
+	centimeters_height = 2*depth*tan_vertical
+    
+	M_x = (x * pixels_width / centimeters_width) + pixels_width/2
+	M_y = -(y * pixels_height / centimeters_height) + pixels_height/2
+    
+	return M_x, M_y, radius
 
 def white_balance(frame):
 	"""Gray World white balance to compensate for colored light sources."""
@@ -83,6 +105,14 @@ def white_balance(frame):
 	result[:, :, 1] = result[:, :, 1] - ((avg_a - 128) * (result[:, :, 0] / 255.0) * 1.1)
 	result[:, :, 2] = result[:, :, 2] - ((avg_b - 128) * (result[:, :, 0] / 255.0) * 1.1)
 	return cv2.cvtColor(result, cv2.COLOR_LAB2BGR)
+
+def transition(prev_position, prev_speed, dt):
+	est_position = prev_position + prev_speed*dt
+	return est_position
+
+def correction(prev_position, actual_position):
+	position = actual_position
+
 
 
 def add_trackbars(): # for HSV boundaries
@@ -127,9 +157,43 @@ args = vars(ap.parse_args())
 greenLower = (70, 50, 0)
 greenUpper = (90, 255, 255)
 circularity_cutoff = 50
+
+
 param1 = 60
 param2 = 20
 pts = deque(maxlen=args["buffer"])
+
+
+pos_var = 0.1
+pos_var_z = pos_var
+speed_var = 0.2
+speed_var_z = speed_var
+pos_speed_covar = 0.1
+obs_var = 1*10
+obs_var_z = obs_var*10
+
+transition_matrix = np.array([[1,0,0,1,0,0],[0,1,0,0,1,0],[0,0,1,0,0,1], [0,0,0,1,0,0],[0,0,0,0,1,0],[0,0,0,0,0,1]])
+observation_matrix = np.array([[1,0,0,0,0,0],[0,1,0,0,0,0],[0,0,1,0,0,0]])
+transition_covariance = np.array([[pos_var,0,0,pos_speed_covar,0,0],[0,pos_var,0,0,pos_speed_covar,0],[0,0,pos_var_z,0,0, pos_speed_covar], [pos_speed_covar, 0,0,speed_var,0,0],[0,pos_speed_covar, 0,0,speed_var,0], [0,0,pos_speed_covar, 0,0,speed_var_z]])
+observation_covariance = np.array([[obs_var,0,0],[0,obs_var,0],[0,0,obs_var_z]])
+initial_state_mean = np.array([0,0,0,0,0,0])
+initial_state_covariance = np.array([[1,0,0, 0.1,0,0],[0,1,0,0, 0.1,0],[0,0,1,0,0, 0.1],[0.1,0,0, 1,0,0],[0,0.1,0,0, 1,0],[0,0,0.1,0,0, 1]])
+
+kf = KalmanFilter(
+	transition_matrices=transition_matrix,
+	observation_matrices=observation_matrix,
+	transition_covariance=transition_covariance,
+	observation_covariance=observation_covariance,
+	initial_state_mean=initial_state_mean,
+	initial_state_covariance=initial_state_covariance
+)
+
+current_state_mean = initial_state_mean
+current_state_covariance = initial_state_covariance
+
+
+
+
 
 # if a video path was not supplied, grab the reference to the webcam
 if args["jetson"]:
@@ -165,6 +229,11 @@ while True:
 	# --- Lighting normalization pipeline ---
 	# Step 1: White balance to fix color casts from light sources
 	frame = white_balance(frame)
+
+	PADDING = 100
+	padded_height = frame.shape[0] + 2 * PADDING
+	padded_width = frame.shape[1] + 2 * PADDING
+	padded_frame = np.zeros((padded_height, padded_width, 3), dtype=np.uint8)
 
 	# Step 2: Blur and convert to HSV
 	blurred = cv2.GaussianBlur(frame, (11, 11), 0)
@@ -237,24 +306,26 @@ while True:
 		# find the largest contour in the mask, then use
 		# it to compute the minimum enclosing circle and centroid
 		c = max(round_cnts, key=cv2.contourArea)
-		((x, y), radius) = cv2.minEnclosingCircle(c)
+		((M_x, M_y), radius) = cv2.minEnclosingCircle(c)
 		M = cv2.moments(c)
-		print(x, y)
+
 		center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
 		# only proceed if the radius meets a minimum size
-		if radius > 5:
+		if radius > 20:
 			# draw the circle and centroid on the frame,
 			# then update the list of tracked points
-			cv2.circle(frame, (int(x), int(y)), int(radius),
+			cv2.circle(frame, (int(M_x), int(M_y)), int(radius),
 				(0, 255, 255), 2)
-			cv2.circle(frame, center, 5, (0, 0, 255), -1)
-			x_pos,y_pos,z_pos = calculate_3D_coordinates(x,y,radius)
-			cv2.putText(frame, f"x: {int(x_pos)} cm ; y: {int(y_pos)} cm ; z: {int(z_pos)} cm", (int(x)+20, int(y)+10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+			#cv2.circle(frame, center, 5, (0, 0, 255), -1)
+			x_pos,y_pos,z_pos = calculate_3D_coordinates(M_x, M_y,radius)
+			cv2.putText(frame, f"x: {int(x_pos)} cm ; y: {int(y_pos)} cm ; z: {int(z_pos)} cm", (int(M_x)+20, int(M_y)+10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
+			observation = [x_pos,y_pos,z_pos]
+			
 
 
 			padding = 20
-			roi = mask[max(int(y-(radius+padding)),0):min(int(y+(radius+padding)),frame.shape[0]), max(int(x-(radius+padding)),0):min(int(x+(radius+padding)),frame.shape[1])]
+			roi = mask[max(int(M_y-(radius+padding)),0):min(int(M_y+(radius+padding)),frame.shape[0]), max(int(M_x-(radius+padding)),0):min(int(M_x+(radius+padding)),frame.shape[1])]
 
 
 			circles = cv2.HoughCircles(
@@ -272,6 +343,29 @@ while True:
 				for (x_rel, y_rel, r) in circles:
 					#cv2.circle(frame, (int(x-(radius+padding))+x_rel, int(y-(radius+padding))+y_rel), r, (255, 255, 255), 4)
 					pass
+		else:
+			observation = None
+	else:
+		observation = None
+
+	# Kalman update
+	if observation == None:
+		current_state_mean = kf.transition_matrices @ current_state_mean
+		current_state_covariance = (kf.transition_matrices @ current_state_covariance @ 
+									kf.transition_matrices.T) + kf.transition_covariance
+	else:
+		current_state_mean, current_state_covariance = kf.filter_update(
+			current_state_mean,
+			current_state_covariance,
+			observation=observation
+		)
+
+	# plot the Kalman estimation
+	x_pos,y_pos,z_pos = current_state_mean[0:3]
+	M_x,M_y,radius = from_3D_coordinates_to_pixels(x_pos,y_pos,z_pos)
+	cv2.circle(frame, (int(M_x), int(M_y)), int(radius),(255, 0, 0), 2)
+	cv2.circle(padded_frame, (int(M_x)+PADDING, int(M_y)+PADDING), int(radius),(255, 0, 0), 2)
+
 
 	# METHODE 2: met Hough Circles (GROEN)
 	# additional blurring to help edge detection
@@ -307,7 +401,7 @@ while True:
 			continue
 		# otherwise, compute the thickness of the line and draw the connecting lines
 		thickness = int(np.sqrt(args["buffer"] / float(i + 1)) * 2.5)
-		cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
+		#cv2.line(frame, pts[i - 1], pts[i], (0, 0, 255), thickness)
 
 	# overlay current HSV values and active corrections on the frame
 	hsv_text = f"HSV Lower: ({h_lower}, {s_lower}, {v_lower}) | Upper: ({h_upper}, {s_upper}, {v_upper})"
@@ -317,7 +411,12 @@ while True:
 				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 150), 1)
 
 	# show the frame and mask
-	cv2.imshow("Frame", frame)
+
+
+
+	padded_frame[PADDING:PADDING+frame.shape[0], PADDING:PADDING+frame.shape[1]] = frame
+
+	cv2.imshow("Frame", padded_frame)
 	cv2.imshow("Mask", mask)
 
 	key = cv2.waitKey(1) & 0xFF
