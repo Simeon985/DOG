@@ -3,8 +3,8 @@ import threading
 import numpy as np
 from multiprocessing import Array
 from multiprocessing.sharedctypes import SynchronizedArray
-from threads.mapping import *
-from threads.control import *
+from processes.threads.mapping import *
+from processes.threads.control import *
 
 
 def sensor_control_process(estimator: str, shared_array: SynchronizedArray) -> None:

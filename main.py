@@ -3,10 +3,11 @@ import argparse
 from multiprocessing import Process, Array
 from processes.sensor_control import sensor_control_process
 from processes.camera import camera_process
+import numpy as np
 
 
 def main(estimator: str) -> None:
-    shared_array = Array('d', [0.0] * 10)
+    shared_array = Array('d', [0.0] * 11)
 
     print("initializing camera")
     p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
@@ -14,6 +15,11 @@ def main(estimator: str) -> None:
         time.sleep
     print("camera initialized")
 
+    print("initializing camera")
+    p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
+    while np.isclose(shared_array[10],0):
+        time.sleep
+    print("camera initialized")
     p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control")
 
     p_sensor.start()

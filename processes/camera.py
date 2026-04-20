@@ -10,6 +10,7 @@ import time
 def camera_process(shared_array: SynchronizedArray) -> None:
     """Process running the camera / vision logic."""
 # Load model
+    print("loading model")
     app = FaceAnalysis(
     name='buffalo_sc',
     providers=[
