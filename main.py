@@ -9,15 +9,15 @@ import numpy as np
 def main(estimator: str) -> None:
     shared_array = Array('d', [0.0] * 11)
 
-    print("initializing camera")
+    p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control")
     p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
+
+    p_camera.start()
+    print("initializing camera")
     while np.isclose(shared_array[10],0):
         time.sleep
     print("camera initialized")
-    p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control")
-
     p_sensor.start()
-    p_camera.start()
 
     try:
         while True:
