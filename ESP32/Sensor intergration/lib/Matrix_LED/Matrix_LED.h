@@ -5,7 +5,7 @@
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
 #define MAX_DEVICES	2
 #define CLK_PIN_LED   25  // or SCK
-#define DATA_PIN_LED  32  // or MOSI
+#define DATA_PIN_LED  33  // or MOSI
 #define CS_PIN_LED    26  // or SS
 
 

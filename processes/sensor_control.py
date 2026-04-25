@@ -11,7 +11,7 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray) -> N
     """Process running the control and sensor threads."""
     ser = initialize_esp()
     scale_1, scale_2, angle_1, angle_2 = 1.0, 1.0, 0.0, 0.0
-    data = np.zeros(10)
+    data = np.zeros(11)
 
     if estimator == "Peripheral":
         est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)

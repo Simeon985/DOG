@@ -120,7 +120,7 @@ def control(
     returning  = False
 
     while not stop_event.is_set():
-        print(shared_array)
+        #print(f"Person detected: {shared_array[6]}")
         time.sleep(0.1)
         continue
         counter[0] += 1

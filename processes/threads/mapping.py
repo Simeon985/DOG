@@ -4,6 +4,7 @@ import math
 from processes.threads.sensor_communication import *
 import numpy.typing as npt
 import threading
+import time
 
 class PeripheralEstimator:
     def __init__(self,scale_1, scale_2, angle_1, angle_2):
@@ -36,18 +37,18 @@ class PeripheralEstimator:
                     self.brake = True
 
             #check whether the robot is about to fall of an edge
-            #if data[5] > #max height:
-            #    with self.lock:
-            #        self.brake = True
+            if data[5] > 10: #max height
+               with self.lock:
+                   self.brake = True
 
             # Convert heading: in the original code they use -raw_orientation_x
             p_a = math.radians(data[0])   # this becomes the current orientation angle
 
             # Calculate velocities from flow (same as _calculate_velocities)
-            fx1, fy1, fx2, fy2 = self.scale_1*data[5], self.scale_1*data[6], self.scale_2*data[7], self.scale_2*data[8]
+            fx1, fy1, fx2, fy2 = self.scale_1*data[6], self.scale_1*data[7], self.scale_2*data[8], self.scale_2*data[9]
             
             #saving elapsed time
-            dt = data[9]
+            dt = data[10]
             # sensor 1
             v_x1 = (fx1*self.angle_1_cos + fy1*self.angle_1_sin) / dt # -fy1 / dt
             v_y1 = (- fx1*self.angle_1_sin + fy1*self.angle_1_cos) / dt # fx1 / dt
@@ -67,7 +68,8 @@ class PeripheralEstimator:
                 self.pose[0] += dx
                 self.pose[1] += dy
                 self.history.append((self.pose[0], self.pose[1], p_a, self.history[-1][-1] + dt))
-            print(f'{data}')
+            #print(data)
+            time.sleep(0.1)
         print("mapping thread closing")
     
     def start_mission(self):

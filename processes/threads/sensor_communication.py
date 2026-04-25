@@ -21,13 +21,14 @@ def initialize_esp(baudrate=921600):
 def get_sensor_data(ser: serial.Serial, data_array):
     """
     return array structure:
-    [heading, gyro, lin_acc_x, lin_acc_y, US_1_distance, OFS_1_X, OFS_1_Y, OFS_2_X, OFS_2_Y, elapsed time]
+    [heading, gyro, lin_acc_x, lin_acc_y, US_1_distance, US_2_distance,  OFS_1_X, OFS_1_Y, OFS_2_X, OFS_2_Y, elapsed time]
     """
-    ser.reset_input_buffer()
-    data = ser.readline()
-    data_list = data.split()
-    for i in range(5):
+    # ser.reset_input_buffer()
+    # data = ser.readline()
+    # data_list = data.split()
+    data_list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 1]
+    for i in range(6):
         data_array[i] = float(data_list[i])      
-    for i in range(5,10):
+    for i in range(6,11):
         data_array[i] = int(data_list[i])
     return 
