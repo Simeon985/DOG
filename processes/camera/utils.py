@@ -5,8 +5,10 @@ import numpy as np
 from insightface.app import FaceAnalysis
 import os
 import uuid
-import time
+import json
 from processes.camera.coordinates_from_picture import *
+
+CALIBRATION_FILE = "processes/camera/color_calibration.json"
 
 
 def save_embedding(name: str, embedding: np.ndarray, save_dir: str = 'AI/images/embeddings') -> None:
@@ -20,7 +22,7 @@ def gstreamer_pipeline(
     display_width=960,
     display_height=540,
     framerate=30,
-    flip_method=0,
+    flip_method=1,
 ):
     return (
         "nvarguscamerasrc sensor-id=%d ! "
@@ -41,41 +43,51 @@ def gstreamer_pipeline(
     )
 
 def save_gallery(name: str, gallery: list, save_dir: str = 'AI/images/embeddings') -> None:
-    """Save a person's embedding gallery as a single .npz file."""
     os.makedirs(save_dir, exist_ok=True)
     np.savez(os.path.join(save_dir, f"{name}.npz"), *gallery)
 
+
 def load_gallery(path: str) -> list:
-    """Load a person's embedding gallery from a .npz file."""
     data = np.load(path)
     return [data[key] for key in data]
 
 
-def match_gallery(emb: np.ndarray, gallery: list) -> float:
-    """Return the best similarity score across all embeddings in a gallery."""
-    return max(float(np.dot(emb, known_emb)) for known_emb in gallery)
+def match_gallery(emb: np.ndarray, gallery: list) -> tuple[float, int]:
+    """Return (best_similarity, best_index) across all embeddings in a gallery."""
+    sims = [float(np.dot(emb, g)) for g in gallery]
+    best_idx = int(np.argmax(sims))
+    return sims[best_idx], best_idx
 
 
-def update_gallery(emb: np.ndarray, gallery: list, similarity: float) -> list:
+def try_add_to_gallery(emb: np.ndarray, gallery: list, pending: bool = False) -> tuple[list, bool]:
     """
-    Add embedding to gallery only if:
-    - The match was confident (high enough to be a real match)
-    - The embedding is diverse enough (not too similar to any existing one)
-    If gallery is full, replace the oldest entry.
+    Try to add emb to gallery.
+    - If diverse enough (max sim < GALLERY_DIVERSITY_THRESHOLD): add or replace most similar if full.
+    - Returns (updated_gallery, was_updated).
     """
-    GALLERY_MAX_SIZE = 10       # max embeddings stored per person
-    GALLERY_ADD_THRESHOLD = 0.65 # only add to gallery if match is confident
-    GALLERY_MIN_DIVERSITY = 0.10 # only add if embedding is different enough from all existing ones
-    if similarity < GALLERY_ADD_THRESHOLD:
-        return gallery  # not confident enough to update
+    GALLERY_DIVERSITY_THRESHOLD_NO_PENDING = 0.6  # temp embedding must be below this to be added to gallery
+    GALLERY_DIVERSITY_THRESHOLD_PENDING = 0.85
+    GALLERY_MAX_SIZE = 20
+    GALLERY_DIVERSITY_THRESHOLD = GALLERY_DIVERSITY_THRESHOLD_NO_PENDING if not pending else GALLERY_DIVERSITY_THRESHOLD_PENDING
 
-    # Check diversity — skip if too similar to any existing embedding
-    for existing in gallery:
-        if float(np.dot(emb, existing)) > (1.0 - GALLERY_MIN_DIVERSITY):
-            return gallery  # redundant embedding, skip
+    best_sim, best_idx = match_gallery(emb, gallery)
+
+    if best_sim >= GALLERY_DIVERSITY_THRESHOLD:
+        return gallery, False  # too similar to existing — redundant
 
     if len(gallery) >= GALLERY_MAX_SIZE:
-        gallery.pop(0)  # remove oldest
+        gallery[best_idx] = emb  # replace most similar
+    else:
+        gallery.append(emb)
 
-    gallery.append(emb)
-    return gallery
+    return gallery, True
+
+def load_matrix():
+    with open(CALIBRATION_FILE, "r") as f:
+        return np.array(json.load(f), dtype=np.float32)
+
+def apply_matrix(image, M):
+    img = image.astype(np.float32) / 255.0
+    img = np.dot(img, M)
+    img = np.clip(img, 0, 1)
+    return (img * 255).astype(np.uint8)
