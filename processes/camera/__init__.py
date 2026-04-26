@@ -61,7 +61,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     print(f"Loaded {len(known_faces)} known faces")
     print("Starting webcam...")
 
-    cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=1))
+    cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=2))
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     cam_info_faces = initialize_coordinate_detection_faces()
 
@@ -74,13 +74,11 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     pending_faces = {}
 
     while True:
-        for _ in range(5):
-            cap.grab()
-        ret, frame = cap.retrieve()
+        ret, frame = cap.read()
         if not ret:
             break
-        #if M is not None:
-            #frame = apply_matrix(frame, M)
+        if M is not None:
+            frame = apply_matrix(frame, M)
         now = time.time()
 
         temp_faces    = {k: v for k, v in temp_faces.items()    if now - v['last_seen'] < TEMP_TIMEOUT}
@@ -199,6 +197,10 @@ def camera_process(shared_array: SynchronizedArray) -> None:
                               (box[0] + label_size[0], box[1]), color, -1)
                 cv2.putText(frame, label, (box[0], box[1] - 5),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+                score = sharpness_score(frame, face.bbox)
+                print(f"score: {score}")
+                cv2.putText(frame, f"sharp: {score:.0f}", (box[0], box[3] + 20),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
 
                 if time.time() - timestamp > 0.1:
                     timestamp = time.time()
@@ -206,6 +208,10 @@ def camera_process(shared_array: SynchronizedArray) -> None:
         else:
             shared_array[6] = 0.0
             print("no face detected")
+
+
+
+
         # for face in faces:
         #     emb = face.normed_embedding
         #     box = face.bbox.astype(int)
