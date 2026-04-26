@@ -1,0 +1,2330 @@
+^C(dog_venv) (base) dog@dog:~/Documents/ESP/DOG$ python3 main.py Peripheral >> output.txt
+Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, threadExecute:734 NvBufSurfaceFromFd Failed.
+Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, threadFunction:245 (propagating)
+[ WARN:0@12.103] global cap_gstreamer.cpp:2784 handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module nvarguscamerasrc0 reported: CANCELLED
+[ WARN:0@12.133] global cap_gstreamer.cpp:1679 open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0@12.133] global cap_gstreamer.cpp:1164 isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[ERROR:0@12.135] global cap.cpp:164 open VIDEOIO(CV_IMAGES): raised OpenCV exception:
+
+OpenCV(4.8.0) /home/ubuntu/opencv_build/opencv/modules/videoio/src/cap_images.cpp:253: error: (-5:Bad argument) CAP_IMAGES: can't find starting number (in the name of file): nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=(int)2560, height=(int)1440, framerate=(fraction)30/1 ! nvvidconv flip-method=1 ! video/x-raw, width=(int)960, height=(int)540, format=(string)BGRx ! videoconvert ! video/x-raw, format=(string)BGR ! appsink in function 'icvExtractPattern'
+
+
+Process sensor_control:
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/dog/Documents/ESP/DOG/processes/sensor_control.py", line 12, in sensor_control_process
+    ser = initialize_esp()
+  File "/home/dog/Documents/ESP/DOG/processes/threads/sensor_communication.py", line 13, in initialize_esp
+    raise RuntimeError("No ESP connection found")
+RuntimeError: No ESP connection found
+^C(dog_venv) (base) dog@dog:~/Documents/ESP/DOG$ 
+
+
+
+
+
+
+
+
+
+
+temp sim: 0.0
+gallery sim: 0.27697914838790894
+pending sim: 0.0
+New pending face: 71bfc0b6
+temp sim: 0.0
+gallery sim: 0.28646957874298096
+pending sim: 0.8564668893814087
+Pending 71bfc0b6: 2/5 confirmations
+temp sim: 0.0
+gallery sim: 0.27299419045448303
+pending sim: 0.7963565587997437
+Pending 71bfc0b6: 3/5 confirmations
+temp sim: 0.0
+gallery sim: 0.2263222634792328
+pending sim: 0.925948977470398
+Pending 71bfc0b6: 4/5 confirmations
+temp sim: 0.0
+gallery sim: 0.2366369068622589
+pending sim: 0.6166354417800903
+Pending 71bfc0b6: 5/5 confirmations
+Face confirmed and saved as: unknown_0af03f40
+temp sim: 0.0
+gallery sim: 0.892667293548584
+Gallery match: unknown_0af03f40 (0.89) → temp 3178d681
+temp sim: 0.7505538463592529
+temp sim: 0.9108731746673584
+temp sim: 0.8354548215866089
+no face detected
+no face detected
+temp sim: 0.6632757782936096
+gallery sim: 0.6343635320663452
+Gallery match: unknown_0af03f40 (0.63) → temp 87b7eacb
+temp sim: 0.7043083310127258
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.0
+gallery sim: 0.30579134821891785
+pending sim: 0.0
+New pending face: f91d7d73
+no face detected
+no face detected
+no face detected
+temp sim: 0.0
+gallery sim: 0.28896433115005493
+pending sim: 0.5050479173660278
+New pending face: 7889d197
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.0
+gallery sim: 0.3149294853210449
+pending sim: 0.2598472833633423
+New pending face: a2ecdb09
+temp sim: 0.0
+gallery sim: 0.26864922046661377
+pending sim: 0.8039778470993042
+Pending a2ecdb09: 2/5 confirmations
+temp sim: 0.0
+gallery sim: 0.3694843053817749
+pending sim: 0.7912620306015015
+Pending a2ecdb09: 3/5 confirmations
+temp sim: 0.0
+gallery sim: 0.31731241941452026
+pending sim: 0.7877715826034546
+Pending a2ecdb09: 4/5 confirmations
+temp sim: 0.0
+gallery sim: 0.32868313789367676
+pending sim: 0.8678168058395386
+Pending a2ecdb09: 5/5 confirmations
+Face confirmed and saved as: unknown_12d21137
+temp sim: 0.0
+gallery sim: 0.8625661134719849
+Gallery match: unknown_12d21137 (0.86) → temp be43a6d7
+temp sim: 0.865502655506134
+temp sim: 0.7828142642974854
+temp sim: 0.8504182696342468
+temp sim: 0.9470787048339844
+temp sim: 0.9405714273452759
+temp sim: 0.9131056070327759
+temp sim: 0.9418789148330688
+temp sim: 0.8885526657104492
+temp sim: 0.9152297973632812
+temp sim: 0.8119702339172363
+temp sim: 0.7764285206794739
+temp sim: 0.7824124693870544
+temp sim: 0.8354347944259644
+temp sim: 0.9099719524383545
+temp sim: 0.884148895740509
+temp sim: 0.8973628282546997
+temp sim: 0.9296813011169434
+temp sim: 0.9382896423339844
+temp sim: 0.8616088628768921
+unknown_12d21137: gallery updated (5 embeddings)
+temp sim: 0.9354466199874878
+temp sim: 0.961631178855896
+temp sim: 0.9192190170288086
+temp sim: 0.8841485381126404
+temp sim: 0.8743882775306702
+temp sim: 0.940247654914856
+temp sim: 0.9499533176422119
+temp sim: 0.9064255952835083
+temp sim: 0.23791567981243134
+gallery sim: 0.3607138395309448
+pending sim: 0.2693864107131958
+New pending face: e9e6358a
+temp sim: 0.21927358210086823
+gallery sim: 0.36493390798568726
+pending sim: 0.8940911889076233
+Pending e9e6358a: 2/5 confirmations
+temp sim: 0.3945774435997009
+gallery sim: 0.3355637192726135
+pending sim: 0.3287135362625122
+New pending face: 8cdb93c7
+temp sim: 0.4209841191768646
+gallery sim: 0.36201930046081543
+pending sim: 0.858519971370697
+Pending 8cdb93c7: 2/5 confirmations
+temp sim: 0.3292485475540161
+gallery sim: 0.3848698139190674
+pending sim: 0.7534613609313965
+Pending 8cdb93c7: 3/5 confirmations
+temp sim: 0.3927205801010132
+gallery sim: 0.3632890284061432
+pending sim: 0.869084358215332
+Pending 8cdb93c7: 4/5 confirmations
+temp sim: 0.4541682302951813
+gallery sim: 0.4544302523136139
+pending sim: 0.73675137758255
+Pending 8cdb93c7: 5/5 confirmations
+Face confirmed and saved as: unknown_ce40982e
+temp sim: 0.42047640681266785
+gallery sim: 0.8667784929275513
+Gallery match: unknown_ce40982e (0.87) → temp 291a1dec
+temp sim: 0.9202046394348145
+temp sim: 0.8469918966293335
+temp sim: 0.7380123138427734
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.8480921983718872
+temp sim: 0.9017652273178101
+temp sim: 0.8124404549598694
+temp sim: 0.8221609592437744
+temp sim: 0.9229143857955933
+temp sim: 0.8932027816772461
+temp sim: 0.7836757898330688
+temp sim: 0.7792902588844299
+temp sim: 0.8952042460441589
+temp sim: 0.916011929512039
+temp sim: 0.7655639052391052
+temp sim: 0.90767896175384252
+temp sim: 0.8254641890525818
+temp sim: 0.9150007963180542
+temp sim: 0.8620468974113464
+temp sim: 0.7703176736831665
+temp sim: 0.9215212464332581
+temp sim: 0.9358726739883423
+temp sim: 0.8941430449485779
+temp sim: 0.8503134250640869
+temp sim: 0.9095209836959839
+temp sim: 0.9324482679367065
+temp sim: 0.881301999092102
+temp sim: 0.8843294382095337
+temp sim: 0.8871270418167114
+temp sim: 0.8947276473045349
+temp sim: 0.8452867269515991
+temp sim: 0.8999469876289368
+temp sim: 0.8509957790374756
+temp sim: 0.8435995578765869
+temp sim: 0.8299214839935303
+temp sim: 0.8347302079200745
+temp sim: 0.9160376787185669
+temp sim: 0.8601759672164917
+temp sim: 0.7465700507164001
+temp sim: 0.7674082517623901
+temp sim: 0.7948077917098999
+temp sim: 0.665454626083374
+gallery sim: 0.7492129802703857
+Gallery match: unknown_ce40982e (0.75) → temp e9b42f38
+temp sim: 0.8631076216697693
+temp sim: 0.9351166486740112
+temp sim: 0.9288584589958191
+temp sim: 0.8650447726249695
+temp sim: 0.855654239654541
+temp sim: 0.9262524247169495
+temp sim: 0.9061270952224731
+temp sim: 0.9254435300827026
+temp sim: 0.9139602184295654
+temp sim: 0.8039124608039856
+temp sim: 0.6878700852394104
+gallery sim: 0.6299835443496704
+Gallery match: unknown_ce40982e (0.63) → temp ce203c4f
+temp sim: 0.5781915783882141
+gallery sim: 0.5707775354385376
+pending sim: 0.18644753098487854
+New pending face: c832c066
+temp sim: 0.5520657300949097
+gallery sim: 0.5353110432624817
+pending sim: 0.9172942638397217
+Pending c832c066: 2/5 confirmations
+temp sim: 0.5593762397766113
+gallery sim: 0.5618234872817993
+pending sim: 0.910374641418457
+Pending c832c066: 3/5 confirmations
+temp sim: 0.5619367361068726
+gallery sim: 0.6111595034599304
+Gallery match: unknown_0af03f40 (0.61) → temp 6c66f7e3
+temp sim: 0.6127990484237671
+gallery sim: 0.6127990484237671
+Gallery match: unknown_0af03f40 (0.61) → temp 0fb7a9fe
+temp sim: 0.6090797185897827
+gallery sim: 0.6090797185897827
+Gallery match: unknown_0af03f40 (0.61) → temp 56816d36
+temp sim: 0.649657130241394
+gallery sim: 0.649657130241394
+Gallery match: unknown_0af03f40 (0.65) → temp f1fec408
+temp sim: 0.639397144317627
+gallery sim: 0.6449950933456421
+Gallery match: unknown_12d21137 (0.64) → temp ded5461e
+temp sim: 0.6334359645843506
+gallery sim: 0.6334359645843506
+Gallery match: unknown_12d21137 (0.63) → temp 9c17ea62
+temp sim: 0.5566631555557251
+gallery sim: 0.5565590858459473
+pending sim: 0.8123465180397034
+Pending c832c066: 4/5 confirmations
+temp sim: 0.6457380652427673
+gallery sim: 0.6457380652427673
+Gallery match: unknown_12d21137 (0.65) → temp 1d959b61
+
+
+
+temp sim: 0.0
+gallery sim: 0.24783988296985626
+pending sim: 0.22731062769889832
+New pending face: f34b5951
+temp sim: 0.0
+gallery sim: 0.24670939147472382
+pending sim: 0.925275444984436
+Pending f34b5951: 2/5 confirmations
+temp sim: 0.0
+gallery sim: 0.249185711145401
+pending sim: 0.9617006778717041
+Pending f34b5951: 3/5 confirmations
+temp sim: 0.0
+gallery sim: 0.23048035800457
+pending sim: 0.9623980522155762
+Pending f34b5951: 4/5 confirmations
+temp sim: 0.0
+gallery sim: 0.24361036717891693
+pending sim: 0.9535251259803772
+Pending f34b5951: 5/5 confirmations
+Face confirmed and saved as: unknown_23545bbb
+temp sim: 0.0
+gallery sim: 0.9553700685501099
+Gallery match: unknown_23545bbb (0.96) → temp 90cffd6f
+temp sim: 0.9366747140884399
+temp sim: 0.9665749669075012
+temp sim: 0.9623976945877075
+temp sim: 0.9682419300079346
+temp sim: 0.967965841293335
+temp sim: 0.9473521709442139
+temp sim: 0.9591792821884155
+temp sim: 0.9555857181549072
+temp sim: 0.9633182287216187
+temp sim: 0.9715156555175781
+temp sim: 0.9413274526596069
+temp sim: 0.9470884203910828
+temp sim: 0.9516295790672302
+temp sim: 0.9457552433013916
+temp sim: 0.9621785283088684
+temp sim: 0.9532890915870667
+temp sim: 0.9701637029647827
+temp sim: 0.9479676485061646
+temp sim: 0.9492121934890747
+unknown_23545bbb: gallery updated (2 embeddings)
+temp sim: 0.9736878871917725
+temp sim: 0.963129997253418
+temp sim: 0.9556440711021423
+temp sim: 0.957277238368988
+temp sim: 0.9342430233955383
+temp sim: 0.9451087713241577
+temp sim: 0.9723974466323853
+temp sim: 0.9647414088249207
+temp sim: 0.964752733707428
+temp sim: 0.9451997876167297
+temp sim: 0.9620968103408813
+temp sim: 0.9416073560714722
+temp sim: 0.9653401374816895
+temp sim: 0.960283637046814
+temp sim: 0.9541639685630798
+temp sim: 0.9688596129417419
+temp sim: 0.9684152007102966
+temp sim: 0.9627264142036438
+temp sim: 0.9513195753097534
+temp sim: 0.9431853294372559
+temp sim: 0.948210597038269
+temp sim: 0.9616888761520386
+temp sim: 0.9776660799980164
+temp sim: 0.9590896368026733
+temp sim: 0.9509662389755249
+temp sim: 0.9730770587921143
+temp sim: 0.9270684123039246
+temp sim: 0.9450443983078003
+temp sim: 0.9526849389076233
+temp sim: 0.9606392979621887
+temp sim: 0.9548887014389038
+temp sim: 0.9249132871627808
+temp sim: 0.9663140177726746
+temp sim: 0.9640257358551025
+temp sim: 0.9714720249176025
+temp sim: 0.9569382667541504
+temp sim: 0.9552898406982422
+temp sim: 0.9563118815422058
+temp sim: 0.9617410898208618
+temp sim: 0.9573266506195068
+temp sim: 0.9585623145103455
+temp sim: 0.9625259637832642
+temp sim: 0.9545304775238037
+temp sim: 0.9599342346191406
+temp sim: 0.9517496228218079
+temp sim: 0.9571919441223145
+temp sim: 0.9641292095184326
+temp sim: 0.9598281979560852
+temp sim: 0.9638509154319763
+temp sim: 0.9686837196350098
+temp sim: 0.974822998046875
+temp sim: 0.9594848155975342
+temp sim: 0.9460282325744629
+temp sim: 0.9528592824935913
+temp sim: 0.9414932131767273
+temp sim: 0.9523630142211914
+temp sim: 0.9717696905136108
+temp sim: 0.967221200466156
+temp sim: 0.967124879360199
+temp sim: 0.962888777256012
+temp sim: 0.9608650207519531
+temp sim: 0.9647408723831177
+temp sim: 0.9699865579605103
+temp sim: 0.9542673230171204
+temp sim: 0.9477238655090332
+temp sim: 0.9501503109931946
+temp sim: 0.9432668685913086
+temp sim: 0.9511640071868896
+temp sim: 0.942878782749176
+temp sim: 0.943590521812439
+temp sim: 0.9486045837402344
+temp sim: 0.9471556544303894
+temp sim: 0.9276869893074036
+temp sim: 0.9300705194473267
+temp sim: 0.934707760810852
+temp sim: 0.9475447535514832
+temp sim: 0.929931640625
+temp sim: 0.8980321288108826
+temp sim: 0.9333091974258423
+temp sim: 0.9473199248313904
+temp sim: 0.9410120248794556
+temp sim: 0.9460108280181885
+temp sim: 0.9404007196426392
+temp sim: 0.9408650994300842
+temp sim: 0.9342054128646851
+temp sim: 0.9317171573638916
+temp sim: 0.9199033975601196
+temp sim: 0.9119272828102112
+temp sim: 0.9026837348937988
+temp sim: 0.877062976360321
+temp sim: 0.8569231033325195
+temp sim: 0.7535810470581055
+temp sim: 0.910668671131134
+temp sim: 0.7728165984153748
+temp sim: 0.9097855091094971
+temp sim: 0.8909522891044617
+temp sim: 0.7379279732704163
+temp sim: 0.9027304649353027
+temp sim: 0.858660101890564
+temp sim: 0.892432451248169
+unknown_23545bbb: gallery updated (3 embeddings)
+temp sim: 0.927266538143158
+temp sim: 0.9295282959938049
+temp sim: 0.924326479434967
+temp sim: 0.8965202569961548
+temp sim: 0.9295873641967773
+temp sim: 0.9316130876541138
+temp sim: 0.9444144368171692
+no face detected
+temp sim: 0.9299318790435791
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.8690585494041443
+temp sim: 0.8944838643074036
+temp sim: 0.8899238109588623
+temp sim: 0.8585068583488464
+temp sim: 0.8810909390449524
+temp sim: 0.9569991230964661
+temp sim: 0.8883205652236938
+temp sim: 0.9171284437179565
+temp sim: 0.8014991879463196
+temp sim: 0.5680145025253296
+gallery sim: 0.4951260983943939
+pending sim: 0.15691667795181274
+New pending face: 0288cd54
+no face detected
+no face detected
+temp sim: 0.2713897228240967
+gallery sim: 0.3396598696708679
+pending sim: 0.5265592336654663
+New pending face: eed558e0
+
+
+temp sim: 0.0
+gallery sim: 0.7792770862579346
+Gallery match: unknown_23545bbb (0.78) → temp 171fbf8b
+temp sim: 0.7714377641677856
+temp sim: 0.9040087461471558
+temp sim: 0.9031943082809448
+temp sim: 0.9194166660308838
+temp sim: 0.841720461845398
+temp sim: 0.9365710020065308
+temp sim: 0.7649805545806885
+no face detected
+temp sim: 0.5847942233085632
+gallery sim: 0.40919730067253113
+pending sim: 0.11471822112798691
+New pending face: fc9e2a8d
+
+
+temp sim: 0.5218449831008911
+gallery sim: 0.3476681709289551
+pending sim: 0.3894335925579071
+New pending face: f0af1216
+temp sim: 0.543243944644928
+gallery sim: 0.6832157373428345
+Gallery match: unknown_23545bbb (0.68) → temp a5e692dc
+temp sim: 0.7351915836334229
+temp sim: 0.8157236576080322
+no face detected
+temp sim: 0.6987186670303345
+gallery sim: 0.5438938140869141
+pending sim: 0.30333971977233887
+New pending face: 05aaf827
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.4635985493659973
+gallery sim: 0.3989970088005066
+pending sim: 0.4023996591567993
+New pending face: 70fec198
+temp sim: 0.37434613704681396
+gallery sim: 0.5151989459991455
+pending sim: 0.837459921836853
+Pending 70fec198: 2/5 confirmations
+temp sim: 0.3333650827407837
+gallery sim: 0.4994812607765198
+pending sim: 0.908189058303833
+Pending 70fec198: 3/5 confirmations
+temp sim: 0.19116726517677307
+gallery sim: 0.7298294901847839
+Gallery match: unknown_23545bbb (0.73) → temp 72d88510
+temp sim: 0.7693334817886353
+temp sim: 0.6374090909957886
+gallery sim: 0.6170745491981506
+Gallery match: unknown_0af03f40 (0.62) → temp 5bd60313
+
+
+
+next test: 
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 2 
+   Output Stream W = 1920 H = 1080 
+   seconds to Run    = 0 
+   Frame Rate = 29.999999 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.0
+gallery sim: 0.1385887861251831
+pending sim: 0.0
+New pending face: d8250ac9
+temp sim: 0.0
+gallery sim: 0.14156119525432587
+pending sim: 0.7433096170425415
+Pending d8250ac9: 2/5 confirmations
+temp sim: 0.0
+gallery sim: 0.15981833636760712
+pending sim: 0.855114758014679
+Pending d8250ac9: 3/5 confirmations
+temp sim: 0.0
+gallery sim: 0.1285649687051773
+pending sim: 0.7788929343223572
+Pending d8250ac9: 4/5 confirmations
+temp sim: 0.0
+gallery sim: 0.19105201959609985
+pending sim: 0.8530141115188599
+Pending d8250ac9: 5/5 confirmations
+Face confirmed and saved as: unknown_f535b9ca
+temp sim: 0.0
+gallery sim: 0.8208858966827393
+Gallery match: unknown_f535b9ca (0.82) → temp a92bf213
+temp sim: 0.7836285829544067
+temp sim: 0.8102389574050903
+temp sim: 0.8126863837242126
+temp sim: 0.7897939682006836
+temp sim: 0.7824577689170837
+temp sim: 0.7663490772247314
+temp sim: 0.7732245922088623
+temp sim: 0.7996276617050171
+temp sim: 0.8613202571868896
+unknown_f535b9ca: gallery updated (4 embeddings)
+temp sim: 0.8289557695388794
+temp sim: 0.8329600691795349
+temp sim: 0.8429107666015625
+no face detected
+temp sim: 0.8023606538772583
+temp sim: 0.8378452062606812
+no face detected
+temp sim: 0.751511812210083
+temp sim: 0.7864750623703003
+temp sim: 0.8686585426330566
+temp sim: 0.7994730472564697
+temp sim: 0.8221333026885986
+temp sim: 0.8282672166824341
+temp sim: 0.8361618518829346
+temp sim: 0.8264555931091309
+temp sim: 0.7830135822296143
+temp sim: 0.8347598910331726
+temp sim: 0.8488382697105408
+temp sim: 0.8411873579025269
+temp sim: 0.8548091650009155
+temp sim: 0.836195707321167
+temp sim: 0.805189311504364
+temp sim: 0.8382269740104675
+temp sim: 0.7999069690704346
+temp sim: 0.798373281955719
+temp sim: 0.8486580848693848
+temp sim: 0.844626784324646
+temp sim: 0.8052141666412354
+temp sim: 0.8273607492446899
+temp sim: 0.8382570743560791
+temp sim: 0.7839945554733276
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.5818305611610413
+unknown_f535b9ca: gallery updated (5 embeddings)
+temp sim: 0.6935698986053467
+temp sim: 0.7141160368919373
+temp sim: 0.6770703196525574
+temp sim: 0.6982442140579224
+temp sim: 0.6845847368240356
+temp sim: 0.7720746994018555
+temp sim: 0.8088933825492859
+temp sim: 0.7632887363433838
+temp sim: 0.6694161891937256
+temp sim: 0.7661898732185364
+unknown_f535b9ca: gallery updated (6 embeddings)
+temp sim: 0.8197521567344666
+temp sim: 0.7627435922622681
+temp sim: 0.7677057981491089
+temp sim: 0.757132887840271
+temp sim: 0.7578545808792114
+no face detected
+no face detected
+no face detected
+no face detected
+temp sim: 0.7266033887863159
+temp sim: 0.7928242683410645
+temp sim: 0.6976310014724731
+temp sim: 0.7908370494842529
+no face detected
+temp sim: 0.7658948302268982
+temp sim: 0.7953669428825378
+no face detected
+temp sim: 0.7472679018974304
+temp sim: 0.7847672700881958
+no face detected
+no face detected
+temp sim: 0.7396805286407471
+temp sim: 0.7351505756378174
+temp sim: 0.7950776219367981
+temp sim: 0.8240554332733154
+temp sim: 0.837113618850708
+temp sim: 0.8068524599075317
+temp sim: 0.7838815450668335
+temp sim: 0.8438593149185181
+temp sim: 0.7706549167633057
+temp sim: 0.8398358225822449
+temp sim: 0.7369488477706909
+temp sim: 0.7589412331581116
+temp sim: 0.755611777305603
+temp sim: 0.8365583419799805
+temp sim: 0.8256099820137024
+temp sim: 0.8579763174057007
+temp sim: 0.8053851127624512
+unknown_f535b9ca: gallery updated (7 embeddings)
+temp sim: 0.7964935898780823
+temp sim: 0.773201048374176
+temp sim: 0.7521951198577881
+temp sim: 0.8019595146179199
+temp sim: 0.7995836734771729
+temp sim: 0.7935134172439575
+temp sim: 0.8262467980384827
+temp sim: 0.8758337497711182
+temp sim: 0.8137321472167969
+temp sim: 0.8038322329521179
+temp sim: 0.81526780128479
+temp sim: 0.8304435014724731
+temp sim: 0.8155268430709839
+temp sim: 0.7852321863174438
+temp sim: 0.8338048458099365
+no face detected
+no face detected
+temp sim: 0.8157768249511719
+temp sim: 0.779143214225769
+temp sim: 0.7883199453353882
+temp sim: 0.854291558265686
+temp sim: 0.7457537055015564
+temp sim: 0.758682131767273
+temp sim: 0.8187146782875061
+no face detected
+temp sim: 0.6967151761054993
+Shutting down...
+All processes closed
+
+
+next:
+
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 946 Frame Rate specified is greater than supported
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 0 
+   Output Stream W = 3280 H = 2464 
+   seconds to Run    = 0 
+   Frame Rate = 21.000000 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 1208 InvalidState.
+GST_ARGUS: Cleaning up
+nvbuf_utils: dmabuf_fd -1 mapped entry NOT found
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded gallery: unknown_f535b9ca (7 embeddings)
+Loaded 5 known faces
+Starting webcam...
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 946 Frame Rate specified is greater than supported
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 0 
+   Output Stream W = 3280 H = 2464 
+   seconds to Run    = 0 
+   Frame Rate = 21.000000 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 1208 InvalidState.
+GST_ARGUS: Cleaning up
+nvbuf_utils: dmabuf_fd -1 mapped entry NOT found
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded gallery: unknown_f535b9ca (7 embeddings)
+Loaded 5 known faces
+Starting webcam...
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 946 Frame Rate specified is greater than supported
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 0 
+   Output Stream W = 3280 H = 2464 
+   seconds to Run    = 0 
+   Frame Rate = 21.000000 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 1208 InvalidState.
+GST_ARGUS: Cleaning up
+nvbuf_utils: dmabuf_fd -1 mapped entry NOT found
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 946 Frame Rate specified is greater than supported
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 0 
+   Output Stream W = 3280 H = 2464 
+   seconds to Run    = 0 
+   Frame Rate = 21.000000 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 1208 InvalidState.
+GST_ARGUS: Cleaning up
+nvbuf_utils: dmabuf_fd -1 mapped entry NOT found
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 2 
+   Output Stream W = 1920 H = 1080 
+   seconds to Run    = 0 
+   Frame Rate = 29.999999 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+GST_ARGUS: Cleaning up
+CONSUMER: Done Success
+GST_ARGUS: Done Success
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 946 Frame Rate specified is greater than supported
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 0 
+   Output Stream W = 3280 H = 2464 
+   seconds to Run    = 0 
+   Frame Rate = 21.000000 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+ARGUS_ERROR: Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute: 1208 InvalidState.
+GST_ARGUS: Cleaning up
+nvbuf_utils: dmabuf_fd -1 mapped entry NOT found
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 0 
+   Output Stream W = 3280 H = 2464 
+   seconds to Run    = 0 
+   Frame Rate = 21.000000 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+GST_ARGUS: Cleaning up
+CONSUMER: Done Success
+GST_ARGUS: Done Success
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 2 
+   Output Stream W = 1920 H = 1080 
+   seconds to Run    = 0 
+   Frame Rate = 29.999999 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+GST_ARGUS: Cleaning up
+CONSUMER: Done Success
+GST_ARGUS: Done Success
+initializing camera
+camera initialized
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+Shutting down...
+All processes closed
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 2 
+   Output Stream W = 1920 H = 1080 
+   seconds to Run    = 0 
+   Frame Rate = 29.999999 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+GST_ARGUS: Cleaning up
+CONSUMER: Done Success
+GST_ARGUS: Done Success
+initializing camera
+camera initialized
+GST_ARGUS: Creating output stream
+CONSUMER: Waiting until producer is connected...
+GST_ARGUS: Available Sensor modes :
+GST_ARGUS: 3280 x 2464 FR = 21.000000 fps Duration = 47619048 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 3280 x 1848 FR = 28.000001 fps Duration = 35714284 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1920 x 1080 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1640 x 1232 FR = 29.999999 fps Duration = 33333334 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: 1280 x 720 FR = 59.999999 fps Duration = 16666667 ; Analog Gain range min 1.000000, max 10.625000; Exposure Range min 13000, max 683709000;
+
+GST_ARGUS: Running with following settings:
+   Camera index = 0 
+   Camera mode  = 2 
+   Output Stream W = 1920 H = 1080 
+   seconds to Run    = 0 
+   Frame Rate = 29.999999 
+GST_ARGUS: Setup Complete, Starting captures for 0 seconds
+GST_ARGUS: Starting repeat capture requests.
+CONSUMER: Producer has connected; continuing.
+CONSUMER: Done Success
+Loading model...
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/det_500m.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['TensorrtExecutionProvider', 'CUDAExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CUDAExecutionProvider': {'sdpa_kernel': '0', 'use_tf32': '1', 'fuse_conv_bias': '0', 'prefer_nhwc': '0', 'tunable_op_max_tuning_duration_ms': '0', 'enable_skip_layer_norm_strict_mode': '0', 'tunable_op_tuning_enable': '0', 'tunable_op_enable': '0', 'use_ep_level_unified_stream': '0', 'device_id': '0', 'has_user_compute_stream': '0', 'gpu_external_empty_cache': '0', 'cudnn_conv_algo_search': 'EXHAUSTIVE', 'cudnn_conv1d_pad_to_nc1d': '0', 'gpu_mem_limit': '18446744073709551615', 'gpu_external_alloc': '0', 'gpu_external_free': '0', 'arena_extend_strategy': 'kNextPowerOfTwo', 'do_copy_in_default_stream': '1', 'enable_cuda_graph': '0', 'user_compute_stream': '0', 'cudnn_conv_use_max_workspace': '1'}, 'TensorrtExecutionProvider': {'trt_load_user_initializer': '0', 'trt_op_types_to_exclude': '', 'trt_external_data_bytestream': '0', 'trt_preview_features': '', 'trt_engine_hw_compatible': '0', 'trt_ep_context_file_path': '', 'trt_dump_ep_context_model': '0', 'trt_cuda_graph_enable': '0', 'trt_profile_opt_shapes': '', 'trt_onnx_bytestream_size': '0', 'trt_profile_min_shapes': '', 'trt_onnx_bytestream': '0', 'trt_extra_plugin_lib_paths': '', 'trt_builder_optimization_level': '3', 'trt_sparsity_enable': '0', 'trt_dla_core': '0', 'trt_engine_cache_path': '/home/dog/.insightface/trt_cache', 'trt_int8_calibration_table_name': '', 'trt_tactic_sources': '', 'trt_bf16_enable': '0', 'trt_weight_stripped_engine_enable': '0', 'trt_fp16_enable': '0', 'trt_max_workspace_size': '0', 'trt_int8_enable': '0', 'trt_min_subgraph_size': '1', 'trt_external_data_bytestream_size': '0', 'trt_engine_decryption_lib_path': '', 'trt_int8_use_native_calibration_table': '0', 'trt_profile_max_shapes': '', 'trt_timing_cache_enable': '0', 'user_compute_stream': '0', 'trt_onnx_model_folder_path': '', 'trt_max_partition_iterations': '1000', 'trt_auxiliary_streams': '-1', 'device_id': '0', 'trt_build_heuristics_enable': '0', 'has_user_compute_stream': '0', 'trt_dump_subgraphs': '0', 'trt_dla_enable': '0', 'trt_engine_cache_prefix': '', 'trt_engine_cache_enable': '1', 'trt_engine_decryption_enable': '0', 'trt_force_timing_cache': '0', 'trt_layer_norm_fp32_fallback': '0', 'trt_force_sequential_engine_build': '0', 'trt_context_memory_sharing_enable': '0', 'trt_timing_cache_path': '', 'trt_ep_context_embed_mode': '0', 'trt_detailed_build_log': '0'}}
+find model: /home/dog/.insightface/models/buffalo_sc/w600k_mbf.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+Loading known faces from images...
+Loaded face: robin
+Loaded face: thomas
+Loaded face: jorien
+Loaded face: Wannes
+Loaded 4 known faces
+Starting webcam...
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+no face detected
+Shutting down...
+All processes closed

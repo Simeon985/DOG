@@ -1,2 +1,4 @@
 dog_venv/
 DOG-venv/
+*.npy
+*.npz
