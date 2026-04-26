@@ -62,7 +62,6 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     print("Starting webcam...")
 
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=2))
-    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     cam_info_faces = initialize_coordinate_detection_faces()
 
     M = load_matrix()

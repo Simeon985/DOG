@@ -22,7 +22,7 @@ def gstreamer_pipeline(
     display_width=960,
     display_height=540,
     framerate=30,
-    flip_method=2,
+    flip_method=0,
 ):
     return (
         "nvarguscamerasrc sensor-id=%d ! "
@@ -30,7 +30,8 @@ def gstreamer_pipeline(
         "nvvidconv flip-method=%d ! "
         "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
         "videoconvert ! "
-        "video/x-raw, format=(string)BGR ! appsink"
+        "video/x-raw, format=(string)BGR ! "
+        "appsink max-buffers=1 drop=true"  # ← changed from just "appsink"
         % (
             sensor_id,
             capture_width,

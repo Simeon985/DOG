@@ -50,7 +50,6 @@ void print_error(String sensor){
 void setup() {
   Serial.begin(921600);
   delay(1000);
-
   // if (!bno.begin()) { print_error("BNO055 sensor)");}
   // Serial.println("BNO055 initialized");
 
@@ -68,7 +67,7 @@ void setup() {
   // Serial.println("BNO055 wire initialized");
 
 
-  //bno.setExtCrystalUse(true); 
+  //bno.setExtCrystalUse(true);
   timer = timerBegin(0, 80, true);  // 80MHz / 80 = 1MHz (1 tick = 1µs)
   timerAttachInterrupt(timer, &onTimer, true);
   timerAlarmWrite(timer, TIMER_INTERVAL, true);  // 1/10 000 µs = 100 Hz
@@ -105,6 +104,7 @@ void loop() {
 
   // reading data ultrasone sensors
   ultra1.read_distance(distance1);
+
   ultra2.read_distance(distance2);
 
   //reading data IMU
@@ -114,15 +114,16 @@ void loop() {
   // heading = euler.x();
   // gyro_x = gyro.z();
   // lin_acc_x = lin_acc.x();
-  // lin_acc_y = lin_acc.y(); 
+  // lin_acc_y = lin_acc.y();
 
   // updating time
   current_time = micros();
 
   // updating animation
-  animation.render();
+  animation.update(current_time,distance1);
 
   //print everything in one line
+  Serial.println(current_time-previous_time);
   Serial.print(heading);
   Serial.print(" ");
   Serial.print(gyro_x);
@@ -131,10 +132,6 @@ void loop() {
   Serial.print(" ");
   Serial.print(lin_acc_y);
   Serial.print("   ");
-  Serial.print(distance1);
-  Serial.print(" ");
-  Serial.print(distance2);
-  Serial.print(" ");
   Serial.print(deltaX1);
   Serial.print(" ");
   Serial.print(deltaY1);
@@ -143,7 +140,11 @@ void loop() {
   Serial.print(" ");
   Serial.print(deltaY2);
   Serial.print("   ");
-  Serial.println(current_time-previous_time);
+  Serial.print(distance1);
+  Serial.print(" ");
+  Serial.print(distance2);
+  Serial.print(" ");
+
   previous_time = current_time;
   }
 }
