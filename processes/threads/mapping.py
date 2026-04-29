@@ -28,6 +28,7 @@ class PeripheralEstimator:
         stop_signal = the threading.Event() of the main thread
         """
         while not stop_signal.is_set():
+            print("beginning of mapping thread loop")
             #request the sensor data
             get_sensor_data(ser, data)
 
@@ -46,7 +47,7 @@ class PeripheralEstimator:
 
             # Calculate velocities from flow (same as _calculate_velocities)
             fx1, fy1, fx2, fy2 = self.scale_1*data[6], self.scale_1*data[7], self.scale_2*data[8], self.scale_2*data[9]
-            
+
             #saving elapsed time
             dt = data[10]
             # sensor 1
@@ -68,13 +69,14 @@ class PeripheralEstimator:
                 self.pose[0] += dx
                 self.pose[1] += dy
                 self.history.append((self.pose[0], self.pose[1], p_a, self.history[-1][-1] + dt))
-            #print(data)
+            print(data)
+            print(f"history: {self.history[-1]}")
             time.sleep(0.1)
         print("mapping thread closing")
-    
+
     def start_mission(self):
         self.mission = True
-    
+
     def complete_mission(self):
         self.mission = False
 

@@ -12,19 +12,25 @@
 #include <Arduino.h>
 #include <stdint.h>
 #include <MD_MAX72xx.h>
+#include <random>
 
 class Matrix_LED {
 public:
 Matrix_LED(void);
 void render(void);
+void render_old(void);
 void update(unsigned long delta_time,float distance);
 private:
 MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, DATA_PIN_LED, CLK_PIN_LED, CS_PIN_LED, MAX_DEVICES);
 
 unsigned long delta_time;
 unsigned long previous_timestamp;
+unsigned long delta_time_animation;
+unsigned long previous_timestamp_animation;
 enum class LedState : uint8_t {S0, S1, S2, S3, S4, S5, S6, S7, S8};
+enum class EmotionalState : uint8_t {boos, sad, hart, neutraal};
 LedState state_led;
+EmotionalState emotional_state;
 
 
 const u_int8_t heart[8] = {
@@ -188,7 +194,7 @@ const u_int8_t neutraal_groot_rechts[8] = {
 
 
 const u_int8_t hartoog_klein_links[8] = {
- 0b00000000,
+0b00000000,
 0b00111000,
 0b01101100,
 0b11000110,
@@ -238,6 +244,141 @@ const u_int8_t hartoog_groot_rechts[8] = {
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// nieuwe oogjes, nu overzichtelijker hopelijk:
+
+// bij hartexpressie animatie die snel wisselt tussen hart_naar_links en hart_naar_rechts. dus ofwel linkeroog & rechteroog beide hart_naar_links, ofwel beide hart_naar_rechts
+const u_int8_t hart_naar_links[8] = {
+  0b00000000,
+  0b00110110,
+  0b01111111,
+  0b01111111,
+  0b00111110,
+  0b00011100,
+  0b00001000,
+  0b00000000,
+};
+const u_int8_t hart_naar_rechts[8] = {
+  0b00000000,
+  0b01101100,
+  0b11111110,
+  0b11111110,
+  0b01111100,
+  0b00111000,
+  0b00010000,
+  0b00000000,
+};
+
+
+
+
+// bij boos expressie & sad expressie zijn er aparte pupillen. linkeroog is altijd _links en rechteroog _rechts, en dan pupillen ofwel beide _naar_links ofwel beide _naar_rechts
+// bij emotionele states wil ik vlugge willekeurige bewegingen heen en weer as opposed to het rustig rondbewegen van de pupil bij neutraal => mss links vs rechts gwn op moment bepalen met random()
+const u_int8_t boos_links[8] = {
+  0b00100000,
+  0b01100000,
+  0b11110000,
+  0b11111000,
+  0b11111100,
+  0b11111111,
+  0b01111110,
+  0b00111100
+};
+const u_int8_t boos_rechts[8] = {
+  0b00000100,
+  0b00000110,
+  0b00001111,
+  0b00011111,
+  0b00111111,
+  0b11111111,
+  0b01111110,
+  0b00111100
+};
+const u_int8_t sad_links[8] = {
+  0b00000100,
+  0b00000110,
+  0b00001111,
+  0b00011111,
+  0b00111111,
+  0b11111111,
+  0b01111110,
+  0b00111100
+};
+const u_int8_t sad_rechts[8] = {
+  0b00100000,
+  0b01100000,
+  0b11110000,
+  0b11111000,
+  0b11111100,
+  0b11111111,
+  0b01111110,
+  0b00111100
+};
+const u_int8_t sad_pupil_naar_rechts[8] = {
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11110111,
+  0b11111111,
+};
+const u_int8_t sad_pupil_naar_links[8] = {
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11101111,
+  0b11111111,
+};
+const u_int8_t boos_pupil_naar_rechts[8] = {
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11110111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+};
+const u_int8_t boos_pupil_naar_links[8] = {
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11101111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+};
+const u_int8_t neutraal[8] = {
+  0b00111100,
+  0b01111110,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b11111111,
+  0b01111110,
+  0b00111100
+};
 
 
 

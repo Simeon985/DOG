@@ -361,7 +361,7 @@ def print_current_angles(robot: SO100Follower):
 def gradually_get_to_ball(start_x,start_y,start_z,robot):
     arm_x, arm_y, arm_z = start_x,start_y,start_z
     for i in range(1,5):
-        cam_x, cam_y, cam_z = get_coordinates_from_picture_2()
+        cam_x, cam_y, cam_z = get_coordinates_from_picture()
         cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
         M = get_trans_matrix_cam(start_x,start_y,start_z,0)
         coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
@@ -407,7 +407,7 @@ def main():
 
 
         # trek foto met camera => coordinaten in camera-assenstelsel
-        cam_x, cam_y, cam_z = get_coordinates_from_picture_2()
+        cam_x, cam_y, cam_z = get_coordinates_from_picture()
         print("COORINDATES WRT CAM")
         print(cam_x, cam_y, cam_z)
         cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])

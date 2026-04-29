@@ -50,8 +50,9 @@ void print_error(String sensor){
 void setup() {
   Serial.begin(921600);
   delay(1000);
+
   if (!bno.begin()) { print_error("BNO055 sensor)");}
-  Serial.println("BNO055 initialized");
+
 
   if (!flow1.begin()) { print_error("Flow sensor 1)");}
   Serial.println("Flow sensor 1 initialized");
@@ -73,7 +74,7 @@ void setup() {
   timerAlarmWrite(timer, TIMER_INTERVAL, true);  // 1/10 000 µs = 100 Hz
   timerAlarmEnable(timer);
 
-
+  print_error("BNO055 sensor)");
 }
 
 
@@ -122,7 +123,7 @@ void loop() {
   animation.update(current_time,distance1);
 
   //print everything in one line
-  Serial.println(current_time-previous_time);
+
   Serial.print(heading);
   Serial.print(" ");
   Serial.print(gyro_x);
@@ -143,7 +144,7 @@ void loop() {
   Serial.print(" ");
   Serial.print(deltaY2);
   Serial.print("   ");
-
+  Serial.println(current_time-previous_time);
   previous_time = current_time;
   }
 }

@@ -24,9 +24,31 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray) -> N
     test_counter = [0]
 
     t1 = threading.Thread(target=control, args=(stop_event, test_counter, shared_array))
+    print("sensor_mapping_should_begin")
     t2 = threading.Thread(target=est.update, args=(ser, data, stop_event))
     t1.start()
     t2.start()
+
+
+
+    fig, ax = plt.subplots()
+    line, = ax.plot([], [], 'b-')
+
+    def update(_):
+        with lock:
+            if not est.history:
+                return line,
+            xs = [p[0] for p in est.history]
+            ys = [p[1] for p in est.history]
+        line.set_data(xs, ys)
+        ax.relim()
+        ax.autoscale_view()
+        return line,
+
+    ani = FuncAnimation(fig, update, frames=itertools.count(),
+                        interval=100, blit=False, cache_frame_data=False)
+    plt.show()
+
 
     try:
         while True:
@@ -41,3 +63,4 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray) -> N
     print(f"x = {est.pose[0]}, y = {est.pose[1]}")
     print(f"history  = {est.history[-5]}")
     print("sensor/control process closing")
+sensor_control_process("Peripheral", [0.0] * 11)

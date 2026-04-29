@@ -83,6 +83,8 @@ def get_coordinates_from_frame(frame: "np.ndarray") -> tuple[float, float, float
 		raise RuntimeError("No detections found in frame")
 
 	coordinates = result.boxes.xyxy[0].tolist()
+	print("DETECTED!!")
+	print(coordinates)
 
 	Mx = (coordinates[0] + coordinates[2]) / 2
 	My = (coordinates[1] + coordinates[3]) / 2
@@ -95,7 +97,6 @@ def get_coordinates_from_frame(frame: "np.ndarray") -> tuple[float, float, float
 def get_coordinates_from_picture():
 	image_path = Path(__file__).with_name("image.png")
 	take_image(image_path)
-
 	img = cv2.imread(str(image_path))
 	if img is None:
 		raise RuntimeError(f"Failed to read image: {image_path}")
