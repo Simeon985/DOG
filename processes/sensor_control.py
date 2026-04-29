@@ -30,15 +30,19 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray) -> N
     t1 = threading.Thread(target=control, args=(stop_event, test_counter, shared_array))
     print("sensor_mapping_should_begin")
     t2 = threading.Thread(target=est.update, args=(ser, data, stop_event))
-    t3 = threading.Thread(target=init_robot, args=(stop_event))
+    t3 = threading.Thread(target=init_robot, args=(stop_event,))
     t1.start()
     t2.start()
     t3.start()
     while(1):
-        print("IMU: ", est.history[-1][2])
-        if est.history[-1][2]>30 or est.history[-1][2]<330:
+        print("IMU: ", est.history[-1][2]-est.history[0][2])
+        if est.history[-1][2]-est.history[0][2]>30 and est.history[0][2] < 40:
             stop_event.set()
             break
+        # if est.history[-1][2] > math.radians(30) and est.history[-1][2] < math.radians(40):
+        #     stop_event.set()
+        #     break
+
         time.sleep(0.1)
 
 
