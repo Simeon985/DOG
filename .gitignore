@@ -3,3 +3,6 @@ DOG-venv/
 venv/
 *.npy
 *.npz
+__pycache__/
+*.sh
+*.pt

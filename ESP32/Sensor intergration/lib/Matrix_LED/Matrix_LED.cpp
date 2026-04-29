@@ -32,7 +32,14 @@ void Matrix_LED::update(unsigned long current_time,float distance){
         previous_timestamp_animation=current_time;
         render();
     }
-    render();
+    delta_time_blink = current_time - previous_timestamp_blink;
+    if(delta_time_blink>3000000){
+        previous_timestamp_blink=current_time;
+        blinking = true;
+        unblinking = false;
+        blink_state = 1;
+    }
+
     
 }
 
@@ -111,9 +118,53 @@ void Matrix_LED::render(void) {
             }
             break;
         case EmotionalState::neutraal:
+            static uint8_t pupil_mask[8];
+            static uint8_t blink_mask[8];
+
+
+
+
+            //switch(pupil_direction){memcpy(pupil_mask, ,);}
+            memcpy(pupil_mask, neutraal,8); // tijdelijke plaatsvervanger tot pupil-logica geimplementeerd is
+
+
+            if (blinking){
+                if (blink_state == 5){
+                    unblinking = true;
+                    blinking = false;
+                } else {
+                    blink_state += 1;
+                }
+            }
+            if (unblinking){
+                if (blink_state == 1){
+                    unblinking = false;
+                } else {
+                    blink_state -= 1;
+                }
+            }
+
+            switch(blink_state){                
+                case 1:
+                    memcpy(blink_mask,blink_1,8);
+                    break;
+                case 2:
+                    memcpy(blink_mask,blink_2,8);
+                    break;
+                case 3:
+                    memcpy(blink_mask,blink_3,8);
+                    break;
+                case 4:
+                    memcpy(blink_mask,blink_4,8);
+                    break;
+                case 5:
+                    memcpy(blink_mask,blink_5,8);
+                    break;
+            }
+            
             for (int i = 0; i < 8; i++) {
-                linkeroog[i] = neutraal[i];
-                rechteroog_unrotated[i] = neutraal[i];
+                linkeroog[i] = neutraal[i] & pupil_mask[i] & blink_mask[i];
+                rechteroog_unrotated[i] = neutraal[i] & pupil_mask[i] & blink_mask[i];
             }
             break;
     }

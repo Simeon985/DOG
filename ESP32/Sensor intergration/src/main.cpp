@@ -67,6 +67,7 @@ void setup() {
   if (!Wire.begin(PIN_SDA_IMU, PIN_SCL_IMU)) { print_error("BNO055 sensor)");}
   Serial.println("BNO055 wire initialized");
 
+  
 
   //bno.setExtCrystalUse(true);
   timer = timerBegin(0, 80, true);  // 80MHz / 80 = 1MHz (1 tick = 1µs)
@@ -74,7 +75,6 @@ void setup() {
   timerAlarmWrite(timer, TIMER_INTERVAL, true);  // 1/10 000 µs = 100 Hz
   timerAlarmEnable(timer);
 
-  print_error("BNO055 sensor)");
 }
 
 
