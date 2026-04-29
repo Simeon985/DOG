@@ -33,7 +33,7 @@ k1 = ball_radius/(2*tan_horizontal)*pixels_width
 k2 = ball_radius/(2*tan_vertical)*pixels_height
 k = (k1+k2)/2
 
-model = YOLO("balls.pt")
+model = YOLO(str(Path(__file__).with_name("balls_ourdata_augmented.pt")))
 
 def calculate_depth(radius):
     if radius > 0:
@@ -67,26 +67,39 @@ def calculate_3D_coordinates(M_x,M_y,radius):
 	return x, y, z
 
 
-def get_coordinates_from_picture():
-	image_path = Path(__file__).with_name("image.png")
-	take_image(image_path)
+def get_coordinates_from_frame(frame: "np.ndarray") -> tuple[float, float, float]:
+	"""
+	Run detection on an in-memory BGR frame and return (x_cm, y_cm, z_cm) in camera coordinates.
+	"""
+	if frame is None:
+		raise RuntimeError("Frame is None")
 
-	results = model.predict(image_path)
+	# Ultralytics can take numpy arrays directly. Keep it in-memory for realtime performance.
+	results = model.predict(frame, verbose=False)
 	if not results:
 		raise RuntimeError("Model returned no results")
 	result = results[0]
 	if result.boxes is None or len(result.boxes) == 0:
-		raise RuntimeError("No detections found in image")
-	coordinates = result.boxes.xyxy[0].tolist()
+		raise RuntimeError("No detections found in frame")
 
+	coordinates = result.boxes.xyxy[0].tolist()
 
 	Mx = (coordinates[0] + coordinates[2]) / 2
 	My = (coordinates[1] + coordinates[3]) / 2
 	radius = (coordinates[2] - coordinates[0]) / 2
 
 	x, y, z = calculate_3D_coordinates(Mx, My, radius)
-
 	return x, y, z
+
+
+def get_coordinates_from_picture():
+	image_path = Path(__file__).with_name("image.png")
+	take_image(image_path)
+
+	img = cv2.imread(str(image_path))
+	if img is None:
+		raise RuntimeError(f"Failed to read image: {image_path}")
+	return get_coordinates_from_frame(img)
 
 def get_coordinates_from_picture_2():
     # OpenCV HSV ranges: H=0..179, S=0..255, V=0..255
@@ -130,11 +143,3 @@ def get_coordinates_from_picture_2():
             print(f"x: {x_pos:.1f} cm ; y: {y_pos:.1f} cm ; z: {z_pos:.1f} cm")
             return x_pos, y_pos, z_pos
     raise RuntimeError("No suitable round contour found")
-
-
-
-
-# x,y,z = get_coordinates_from_picture()
-# print(f"x: {x:.1f} cm ; y: {y:.1f} cm ; z: {z:.1f} cm")
-
-# get_coordinates_from_picture_2()

@@ -1,5 +1,3 @@
-LICENSE
-MANIFEST.in
 README.md
 pyproject.toml
 setup.py
@@ -333,6 +331,3 @@ src/lerobot/utils/train_utils.py
 src/lerobot/utils/transition.py
 src/lerobot/utils/utils.py
 src/lerobot/utils/visualization_utils.py
-tests/test_available.py
-tests/test_cli_peft.py
-tests/test_control_robot.py

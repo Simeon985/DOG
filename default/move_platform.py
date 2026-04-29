@@ -79,3 +79,13 @@ def rotate_platform(
     time.sleep(duration_s)
     bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
     return goal_velocities
+
+
+bus = LeKiwi(LeKiwiConfig(id=ROBOT_ID, port=PORT))
+try:
+    bus.connect()
+    configure_wheels(bus)
+    rotate_platform(bus, 90, 800, 10.0)
+finally:
+    if bus.is_connected:
+        bus.disconnect()

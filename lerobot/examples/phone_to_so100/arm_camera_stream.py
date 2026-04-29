@@ -2,6 +2,10 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Optional
+import select
+import time
+import tempfile
 
 SYSTEM_PYTHON = "/usr/bin/python3"
 GST_PLUGIN_SCANNER = "/usr/lib/aarch64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
@@ -26,7 +30,7 @@ def csi_pipeline():
     sensor_id = int(os.environ.get("ARM_CAMERA_SENSOR_ID", "0"))
     return (
         f"nvarguscamerasrc sensor-id={sensor_id} wbmode=0 awblock=true ! "
-        "video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1 ! "
+        "video/x-raw(memory:NVMM),width=600,height=400,framerate=30/1 ! "
         "nvvidconv ! "
         "video/x-raw,format=BGRx ! "
         "videoconvert ! "
@@ -248,6 +252,258 @@ if __name__ == "__main__":
     main()
 """
 
+_CHILD_IPC_SCRIPT = r"""
+import json
+import os
+import struct
+import sys
+import time
+from pathlib import Path
+
+import cv2
+import numpy as np
+
+CALIBRATION_FILE = Path(os.environ["ARM_CAMERA_CALIBRATION_FILE"])
+
+
+def csi_pipeline():
+    sensor_id = int(os.environ.get("ARM_CAMERA_SENSOR_ID", "0"))
+    return (
+        f"nvarguscamerasrc sensor-id={sensor_id} wbmode=0 awblock=true ! "
+        "video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1 ! "
+        "nvvidconv ! "
+        "video/x-raw,format=BGRx ! "
+        "videoconvert ! "
+        "video/x-raw,format=BGR ! "
+        "appsink drop=true max-buffers=1 sync=false"
+    )
+
+
+def _open_capture():
+    cap = cv2.VideoCapture(csi_pipeline(), cv2.CAP_GSTREAMER)
+    if not cap.isOpened():
+        cap.release()
+        raise RuntimeError("Camera failed to open (GStreamer pipeline did not start).")
+    return cap
+
+
+def load_matrix():
+    if not CALIBRATION_FILE.exists():
+        return None
+    with open(CALIBRATION_FILE, "r") as f:
+        return np.array(json.load(f), dtype=np.float32)
+
+
+def apply_matrix(image, M):
+    img = image.astype(np.float32) / 255.0
+    img = np.dot(img, M)
+    img = np.clip(img, 0, 1)
+    return (img * 255).astype(np.uint8)
+
+
+def main():
+    cap = _open_capture()
+
+    # Warmup for AWB/AE settle.
+    for _ in range(30):
+        cap.read()
+        time.sleep(0.02)
+
+    M = load_matrix()
+
+    def _reopen_capture():
+        nonlocal cap
+        try:
+            cap.release()
+        except Exception:
+            pass
+        time.sleep(0.2)
+        cap = _open_capture()
+        # Quick warmup after reopen.
+        for _ in range(10):
+            cap.read()
+            time.sleep(0.02)
+
+    try:
+        while True:
+            line = sys.stdin.buffer.readline()
+            if not line:
+                break
+            cmd = line.strip().upper()
+            if cmd == b"QUIT":
+                break
+            if cmd == b"RELOAD":
+                M = load_matrix()
+                continue
+            if cmd != b"GET":
+                continue
+
+            payload = b""
+            frame = None
+
+            # Argus/GStreamer can stall; retry a few reads, then reopen capture.
+            for attempt in range(1, 21):
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    break
+                time.sleep(0.02)
+                if attempt in (10, 15):
+                    try:
+                        print("Frame read failed; reopening capture...", file=sys.stderr, flush=True)
+                    except Exception:
+                        pass
+                    try:
+                        _reopen_capture()
+                    except Exception as exc:
+                        try:
+                            print(f"Reopen failed: {exc}", file=sys.stderr, flush=True)
+                        except Exception:
+                            pass
+
+            if frame is not None:
+                try:
+                    if M is not None:
+                        frame = apply_matrix(frame, M)
+                    ok, jpg = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
+                    payload = bytes(jpg) if ok else b""
+                except Exception as exc:
+                    try:
+                        print(f"Encode failed: {exc}", file=sys.stderr, flush=True)
+                    except Exception:
+                        pass
+            else:
+                try:
+                    print(
+                        "No frame received after retries; returning empty payload.",
+                        file=sys.stderr,
+                        flush=True,
+                    )
+                except Exception:
+                    pass
+
+            sys.stdout.buffer.write(struct.pack(">I", len(payload)))
+            if payload:
+                sys.stdout.buffer.write(payload)
+            sys.stdout.buffer.flush()
+    finally:
+        cap.release()
+
+
+if __name__ == "__main__":
+    main()
+"""
+
+_CHILD_DAEMON_SCRIPT = r"""
+import json
+import os
+import time
+from pathlib import Path
+
+import cv2
+import numpy as np
+
+CALIBRATION_FILE = Path(os.environ["ARM_CAMERA_CALIBRATION_FILE"])
+OUT_PATH = Path(os.environ["ARM_CAMERA_OUT_PATH"])
+OUT_TMP = OUT_PATH.with_suffix(OUT_PATH.suffix + ".tmp")
+
+
+def csi_pipeline():
+    sensor_id = int(os.environ.get("ARM_CAMERA_SENSOR_ID", "0"))
+    return (
+        f"nvarguscamerasrc sensor-id={sensor_id} wbmode=0 awblock=true ! "
+        "video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1 ! "
+        "nvvidconv ! "
+        "video/x-raw,format=BGRx ! "
+        "videoconvert ! "
+        "video/x-raw,format=BGR ! "
+        "appsink drop=true max-buffers=1 sync=false"
+    )
+
+
+def _open_capture():
+    cap = cv2.VideoCapture(csi_pipeline(), cv2.CAP_GSTREAMER)
+    if not cap.isOpened():
+        cap.release()
+        raise RuntimeError("Camera failed to open (GStreamer pipeline did not start).")
+    return cap
+
+
+def load_matrix():
+    if not CALIBRATION_FILE.exists():
+        return None
+    with open(CALIBRATION_FILE, "r") as f:
+        return np.array(json.load(f), dtype=np.float32)
+
+
+def apply_matrix(image, M):
+    img = image.astype(np.float32) / 255.0
+    img = np.dot(img, M)
+    img = np.clip(img, 0, 1)
+    return (img * 255).astype(np.uint8)
+
+
+def main():
+    cap = _open_capture()
+
+    # Warmup for AWB/AE settle.
+    for _ in range(30):
+        cap.read()
+        time.sleep(0.02)
+
+    M = load_matrix()
+    calib_mtime = CALIBRATION_FILE.stat().st_mtime if CALIBRATION_FILE.exists() else None
+
+    def reopen():
+        nonlocal cap
+        try:
+            cap.release()
+        except Exception:
+            pass
+        time.sleep(0.2)
+        cap = _open_capture()
+        for _ in range(10):
+            cap.read()
+            time.sleep(0.02)
+
+    try:
+        while True:
+            # Reload calibration if file changed.
+            try:
+                if CALIBRATION_FILE.exists():
+                    m = CALIBRATION_FILE.stat().st_mtime
+                    if calib_mtime is None or m != calib_mtime:
+                        M = load_matrix()
+                        calib_mtime = m
+            except Exception:
+                pass
+
+            ret, frame = cap.read()
+            if not ret or frame is None:
+                # Try to recover.
+                time.sleep(0.02)
+                ret, frame = cap.read()
+                if not ret or frame is None:
+                    reopen()
+                    continue
+
+            if M is not None:
+                frame = apply_matrix(frame, M)
+
+            ok, jpg = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), 85])
+            if ok:
+                OUT_TMP.write_bytes(bytes(jpg))
+                OUT_TMP.replace(OUT_PATH)
+
+            # ~30 FPS cap, but let CPU breathe.
+            time.sleep(0.01)
+    finally:
+        cap.release()
+
+
+if __name__ == "__main__":
+    main()
+"""
+
 
 def _system_env() -> dict:
     env = os.environ.copy()
@@ -269,6 +525,83 @@ def _run_child() -> int:
         print(f"Failed to launch system python: {exc}")
         return 1
     return completed.returncode
+
+
+class ArmCameraFrameClient:
+    """
+    Persistent CSI camera reader using system Python + GStreamer/Argus.
+
+    This avoids repeatedly starting nvargus (slow) and avoids writing image files.
+    """
+
+    def __init__(self):
+        self._proc: Optional[subprocess.Popen] = None
+        self._out_path: Optional[Path] = None
+        self._last_mtime: float = 0.0
+
+    def start(self) -> None:
+        if self._proc is not None and self._proc.poll() is None:
+            return
+        out_path = Path(tempfile.gettempdir()) / "arm_latest.jpg"
+        env = _system_env()
+        env["ARM_CAMERA_OUT_PATH"] = str(out_path)
+        cmd = [SYSTEM_PYTHON, "-u", "-c", _CHILD_DAEMON_SCRIPT]
+        self._proc = subprocess.Popen(
+            cmd,
+            env=env,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+        )
+        self._out_path = out_path
+        self._last_mtime = 0.0
+
+    def close(self) -> None:
+        if self._proc is None:
+            return
+        try:
+            self._proc.kill()
+        except Exception:
+            pass
+        self._proc = None
+        self._out_path = None
+
+    def reload_calibration(self) -> None:
+        # Daemon auto-reloads calibration on file mtime change.
+        return
+
+    def get_jpeg(self, timeout_s: float = 2.0) -> bytes:
+        if self._proc is None or self._proc.poll() is not None:
+            raise RuntimeError("ArmCameraFrameClient is not running")
+        if self._out_path is None:
+            raise RuntimeError("ArmCameraFrameClient output path not set")
+
+        deadline = time.time() + timeout_s
+        while time.time() < deadline:
+            try:
+                st = self._out_path.stat()
+                if st.st_mtime > self._last_mtime and st.st_size > 0:
+                    data = self._out_path.read_bytes()
+                    self._last_mtime = st.st_mtime
+                    return data
+            except FileNotFoundError:
+                pass
+            except Exception:
+                pass
+            time.sleep(0.01)
+
+        err_tail = b""
+        try:
+            if self._proc.stderr is not None:
+                rerr, _, _ = select.select([self._proc.stderr], [], [], 0.0)
+                if rerr:
+                    err_tail = self._proc.stderr.read(4096) or b""
+        except Exception:
+            pass
+        raise RuntimeError(
+            f"Timed out waiting for camera daemon to write {self._out_path}."
+            + (f" Child stderr: {err_tail.decode(errors='ignore')}" if err_tail else "")
+        )
 
 
 if __name__ == "__main__":

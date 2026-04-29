@@ -375,6 +375,17 @@ def gradually_get_to_ball(start_x,start_y,start_z,robot):
     move_to_xyz(x,y,z+DISTANCE_MOTOR_4_GRIPPER,robot,gripping=True)
 
 
+def reset_arm(robot: SO100Follower):
+    TARGET_ANGLES = {
+        "shoulder_pan": 0, # ID 1 #-90..90
+        "shoulder_lift": -98, # ID 2
+        "elbow_flex": 90, # ID 3
+        "wrist_flex": 0, # ID 4
+        "wrist_roll": 90, # ID 5
+        "gripper": 60, # ID 6
+    }
+    move_to_target_angles(robot, TARGET_ANGLES)
+
 
 
 def main():
@@ -410,15 +421,7 @@ def main():
         print("ERROR!")
     finally:
         time.sleep(1)
-        TARGET_ANGLES = {
-            "shoulder_pan": 0, # ID 1 #-90..90
-            "shoulder_lift": -98, # ID 2
-            "elbow_flex": 90, # ID 3
-            "wrist_flex": 0, # ID 4
-            "wrist_roll": 90, # ID 5
-            "gripper": 90, # ID 6
-        }
-        move_to_target_angles(robot, TARGET_ANGLES)
+        reset_arm(robot)
 
     # inspect_floor_motors(robot)
     # grab_ball(robot)
