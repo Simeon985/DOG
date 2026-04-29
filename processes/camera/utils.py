@@ -91,3 +91,10 @@ def apply_matrix(image, M):
     img = np.dot(img, M)
     img = np.clip(img, 0, 1)
     return (img * 255).astype(np.uint8)
+
+def sharpness_score(frame, bbox):
+    x1, y1, x2, y2 = bbox.astype(int)
+    face_crop = frame[y1:y2, x1:x2]
+    gray = cv2.cvtColor(face_crop, cv2.COLOR_BGR2GRAY)
+    score = cv2.Laplacian(gray, cv2.CV_64F).var()
+    return score

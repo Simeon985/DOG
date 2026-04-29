@@ -61,7 +61,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     print(f"Loaded {len(known_faces)} known faces")
     print("Starting webcam...")
 
-    cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=1))
+    cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     cam_info_faces = initialize_coordinate_detection_faces()
 
@@ -74,9 +74,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     pending_faces = {}
 
     while True:
-        for _ in range(5):
-            cap.grab()
-        ret, frame = cap.retrieve()
+        ret, frame = cap.read()
         if not ret:
             break
         #if M is not None:
@@ -240,6 +238,9 @@ def camera_process(shared_array: SynchronizedArray) -> None:
         # # Draw fps counter
         # # cv2.putText(frame, f"FPS: {fps:.1f}", (10, 30),
         # #     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        score = sharpness_score(frame, face.bbox)
+        cv2.putText(frame, f"sharp: {score:.0f}", (box[0], box[3] + 20),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
         cv2.imshow("Face Recognition", frame) 
         if cv2.waitKey(1) == 27:  # ESC to exit
             break
