@@ -22,7 +22,7 @@
 #define PIN_SDA_IMU 22
 #define PIN_SCL_IMU 21
 #define IMU_SENSOR_ID 55
-#define TIMER_INTERVAL 10000 // 50000 MICROs = 20 Hz
+#define TIMER_INTERVAL 100000 // 50000 MICROs = 20 Hz
 
 
 
@@ -60,14 +60,14 @@ void setup() {
   if (!flow2.begin()) { print_error("Flow sensor 2)");}
   Serial.println("Flow sensor 2 initialized");
 
-  if (!ultra1.begin()) {print_error("Ultrasone sensor 1");}
-  Serial.println("Ultrasone sensor 1 initialized");
-  if (!ultra2.begin()) {print_error("Ultrasone sensor 2");}
-  Serial.println("Ultrasone sensor 2 initialized");
+  // if (!ultra1.begin()) {print_error("Ultrasone sensor 1");}
+  // Serial.println("Ultrasone sensor 1 initialized");
+  // if (!ultra2.begin()) {print_error("Ultrasone sensor 2");}
+  // Serial.println("Ultrasone sensor 2 initialized");
   if (!Wire.begin(PIN_SDA_IMU, PIN_SCL_IMU)) { print_error("BNO055 sensor)");}
   Serial.println("BNO055 wire initialized");
 
-  
+
 
   //bno.setExtCrystalUse(true);
   timer = timerBegin(0, 80, true);  // 80MHz / 80 = 1MHz (1 tick = 1µs)
@@ -104,8 +104,8 @@ void loop() {
   flow2.readMotionCount(&deltaX2, &deltaY2);
 
   // reading data ultrasone sensors
-  distance1=ultra1.get_distance();
-  distance2=ultra2.get_distance();
+  // distance1=ultra1.get_distance();
+  // distance2=ultra2.get_distance();
 
   //reading data IMU
   euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);

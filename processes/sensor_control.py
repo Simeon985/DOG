@@ -10,12 +10,13 @@ from processes.threads.mapping import *
 from processes.threads.control import *
 from processes.threads.control_help_commands import *
 
-global ani
-def sensor_control_process(estimator: str, shared_array: SynchronizedArray) -> None:
+# global ani
+def sensor_control_process(estimator: str, shared_array: SynchronizedArray, graden: int=-180) -> None:
     """Process running the control and sensor threads."""
     ser = initialize_esp()
-    scale_1, scale_2, angle_1, angle_2 = 1.0, 1.0, 0.0, 0.0
+    scale_1, scale_2, angle_1, angle_2 = 5.963691140961605e-05, 5.8920022248807314e-05, -46.31328914736247, 117.43771136252667
     data = np.zeros(11)
+
 
     if estimator == "Peripheral":
         est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)
@@ -30,21 +31,35 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray) -> N
     t1 = threading.Thread(target=control, args=(stop_event, test_counter, shared_array))
     print("sensor_mapping_should_begin")
     t2 = threading.Thread(target=est.update, args=(ser, data, stop_event))
-    t3 = threading.Thread(target=init_robot, args=(stop_event,))
+    if graden < 0:
+        direction = "left"
+    else:
+        direction = "right"
+
+    t3 = threading.Thread(target=init_robot, args=(stop_event,direction))
     t1.start()
     t2.start()
+    time.sleep(2)  # Ensure the control thread is running before starting the mapping thread
     t3.start()
-    while(1):
-        print("IMU: ", est.history[-1][2]-est.history[0][2])
-        if est.history[-1][2]-est.history[0][2]>30 and est.history[0][2] < 40:
-            stop_event.set()
-            break
-        # if est.history[-1][2] > math.radians(30) and est.history[-1][2] < math.radians(40):
-        #     stop_event.set()
-        #     break
+    start_angle = est.history[10][2]
+    graden = graden % 360
+    upper_lim_graden= (graden+4) %360
+    try:
+        while(1):
 
-        time.sleep(0.1)
+            current_angle = est.history[-1][2]
+            print("current position 's and IMu: ", est.history[-1][0]," ",est.history[-1][1]," ",(current_angle-start_angle)%360)
+            # print("IMU: end and begin ", current_angle, start_angle)
+            # print("IMU: ", current_angle-start_angle)
+            if ((current_angle-start_angle)%360>graden and (current_angle-start_angle)%360 < upper_lim_graden) or ((current_angle-start_angle)%360<360-graden and (current_angle-start_angle)%360 > 360-upper_lim_graden):
+                stop_event.set()
+                break
 
+
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        print("\nKeyboardInterrupt")
+        stop_event.set()
 
     # fig, ax = plt.subplots()
     # line, = ax.plot([], [], 'b-')

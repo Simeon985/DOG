@@ -20,6 +20,11 @@ class PeripheralEstimator:
         self.returning = False
         self.brake = False
         self.lock = threading.Lock()
+        # scale_factor_1: 5.963691140961605e-05
+        # scale_factor_2: 5.8920022248807314e-05
+        # angle_1: -46.31328914736247
+        # angle_2: 117.43771136252667
+
 
     def update(self, ser : serial.Serial, data : npt.NDArray[np.float64], stop_signal : threading.Event):
         """

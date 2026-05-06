@@ -46,10 +46,7 @@ def move_backward(bus, velocity: int = 800, duration_s: float = 10.0) -> dict[st
 def rotate_platform(
     bus,
     stop_event: threading.Event,
-    angle_deg: float | None = None,
-    velocity: int = 800,
-    duration_s: float = 10.0,
-    deg_per_s_at_velocity_800: float = 30.0,
+    velocity: int = -100,
 ) -> dict[str, int]:
     """
     Rotate the base in place.
@@ -61,15 +58,7 @@ def rotate_platform(
     - This is time-based (open loop). Expect drift; tune `deg_per_s_at_velocity_800` for your floor/battery.
     - Positive `angle_deg` uses the same direction as positive `velocity` in Goal_Velocity.
     """
-    if angle_deg is not None:
-        # Simple scaling: assume angular speed is ~ proportional to wheel velocity command.
-        deg_per_s = abs(velocity) * (deg_per_s_at_velocity_800 / 800.0)
-        duration_s = abs(float(angle_deg)) / max(1e-6, deg_per_s)
-        # Flip sign based on desired angle.
-        if angle_deg < 0:
-            velocity = -abs(velocity)
-        else:
-            velocity = abs(velocity)
+
 
     goal_velocities = {
         WHEEL_MOTORS[0]: velocity,
@@ -82,13 +71,17 @@ def rotate_platform(
     return goal_velocities
 
 
-def init_robot(stop_event) -> None:
+def init_robot(stop_event,direction) -> None:
     robot = LeKiwi(LeKiwiConfig(id=ROBOT_ID, port=PORT, cameras={}))
     motor_bus = robot.bus
+    velocity = -400
+    if direction == "left":
+        velocity = -velocity
     try:
         motor_bus.connect()
         configure_wheels(motor_bus)
-        rotate_platform(motor_bus, stop_event, 30, 400, 10.0)
+        #rotate_platform(motor_bus, stop_event, velocity)
+        move_forward(motor_bus)
     finally:
         if motor_bus.is_connected:
             motor_bus.disconnect()
