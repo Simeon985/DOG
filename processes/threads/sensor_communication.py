@@ -32,6 +32,10 @@ def get_sensor_data(ser: serial.Serial, data_array):
     data = ser.readline()
     data_list = data.split()
     print(data_list)
+    if len(data_list) != 11:
+        print("Error reading line, expected 11 elements but got ", len(data_list))
+        return
+
     #data_list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 1]
     for i in range(6):
         data_array[i] = float(data_list[i])

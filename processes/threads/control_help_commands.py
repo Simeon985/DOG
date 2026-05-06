@@ -13,7 +13,6 @@ WHEEL_MOTORS = [
 
 FORWARD_MOTORS = ["base_back_wheel", "base_right_wheel"]
 
-
 def configure_wheels(bus) -> None:
     bus.disable_torque(WHEEL_MOTORS)
     bus.configure_motors()
@@ -45,19 +44,26 @@ def move_backward(bus, velocity: int = 800, duration_s: float = 10.0) -> dict[st
 
 def rotate_platform(
     bus,
-    stop_event: threading.Event,
-    velocity: int = -100,
+    stop: bool,
+    velocity_normalized: int = 1,
+    direction: str = "left"
 ) -> dict[str, int]:
     """
     Rotate the base in place.
-
-    If `angle_deg` is provided, the function computes an open-loop duration based on an approximate
-    calibration constant (deg/s at velocity=800) and scales it with `velocity`.
-
-    Notes:
-    - This is time-based (open loop). Expect drift; tune `deg_per_s_at_velocity_800` for your floor/battery.
-    - Positive `angle_deg` uses the same direction as positive `velocity` in Goal_Velocity.
+    Give a normalized velocity between 0 and 1 where 0 is no movement and 1 is maximum speed, and a direction ("left" or "right"), and a stoping event
     """
+    #catch if stop is set
+    if(stop == True):
+        print("Stopping rotation")
+        bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
+        return dict.fromkeys(WHEEL_MOTORS, 0)
+    print("Setting rotation: ", direction, velocity_normalized)
+    #Determin actual motor velocity from normalized velocity and direction
+    max_velocity = 400
+    velocity = max_velocity * velocity_normalized
+    if direction == "left":
+        velocity = -velocity
+
 
 
     goal_velocities = {
@@ -65,27 +71,30 @@ def rotate_platform(
         WHEEL_MOTORS[1]: velocity,
         WHEEL_MOTORS[2]: velocity,
     }
+
     bus.sync_write("Goal_Velocity", goal_velocities)
-    stop_event.wait()
-    bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
+    print(f"Rotating {direction} with velocity {velocity} ({velocity_normalized} normalized)")
+    # stop_event.wait()
+    # bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
     return goal_velocities
 
 
-def init_robot(stop_event,direction) -> None:
+def init_robot() -> None:
+    print("Initializing robot...")
     robot = LeKiwi(LeKiwiConfig(id=ROBOT_ID, port=PORT, cameras={}))
     motor_bus = robot.bus
-    velocity = -400
-    if direction == "left":
-        velocity = -velocity
     try:
         motor_bus.connect()
         configure_wheels(motor_bus)
         #rotate_platform(motor_bus, stop_event, velocity)
-        move_forward(motor_bus)
-    finally:
+        #move_forward(motor_bus)
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
         if motor_bus.is_connected:
             motor_bus.disconnect()
-
+    print("Robot initialized")
+    return robot
 
 # if __name__ == "__main__":
 #     init_robot()

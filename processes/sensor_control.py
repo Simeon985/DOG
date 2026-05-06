@@ -11,7 +11,7 @@ from processes.threads.control import *
 from processes.threads.control_help_commands import *
 
 # global ani
-def sensor_control_process(estimator: str, shared_array: SynchronizedArray, graden: int=-180) -> None:
+def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desired_angle: int=90) -> None:
     """Process running the control and sensor threads."""
     ser = initialize_esp()
     scale_1, scale_2, angle_1, angle_2 = 5.963691140961605e-05, 5.8920022248807314e-05, -46.31328914736247, 117.43771136252667
@@ -31,27 +31,36 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, grad
     t1 = threading.Thread(target=control, args=(stop_event, test_counter, shared_array))
     print("sensor_mapping_should_begin")
     t2 = threading.Thread(target=est.update, args=(ser, data, stop_event))
-    if graden < 0:
+    if desired_angle < 0:
         direction = "left"
     else:
         direction = "right"
 
-    t3 = threading.Thread(target=init_robot, args=(stop_event,direction))
+    # t3 = threading.Thread(target=init_robot, args=(stop_event,direction))
     t1.start()
     t2.start()
     time.sleep(2)  # Ensure the control thread is running before starting the mapping thread
-    t3.start()
+    # t3.start()
+    robot=init_robot()
     start_angle = est.history[10][2]
-    graden = graden % 360
-    upper_lim_graden= (graden+4) %360
+    # desired_angle = (desired_angle ) % 360
+    upper_lim_desired_angle= (desired_angle+2) %360
+    current_angle = est.history[-1][2]
     try:
         while(1):
-
             current_angle = est.history[-1][2]
-            print("current position 's and IMu: ", est.history[-1][0]," ",est.history[-1][1]," ",(current_angle-start_angle)%360)
-            # print("IMU: end and begin ", current_angle, start_angle)
-            # print("IMU: ", current_angle-start_angle)
-            if ((current_angle-start_angle)%360>graden and (current_angle-start_angle)%360 < upper_lim_graden) or ((current_angle-start_angle)%360<360-graden and (current_angle-start_angle)%360 > 360-upper_lim_graden):
+            #print("current position 's and IMu: ", est.history[-1][0]," ",est.history[-1][1]," ",(current_angle-start_angle)%360)
+            error = (current_angle- start_angle - desired_angle) % 360
+            if error > 180:
+                error -= 360
+            velocity_normalized=min(20,abs(error))*0.05
+            direction = "left" if error > 180 else "right"
+            print("IMU: now, error, begin: ", current_angle, error ,start_angle)
+            rotate_platform(robot.bus, False, velocity_normalized, direction)
+            print("-------------------------------------------------------------")
+            #if ((current_angle-start_angle)%360>desired_angle and (current_angle-start_angle)%360 < upper_lim_desired_angle) or ((current_angle-start_angle)%360<360-desired_angle and (current_angle-start_angle)%360 > 360-upper_lim_desired_angle):
+            if (error < 2 or error > 358):
+                rotate_platform(robot.bus, True)
                 stop_event.set()
                 break
 
