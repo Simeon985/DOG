@@ -14,26 +14,23 @@
 #define PIN_CS_OFS_1 5
 #define PIN_CS_OFS_2 14
 
-<<<<<<< HEAD
-#define PIN_TRIG_US_1 17
-#define PIN_ECHO_US_1 16
-#define PIN_TRIG_US_2 32
-#define PIN_ECHO_US_2 34
-=======
 #define PIN_TRIG_US_2 17
 #define PIN_ECHO_US_2 16
 #define PIN_TRIG_US_1 32
 #define PIN_ECHO_US_1 34
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 
 #define PIN_SDA_IMU 22
 #define PIN_SCL_IMU 21
 #define IMU_SENSOR_ID 55
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define TIMER_INTERVAL 50000 // 50000 MICROs = 20 Hz
 =======
 #define TIMER_INTERVAL 10000 // 50000 MICROs = 20 Hz
 >>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
+=======
+#define TIMER_INTERVAL 100000 // 50000 MICROs = 20 Hz
+>>>>>>> 78d5bee5deb08ca3a02406559424a55c75b51375
 
 
 
@@ -80,6 +77,7 @@ void setup() {
   if (!flow2.begin()) { print_error("Flow sensor 2)");}
   Serial.println("Flow sensor 2 initialized");
 
+<<<<<<< HEAD
   if (!ultra1.begin()) {print_error("Ultrasone sensor 1");}
   Serial.println("Ultrasone sensor 1 initialized");
   if (!ultra2.begin()) {print_error("Ultrasone sensor 2");}
@@ -91,10 +89,16 @@ void setup() {
 
   //bno.setExtCrystalUse(true); 
 =======
+=======
+  // if (!ultra1.begin()) {print_error("Ultrasone sensor 1");}
+  // Serial.println("Ultrasone sensor 1 initialized");
+  // if (!ultra2.begin()) {print_error("Ultrasone sensor 2");}
+  // Serial.println("Ultrasone sensor 2 initialized");
+>>>>>>> 78d5bee5deb08ca3a02406559424a55c75b51375
   if (!Wire.begin(PIN_SDA_IMU, PIN_SCL_IMU)) { print_error("BNO055 sensor)");}
   Serial.println("BNO055 wire initialized");
 
-  
+
 
   //bno.setExtCrystalUse(true);
 >>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
@@ -143,6 +147,7 @@ void loop() {
 
   // reading data ultrasone sensors
 <<<<<<< HEAD
+<<<<<<< HEAD
   ultra1.read_distance(distance1);
   ultra2.read_distance(distance2);
 
@@ -157,6 +162,10 @@ void loop() {
 =======
   distance1=ultra1.get_distance();
   distance2=ultra2.get_distance();
+=======
+  // distance1=ultra1.get_distance();
+  // distance2=ultra2.get_distance();
+>>>>>>> 78d5bee5deb08ca3a02406559424a55c75b51375
 
   //reading data IMU
   euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
