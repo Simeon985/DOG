@@ -2328,6 +2328,8 @@ no face detected
 no face detected
 Shutting down...
 All processes closed
+<<<<<<< HEAD
+=======
 initializing camera
 camera initialized
 Loading model...
@@ -8557,3 +8559,4 @@ temp sim: 0.8586349487304688
 score: 2374.6050547792915
 Shutting down...
 All processes closed
+>>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08

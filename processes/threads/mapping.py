@@ -52,7 +52,6 @@ class PeripheralEstimator:
 
             # Calculate velocities from flow (same as _calculate_velocities)
             fx1, fy1, fx2, fy2 = self.scale_1*data[6], self.scale_1*data[7], self.scale_2*data[8], self.scale_2*data[9]
-
             #saving elapsed time
             dt = data[10]
             # sensor 1

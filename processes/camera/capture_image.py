@@ -5,6 +5,8 @@ import select
 import termios
 import tty
 from datetime import datetime
+import uuid
+import time
 
 def gstreamer_pipeline(
     sensor_id=0,
@@ -41,9 +43,8 @@ def is_data():
 
 def capture_image_ssh():
     # Use 1080p for capture
-    cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
-    
-    save_path = "captured_faces"
+    cap = cv2.VideoCapture(0)
+    save_path = "captured_faces_laptop"
     os.makedirs(save_path, exist_ok=True)
 
     # Save terminal settings so we can restore them later
@@ -61,7 +62,6 @@ def capture_image_ssh():
             ret, frame = cap.read()
             if not ret:
                 break
-
             # Check if a key was pressed in the terminal
             if is_data():
                 c = sys.stdin.read(1)
@@ -85,5 +85,20 @@ def capture_image_ssh():
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
         cap.release()
 
+def capture_stream():
+    cap = cv2.VideoCapture(0)
+    save_path = "captured_stream"
+    os.makedirs(save_path, exist_ok=True)
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+        im_path = os.path.join(save_path, f"ref_{time.time()}.png")
+        cv2.imwrite(im_path, frame)
+        cv2.imshow("Face Recognition", frame)
+        if cv2.waitKey(1) == 27:
+            break
+    cap.release()
+
 if __name__ == "__main__":
-    capture_image_ssh()
+    capture_stream()

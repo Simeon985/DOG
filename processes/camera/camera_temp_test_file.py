@@ -1,4 +1,4 @@
-from processes.camera.utils import *
+from utils import *
 import uuid
 from skimage.exposure import match_histograms
 
@@ -66,7 +66,7 @@ def expand_bbox(bbox: np.ndarray, margin: float, frame_shape: tuple) -> tuple:
     return x1, y1, x2, y2
 
 
-def camera_process(shared_array: SynchronizedArray) -> None:
+def camera_process() -> None:
     """Process running the camera / vision logic."""
     print("Loading model...")
     app = FaceAnalysis(
@@ -130,12 +130,12 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     print(f"Loaded {len(known_faces)} known faces")
     print("Starting webcam...")
 
-    cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=2))
+    cap = cv2.VideoCapture(0)
     cam_info_faces = initialize_coordinate_detection_faces()
 
     M = load_matrix()
 
-    shared_array[10] = 1.0
+    #hared_array[10] = 1.0
     timestamp = time.time()
 
     temp_faces = {}
@@ -172,7 +172,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
         ]
 
         if faces:
-            shared_array[6] = 1.0
+            #shared_array[6] = 1.0
             for face in faces:
                 emb = face.normed_embedding
                 box = face.bbox.astype(int)
@@ -304,7 +304,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
                     timestamp = time.time()
 
         else:
-            shared_array[6] = 0.0
+            #shared_array[6] = 0.0
             prev_bboxes = []  # no faces — clear bboxes so we don't correct stale regions
             print("no face detected")
 
@@ -312,5 +312,96 @@ def camera_process(shared_array: SynchronizedArray) -> None:
         if cv2.waitKey(1) == 27:
             break
 
-    cap.release()
-    cv2.destroyAllWindows()
+def camera_process_2() -> None:
+    """Process running the camera / vision logic."""
+    print("Loading model...")
+    app = FaceAnalysis(
+        name='buffalo_sc',
+        providers=[
+            ('TensorrtExecutionProvider', {
+                'trt_engine_cache_enable': True,
+                'trt_engine_cache_path': '/home/dog/.insightface/trt_cache'
+            }),
+            'CUDAExecutionProvider',
+            'CPUExecutionProvider'
+        ]
+    )
+    app.prepare(ctx_id=0, det_size=(640, 640))
+
+    known_faces = {}
+    npy_faces = set()
+    images_dir = 'AI/images'
+    embeddings_dir = 'AI/images/embeddings'
+    references_dir = 'captured_stream'
+
+    # Load reference face crops for histogram matching
+    # These should be face crops (not full frames) taken under ideal lighting
+    references = []
+    os.makedirs(references_dir, exist_ok=True)
+    filenames = sorted(os.listdir(references_dir))
+    for filename in filenames:
+        if filename.endswith(('.jpg', '.png')):
+            ref = cv2.imread(os.path.join(references_dir, filename))
+            if ref is not None:
+                references.append(ref)
+                #print(f"Loaded reference: {filename}")
+    print(f"Loaded {len(references)} reference images")
+
+    # print("Loading known faces from images...")
+    # for filename in ['robin.jpg', 'thomas.jpg', 'jorien.jpg', 'Wannes.jpg']:
+    #     image_path = os.path.join(images_dir, filename)
+    #     if os.path.exists(image_path):
+    #         img = cv2.imread(image_path)
+    #         if img is not None:
+    #             faces = app.get(img)
+    #             if len(faces) > 0:
+    #                 name = os.path.splitext(filename)[0]
+    #                 known_faces[name] = [faces[0].normed_embedding]
+    #                 print(f"Loaded face: {name}")
+    #             else:
+    #                 print(f"No face detected in {filename}")
+    #         else:
+    #             print(f"Could not read {filename}")
+    #     else:
+    #         print(f"File not found: {image_path}")
+
+    # os.makedirs(embeddings_dir, exist_ok=True)
+    # for filename in os.listdir(embeddings_dir):
+    #     if filename.endswith('.npz'):
+    #         name = os.path.splitext(filename)[0]
+    #         if name not in known_faces:
+    #             known_faces[name] = load_gallery(os.path.join(embeddings_dir, filename))
+    #             npy_faces.add(name)
+    #             print(f"Loaded gallery: {name} ({len(known_faces[name])} embeddings)")
+
+    # print(f"Loaded {len(known_faces)} known faces")
+    # print("Starting webcam...")
+
+    # cap = cv2.VideoCapture(0)
+    # cam_info_faces = initialize_coordinate_detection_faces()
+
+    # M = load_matrix()
+
+    # shared_array[10] = 1.0
+    # timestamp = time.time()
+
+    # temp_faces = {}
+    # pending_faces = {}
+
+    # # Stores bounding boxes from the previous frame
+    # # { track_id -> expanded_bbox (x1, y1, x2, y2) }
+    # prev_bboxes = []
+
+    emb = []
+
+    for frame in references:
+
+        faces = app.get(frame)
+        for face in faces:
+                emb.append(face.normed_embedding)
+
+    for i in range(len(emb)-1):
+        sim = float(np.dot(emb[i] , emb[i+1]))
+        print(sim)
+
+camera_process_2()
