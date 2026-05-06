@@ -5,7 +5,14 @@ Matrix_LED::Matrix_LED(void) {
     //initialize the LED displays
     delta_time=0;
     previous_timestamp=0;
+<<<<<<< HEAD
     state_led = LedState::S0;
+=======
+    delta_time_animation=0;
+    previous_timestamp_animation=0;
+    state_led = LedState::S0;
+    emotional_state = EmotionalState::boos;
+>>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
     if (!mx.begin()){
     Serial.println("\nMD_MAX72XX initialization failed");
     }
@@ -16,16 +23,176 @@ Matrix_LED::Matrix_LED(void) {
 }
 void Matrix_LED::update(unsigned long current_time,float distance){
     delta_time = current_time - previous_timestamp;
+<<<<<<< HEAD
+=======
+    delta_time_animation = current_time - previous_timestamp_animation;
+>>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
     if(2<distance && distance<10){
         if(delta_time>1000000){
             previous_timestamp=current_time;
             state_led = static_cast<LedState>((static_cast<uint8_t>(state_led) + 1) % 8);
+<<<<<<< HEAD
             render();
         }
     }
 
 }
 void Matrix_LED::render(void) {
+=======
+            emotional_state = static_cast<EmotionalState>((static_cast<uint8_t>(emotional_state) + 1) % 4);       
+            render();     
+        }
+    }
+    if (delta_time_animation>100000){
+        previous_timestamp_animation=current_time;
+        render();
+    }
+    delta_time_blink = current_time - previous_timestamp_blink;
+    if(delta_time_blink>3000000){
+        previous_timestamp_blink=current_time;
+        blinking = true;
+        unblinking = false;
+        blink_state = 1;
+    }
+
+    
+}
+
+
+void rotate180(const uint8_t in[8], uint8_t out[8]) {
+    for (int i = 0; i < 8; i++) {
+        uint8_t b = in[7 - i];
+        // Reverse the bits in the byte
+        b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);
+        b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);
+        b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);
+        out[i] = b;
+    }
+}
+void mirrorVertical(const uint8_t in[8], uint8_t out[8]) {
+    for (int i = 0; i < 8; i++) {
+        uint8_t b = in[i];
+        b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);
+        b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);
+        b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);
+        out[i] = b;
+    }
+}
+
+bool random_bool() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dist(0, 1);
+    
+    return dist(gen) == 1;
+}
+
+
+void Matrix_LED::render(void) {
+    uint8_t linkeroog[8];
+    uint8_t rechteroog_unrotated[8];
+    uint8_t rechteroog[8];
+    switch (emotional_state) {
+        case EmotionalState::boos:
+            if (random_bool()){
+                for (int i = 0; i < 8; i++) {
+                    linkeroog[i] = boos_links[i] & sad_pupil_naar_links[i];
+                    rechteroog_unrotated[i] = boos_rechts[i] & sad_pupil_naar_links[i];
+                }
+            } else {
+                for (int i = 0; i < 8; i++) {
+                    linkeroog[i] = boos_links[i] & sad_pupil_naar_rechts[i];
+                    rechteroog_unrotated[i] = boos_rechts[i] & sad_pupil_naar_rechts[i];
+                }
+            }
+            break;
+        case EmotionalState::sad:
+            if (random_bool()){
+                for (int i = 0; i < 8; i++) {
+                    linkeroog[i] = sad_links[i] & sad_pupil_naar_links[i];
+                    rechteroog_unrotated[i] = sad_rechts[i] & sad_pupil_naar_links[i];
+                }
+            } else {
+                for (int i = 0; i < 8; i++) {
+                    linkeroog[i] = sad_links[i] & sad_pupil_naar_rechts[i];
+                    rechteroog_unrotated[i] = sad_rechts[i] & sad_pupil_naar_rechts[i];
+                }
+            }
+            break;
+        case EmotionalState::hart:
+            if (random_bool()){
+                for (int i = 0; i < 8; i++) {
+                    linkeroog[i] = hart_naar_links[i];
+                    rechteroog_unrotated[i] = hart_naar_links[i];
+                }
+            } else {
+                for (int i = 0; i < 8; i++) {
+                    linkeroog[i] = hart_naar_rechts[i];
+                    rechteroog_unrotated[i] = hart_naar_rechts[i];
+                }
+            }
+            break;
+        case EmotionalState::neutraal:
+            static uint8_t pupil_mask[8];
+            static uint8_t blink_mask[8];
+
+
+
+
+            //switch(pupil_direction){memcpy(pupil_mask, ,);}
+            memcpy(pupil_mask, neutraal,8); // tijdelijke plaatsvervanger tot pupil-logica geimplementeerd is
+
+
+            if (blinking){
+                if (blink_state == 5){
+                    unblinking = true;
+                    blinking = false;
+                } else {
+                    blink_state += 1;
+                }
+            }
+            if (unblinking){
+                if (blink_state == 1){
+                    unblinking = false;
+                } else {
+                    blink_state -= 1;
+                }
+            }
+
+            switch(blink_state){                
+                case 1:
+                    memcpy(blink_mask,blink_1,8);
+                    break;
+                case 2:
+                    memcpy(blink_mask,blink_2,8);
+                    break;
+                case 3:
+                    memcpy(blink_mask,blink_3,8);
+                    break;
+                case 4:
+                    memcpy(blink_mask,blink_4,8);
+                    break;
+                case 5:
+                    memcpy(blink_mask,blink_5,8);
+                    break;
+            }
+            
+            for (int i = 0; i < 8; i++) {
+                linkeroog[i] = neutraal[i] & pupil_mask[i] & blink_mask[i];
+                rechteroog_unrotated[i] = neutraal[i] & pupil_mask[i] & blink_mask[i];
+            }
+            break;
+    }
+    rotate180(rechteroog_unrotated,rechteroog);
+    for (u_int8_t row = 0; row < 8; row++) {
+        mx.setColumn(row, linkeroog[row]);
+        mx.setColumn(row+8, rechteroog[row]);
+    }
+}
+
+
+void Matrix_LED::render_old(void) {
+>>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 
     for (u_int8_t row = 0; row < 8; row++) {
         switch (state_led) {

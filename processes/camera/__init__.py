@@ -204,6 +204,10 @@ def camera_process(shared_array: SynchronizedArray) -> None:
         else:
             shared_array[6] = 0.0
             print("no face detected")
+
+
+
+
         # for face in faces:
         #     emb = face.normed_embedding
         #     box = face.bbox.astype(int)

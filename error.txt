@@ -1,3 +1,28 @@
+<<<<<<< HEAD
+=======
+^C(dog_venv) (base) dog@dog:~/Documents/ESP/DOG$ python3 main.py Peripheral >> output.txt
+[ WARN:0@10.004] global cap_gstreamer.cpp:1728 open OpenCV | GStreamer warning: Cannot query video position: status=0, value=-1, duration=-1
+[ WARN:0@10.129] global cap_gstreamer.cpp:2099 setProperty OpenCV | GStreamer warning: GStreamer: unhandled property
+Gtk-Message: 19:32:47.596: Failed to load module "canberra-gtk-module"
+Process camera:
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.10/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/dog/Documents/ESP/DOG/processes/camera/__init__.py", line 200, in camera_process
+    score = sharpness_score(frame, face.bbox)
+  File "/home/dog/Documents/ESP/DOG/processes/camera/utils.py", line 98, in sharpness_score
+    gray = cv2.cvtColor(face_crop, cv2.COLOR_BGR2GRAY)
+cv2.error: OpenCV(4.8.0) /home/ubuntu/opencv_build/opencv/modules/imgproc/src/color.cpp:182: error: (-215:Assertion failed) !_src.empty() in function 'cvtColor'
+
+^C(dog_venv) (base) dog@dog:~/Documents/ESP/DOG$ 
+
+
+
+
+
+>>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 (dog_venv) (base) dog@dog:~/Documents/ESP/DOG/AI/yolo_ball_detection$ python3 detect_3.py --jetson
 WARNING ⚠️ Unable to automatically guess model task, assuming 'task=detect'. Explicitly define task for your model, i.e. 'task=detect', 'segment', 'classify','pose' or 'obb'.
 Running with TensorRT engine (FP32)

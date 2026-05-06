@@ -22,7 +22,7 @@ def gstreamer_pipeline(
     display_width=960,
     display_height=540,
     framerate=30,
-    flip_method=1,
+    flip_method=2,
 ):
     return (
         "nvarguscamerasrc sensor-id=%d ! "
@@ -30,7 +30,8 @@ def gstreamer_pipeline(
         "nvvidconv flip-method=%d ! "
         "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
         "videoconvert ! "
-        "video/x-raw, format=(string)BGR ! appsink"
+        "video/x-raw, format=(string)BGR ! "
+        "appsink max-buffers=1 drop=true"  # ← changed from just "appsink"
         % (
             sensor_id,
             capture_width,
@@ -94,7 +95,24 @@ def apply_matrix(image, M):
 
 def sharpness_score(frame, bbox):
     x1, y1, x2, y2 = bbox.astype(int)
+    # Clamp to frame boundaries
+    x1 = max(0, x1)
+    y1 = max(0, y1)
+    x2 = min(frame.shape[1], x2)
+    y2 = min(frame.shape[0], y2)
+    
+    # Check crop is valid after clamping
+    if x2 <= x1 or y2 <= y1:
+        return 0.0
+    
     face_crop = frame[y1:y2, x1:x2]
     gray = cv2.cvtColor(face_crop, cv2.COLOR_BGR2GRAY)
     score = cv2.Laplacian(gray, cv2.CV_64F).var()
     return score
+
+clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+
+def apply_clahe(frame):
+    lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
+    lab[:, :, 0] = clahe.apply(lab[:, :, 0])
+    return cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)

@@ -1,4 +1,11 @@
 dog_venv/
 DOG-venv/
+venv/
 *.npy
 *.npz
+**/__pycache__/
+**/*.sh
+**/*.pt
+**/*.pyc
+**/*.pyo
+**/*.pyd
