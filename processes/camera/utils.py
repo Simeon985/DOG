@@ -6,7 +6,7 @@ from insightface.app import FaceAnalysis
 import os
 import uuid
 import json
-from processes.camera.coordinates_from_picture import *
+from coordinates_from_picture import *
 
 CALIBRATION_FILE = "processes/camera/color_calibration.json"
 
