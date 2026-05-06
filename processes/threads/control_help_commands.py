@@ -94,5 +94,5 @@ def init_robot(stop_event) -> None:
             motor_bus.disconnect()
 
 
-if __name__ == "__main__":
-    init_robot()
+# if __name__ == "__main__":
+#     init_robot()

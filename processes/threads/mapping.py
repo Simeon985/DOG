@@ -67,9 +67,9 @@ class PeripheralEstimator:
             with self.lock:
                 self.pose[0] += dx
                 self.pose[1] += dy
-                self.history.append((self.pose[0], self.pose[1], p_a, self.history[-1][-1] + dt))
-            #print(data)
-            #print(f"history: {self.history[-1]}")
+                self.history.append((self.pose[0], self.pose[1], data[0], self.history[-1][-1] + dt))
+            # print(data)
+            # print(f"history: {self.history[-1]}")
             time.sleep(0.1)
         print("mapping thread closing")
 
