@@ -1,41 +1,26 @@
 
 #ifndef __MATRIX_LED_H__
 #define __MATRIX_LED_H__
-
 #define HARDWARE_TYPE MD_MAX72XX::FC16_HW
-#define MAX_DEVICES	2
+#define MAX_DEVICES 2
 #define CLK_PIN_LED   25  // or SCK
 #define DATA_PIN_LED  33  // or MOSI
 #define CS_PIN_LED    26  // or SS
 
-
 #include <Arduino.h>
 #include <stdint.h>
 #include <MD_MAX72xx.h>
-<<<<<<< HEAD
-=======
 #include <random>
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
-
 class Matrix_LED {
 public:
 Matrix_LED(void);
 void render(void);
-<<<<<<< HEAD
-=======
 void render_old(void);
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 void update(unsigned long delta_time,float distance);
 private:
 MD_MAX72XX mx = MD_MAX72XX(HARDWARE_TYPE, DATA_PIN_LED, CLK_PIN_LED, CS_PIN_LED, MAX_DEVICES);
-
 unsigned long delta_time;
 unsigned long previous_timestamp;
-<<<<<<< HEAD
-enum class LedState : uint8_t {S0, S1, S2, S3, S4, S5, S6, S7, S8};
-LedState state_led;
-
-=======
 unsigned long delta_time_animation;
 unsigned long previous_timestamp_animation;
 unsigned long delta_time_blink;
@@ -47,8 +32,9 @@ EmotionalState emotional_state;
 int blink_state;
 bool blinking;
 bool unblinking;
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
-
+bool is_scared = false;
+int vertical_offset_pupil = 0;
+int horizontal_offset_pupil = 0;
 const u_int8_t heart[8] = {
   0b00000000,  // Row 0: ........
   0b01100110,  // Row 1: .XX..XX.
@@ -71,28 +57,7 @@ const u_int8_t heart_mirror[8] = {
 };
 
 
-
 const u_int8_t sad_klein_links[8] = {
-<<<<<<< HEAD
-  0b00000000,
-  0b00000100,
-  0b00000110,
-  0b00001111,
-  0b00011011,
-  0b01111111,
-  0b00111110,
-  0b00011100
-};
-const u_int8_t sad_klein_rechts[8] = {
-  0b00000000,
-  0b00100000,
-  0b01100000,
-  0b11110000,
-  0b11011000,
-  0b11111110,
-  0b01111100,
-  0b00111000
-=======
 0b00111000,
 0b01111100,
 0b11111110,
@@ -111,9 +76,7 @@ const u_int8_t sad_klein_rechts[8] = {
 0b00000110,
 0b00000100,
 0b00000000,
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 };
-
 
 const u_int8_t sad_groot_links[8] = {
   0b00000100,
@@ -137,7 +100,6 @@ const u_int8_t sad_groot_rechts[8] = {
 };
 
 
-
 const u_int8_t boos_klein_links[8] = {
   0b00000000,
   0b00010000,
@@ -158,7 +120,6 @@ const u_int8_t boos_klein_rechts[8] = {
   0b01111100,
   0b00111000
 };
-
 
 const u_int8_t boos_groot_links[8] = {
   0b00100000,
@@ -184,7 +145,6 @@ const u_int8_t boos_groot_rechts[8] = {
 
 
 
-
 const u_int8_t neutraal_klein_links[8] = {
   0b00000000,
   0b00011100,
@@ -196,16 +156,6 @@ const u_int8_t neutraal_klein_links[8] = {
   0b00011100
 };
 const u_int8_t neutraal_klein_rechts[8] = {
-<<<<<<< HEAD
-  0b00000000,
-  0b00011100,
-  0b00111110,
-  0b01111111,
-  0b01111011,
-  0b01111111,
-  0b00111110,
-  0b00011100
-=======
 0b00111000,
 0b01111100,
 0b11111110,
@@ -214,9 +164,7 @@ const u_int8_t neutraal_klein_rechts[8] = {
 0b01111100,
 0b00111000,
 0b00000000,
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 };
-
 
 const u_int8_t neutraal_groot_links[8] = {
   0b00111100,
@@ -240,28 +188,7 @@ const u_int8_t neutraal_groot_rechts[8] = {
 };
 
 
-
 const u_int8_t hartoog_klein_links[8] = {
-<<<<<<< HEAD
-  0b00000000,
-  0b00011100,
-  0b00111110,
-  0b01101011,
-  0b01000001,
-  0b01100011,
-  0b00110110,
-  0b00011100
-};
-const u_int8_t hartoog_klein_rechts[8] = {
-  0b00000000,
-  0b00111000,
-  0b01111100,
-  0b11010110,
-  0b10000010,
-  0b11000110,
-  0b01101100,
-  0b00111000
-=======
 0b00000000,
 0b00111000,
 0b01101100,
@@ -280,9 +207,7 @@ const u_int8_t hartoog_klein_rechts[8] = {
 0b01100011,
 0b00110110,
 0b00011100,
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 };
-
 
 const u_int8_t hartoog_groot_links[8] = {
   0b00111100,
@@ -309,7 +234,6 @@ const u_int8_t hartoog_groot_rechts[8] = {
 
 
 
-
 };
 
 
@@ -326,13 +250,9 @@ const u_int8_t hartoog_groot_rechts[8] = {
 
 
 
-<<<<<<< HEAD
-=======
-
 
 
 // nieuwe oogjes, nu overzichtelijker hopelijk:
-
 // bij hartexpressie animatie die snel wisselt tussen hart_naar_links en hart_naar_rechts. dus ofwel linkeroog & rechteroog beide hart_naar_links, ofwel beide hart_naar_rechts
 const u_int8_t hart_naar_links[8] = {
 0b00000000,
@@ -354,7 +274,6 @@ const u_int8_t hart_naar_rechts[8] = {
 0b00001100,
 0b00000000,
 };
-
 
 
 
@@ -451,7 +370,6 @@ const u_int8_t neutraal[8] = {
   0b00111100
 };
 
-
 const u_int8_t blink_1[8] = {
   0b11111111,
   0b11111111,
@@ -506,6 +424,18 @@ const u_int8_t blink_5[8] = {
 
 
 
+const uint8_t normal_pupil[4] = {
+    0b0000,
+    0b0110,
+    0b0110,
+    0b0000,
+};
+const uint8_t scared_pupil[4] = {
+    0b0110,
+    0b1111,
+    0b1111,
+    0b0110,
+};
 
 
 
@@ -513,5 +443,5 @@ const u_int8_t blink_5[8] = {
 
 
 
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
+
 #endif

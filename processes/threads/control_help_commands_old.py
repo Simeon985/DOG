@@ -30,56 +30,38 @@ def move_forward(bus, velocity: int = 800, duration_s: float = 10.0) -> dict[str
     time.sleep(duration_s)
     bus.sync_write("Goal_Velocity", dict.fromkeys(FORWARD_MOTORS, 0), num_retry=5)
     return goal_velocities
-def move_straight_to_object(bus, distance: float, angle: float) -> dict[str, int]:
+def move_straight_to_object(bus, distance: float, angle: float) -> None:
     if distance < 0.1:
         print("Already at the object")
         return
-    #print(f"Moving straight to object at distance {distance} and angle {angle}")
+
     if(-30< angle< 30):
-        return move_in_direction(bus, "base_back_wheel","forward")
+        move_in_direction(bus, "base_back_wheel","forward")
     if(30 < angle < 90):
-        return move_in_direction(bus, "base_right_wheel","forward")
+        move_in_direction(bus, "base_right_wheel","forward")
     if(90 < angle <150):
-        return move_in_direction(bus, "base_left_wheel","backward")
+        move_in_direction(bus, "base_left_wheel","backward")
     if(150 < angle < 180 or -180 < angle < -150):
-        return move_in_direction(bus, "base_back_wheel","backward")
+        move_in_direction(bus, "base_back_wheel","backward")
     if(-150 < angle < -90):
-        return move_in_direction(bus, "base_right_wheel","backward")
+        move_in_direction(bus, "base_right_wheel","backward")
     if(-90 < angle < -30):
-        return move_in_direction(bus, "base_left_wheel","forward")
-def move_in_direction(bus, stationairy_wheel: str,direction: str, velocity: float = 800)-> dict[str, int]:
+        move_in_direction(bus, "base_left_wheel","forward")
+def move_in_direction(bus, stationairy_wheel: str,direction: str, velocity: float = 800)-> None:
     #3 omnidirectional wheels
     goal_velocities = {}
     factor= -1
-    #print("----",stationairy_wheel,"---",direction,"--- ")
-    if stationairy_wheel=="base_back_wheel":
-        factor=1
     if direction == "backward":
         velocity = -velocity
-    if stationairy_wheel == "base_back_wheel":
-        goal_velocities = {
-            "base_back_wheel": 0,
-            "base_right_wheel": velocity,
-            "base_left_wheel": -velocity
-        }
-    if stationairy_wheel == "base_right_wheel":
-        goal_velocities = {
-            "base_back_wheel": velocity,
-            "base_right_wheel": 0,
-            "base_left_wheel": -velocity
-        }
-    if stationairy_wheel == "base_left_wheel":
-        goal_velocities = {
-            "base_back_wheel": -velocity,
-            "base_right_wheel": velocity,
-            "base_left_wheel": 0
-        }
-    #print("Initial goal velocities: ", goal_velocities)
+    for motor in WHEEL_MOTORS:
+        if motor == stationairy_wheel:
+            goal_velocities[motor] = 0
+        else:
+            goal_velocities[motor] = factor * velocity
+            factor *= -1
     goal_velocities = aliassing_wheels(goal_velocities)
-    #print("Aliased goal velocities: ", goal_velocities)
-    return goal_velocities
     bus.sync_write("Goal_Velocity", goal_velocities)
-    #print(f"Moving {direction} with velocity {velocity} on {stationairy_wheel}")
+    print(f"Moving {direction} with velocity {velocity} on {stationairy_wheel}")
     # stop_event.wait()
 
 def aliassing_wheels(goal_velocities: dict[str, int]) -> dict[str, int]:
@@ -87,12 +69,11 @@ def aliassing_wheels(goal_velocities: dict[str, int]) -> dict[str, int]:
     aliased_goal_velocities = {}
     for wheel, velocity in goal_velocities.items():
         if wheel == "base_left_wheel":
-            aliased_goal_velocities["base_right_wheel"] = velocity
-        elif wheel == "base_right_wheel":
             aliased_goal_velocities["base_back_wheel"] = velocity
+        elif wheel == "base_right_wheel":
+            aliased_goal_velocities["base_right_wheel"] = velocity
         elif wheel == "base_back_wheel":
             aliased_goal_velocities["base_left_wheel"] = velocity
-    #print("Aliased goal velocities: ", aliased_goal_velocities)
     return aliased_goal_velocities
 
 
@@ -118,10 +99,10 @@ def rotate_platform(
     """
     #catch if stop is set
     if(stop == True):
-        print("Stopping rotation b")
+        print("Stopping rotation")
         bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
         return dict.fromkeys(WHEEL_MOTORS, 0)
-    #print("Setting rotation: ", direction, velocity_normalized)
+    print("Setting rotation: ", direction, velocity_normalized)
     #Determin actual motor velocity from normalized velocity and direction
     max_velocity = 400
     velocity = max_velocity * velocity_normalized
@@ -135,53 +116,13 @@ def rotate_platform(
         WHEEL_MOTORS[1]: velocity,
         WHEEL_MOTORS[2]: velocity,
     }
-    return goal_velocities
+
     bus.sync_write("Goal_Velocity", goal_velocities)
-    #print(f"Rotating {direction} with velocity {velocity} ({velocity_normalized} normalized)")
+    print(f"Rotating {direction} with velocity {velocity} ({velocity_normalized} normalized)")
     # stop_event.wait()
     # bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
     return goal_velocities
 
-def move_rot_and_straight(    bus,
-    stop: bool,
-    velocity_normalized: int,
-    direction: str ,
-    distance: float,
-    angle: float
-) -> None:
-    if(stop == True):
-        print("Stopping rotation e")
-        bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
-        return dict.fromkeys(WHEEL_MOTORS, 0)
-    straight_velocities={}
-    rotation_velocities={}
-    straight_velocities = move_straight_to_object(bus, distance, angle)
-    #print("Determining rotation velocities ...")
-    rotation_velocities = rotate_platform(bus, False, velocity_normalized, direction)
-
-    goal_velocities = {motor: straight_velocities.get(motor, 0) + rotation_velocities.get(motor, 0) for motor in WHEEL_MOTORS}
-    #print("Combined goal velocities: ", goal_velocities)
-    #print(f"Moving with combined straight and rotational velocities: {goal_velocities}")
-    bus.sync_write("Goal_Velocity", goal_velocities)
-
-def vierkant_maken(    bus,
-    stop: bool,
-    velocity_normalized: int,
-    direction: str ,
-    distance: float,
-    angle: float
-) -> None:
-    if(stop == True):
-        print("Stopping rotation a")
-        bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
-        return dict.fromkeys(WHEEL_MOTORS, 0)
-    straight_velocities={}
-    rotation_velocities={}
-    straight_velocities = move_straight_to_object(bus, distance, 0)
-    bus.sync_write("Goal_Velocity", straight_velocities)
-    time.sleep(2)
-    rotation_velocities = rotate_platform(bus, False, velocity_normalized, direction)
-    bus.sync_write("Goal_Velocity", rotation_velocities)
 
 def init_robot() -> None:
     print("Initializing robot...")

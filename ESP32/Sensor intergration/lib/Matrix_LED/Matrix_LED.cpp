@@ -1,68 +1,51 @@
 #include "Matrix_LED.h"
 
 Matrix_LED::Matrix_LED(void) {
-
-    //initialize the LED displays
     delta_time=0;
     previous_timestamp=0;
-<<<<<<< HEAD
+    delta_time_animation=0;                  // restored
+    previous_timestamp_animation=0;          // restored
     state_led = LedState::S0;
-=======
-    delta_time_animation=0;
-    previous_timestamp_animation=0;
-    state_led = LedState::S0;
-    emotional_state = EmotionalState::boos;
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
+    emotional_state = EmotionalState::hart;
     if (!mx.begin()){
-    Serial.println("\nMD_MAX72XX initialization failed");
+        Serial.println("\nMD_MAX72XX initialization failed");
     }
     Serial.println("\nMD_MAX72XX initialization succeeded");
     Serial.println("Timing flow\n");
     render();
-
 }
-void Matrix_LED::update(unsigned long current_time,float distance){
+
+void Matrix_LED::update(unsigned long current_time, float distance){
     delta_time = current_time - previous_timestamp;
-<<<<<<< HEAD
-=======
-    delta_time_animation = current_time - previous_timestamp_animation;
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
+    delta_time_animation = current_time - previous_timestamp_animation;  // restored
+
     if(2<distance && distance<10){
         if(delta_time>1000000){
             previous_timestamp=current_time;
             state_led = static_cast<LedState>((static_cast<uint8_t>(state_led) + 1) % 8);
-<<<<<<< HEAD
+            emotional_state = static_cast<EmotionalState>((static_cast<uint8_t>(emotional_state) + 1) % 4);
             render();
         }
     }
 
-}
-void Matrix_LED::render(void) {
-=======
-            emotional_state = static_cast<EmotionalState>((static_cast<uint8_t>(emotional_state) + 1) % 4);       
-            render();     
-        }
-    }
-    if (delta_time_animation>100000){
+    if (delta_time_animation>50000){        // restored: throttled animation
         previous_timestamp_animation=current_time;
         render();
     }
-    delta_time_blink = current_time - previous_timestamp_blink;
-    if(delta_time_blink>3000000){
-        previous_timestamp_blink=current_time;
-        blinking = true;
-        unblinking = false;
-        blink_state = 1;
-    }
 
-    
+    delta_time_blink = current_time - previous_timestamp_blink;
+    if(delta_time_blink > 5000000){
+        previous_timestamp_blink = current_time;
+        blinking = true;
+        unblinking = false;                  // restored
+        blink_state = 1;                     // restored
+    }
 }
 
-
+#include <cstdint>
 void rotate180(const uint8_t in[8], uint8_t out[8]) {
     for (int i = 0; i < 8; i++) {
         uint8_t b = in[7 - i];
-        // Reverse the bits in the byte
         b = ((b & 0xF0) >> 4) | ((b & 0x0F) << 4);
         b = ((b & 0xCC) >> 2) | ((b & 0x33) << 2);
         b = ((b & 0xAA) >> 1) | ((b & 0x55) << 1);
@@ -78,20 +61,35 @@ void mirrorVertical(const uint8_t in[8], uint8_t out[8]) {
         out[i] = b;
     }
 }
+void generatePupil(const int vertical_offset, const int horizontal_offset, const bool scared, uint8_t out[8]){
+    for (int i = 0; i < 8; i++) {
+        out[i] = 0x00;
+    }
+    int start_row = horizontal_offset + 1; // door de rotatie die hierna gebeurt is dit de horizontal offset
+    int bit_shift = 3 - vertical_offset;
+    for (int i = 0; i < 4; i++) {
+        if (scared){
+            out[start_row + i] = scared_pupil[i] << bit_shift;
+        } else {
+            out[start_row + i] = normal_pupil[i] << bit_shift;
+        }
+    }
+    for (int i = 0; i < 8; i++) {
+        out[i] = ~out[i];
+    }
+}
 
 bool random_bool() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
     static std::uniform_int_distribution<> dist(0, 1);
-    
     return dist(gen) == 1;
 }
 
-
 void Matrix_LED::render(void) {
-    uint8_t linkeroog[8];
-    uint8_t rechteroog_unrotated[8];
-    uint8_t rechteroog[8];
+    static uint8_t linkeroog[8];
+    static uint8_t rechteroog_unrotated[8];
+    static uint8_t rechteroog[8];
     switch (emotional_state) {
         case EmotionalState::boos:
             if (random_bool()){
@@ -136,12 +134,21 @@ void Matrix_LED::render(void) {
             static uint8_t pupil_mask[8];
             static uint8_t blink_mask[8];
 
+            if (rand() < RAND_MAX / 10){
+                if (random_bool()){
+                    horizontal_offset_pupil = max(0,horizontal_offset_pupil-1);
+                } else {
+                    horizontal_offset_pupil = min(2,horizontal_offset_pupil+1);
+                }
+            } else if (rand() < RAND_MAX / 30){
+                if (random_bool()){
+                    vertical_offset_pupil = max(0,vertical_offset_pupil-1);
+                } else {
+                    vertical_offset_pupil = min(2,vertical_offset_pupil+1);
+                }
+            }
 
-
-
-            //switch(pupil_direction){memcpy(pupil_mask, ,);}
-            memcpy(pupil_mask, neutraal,8); // tijdelijke plaatsvervanger tot pupil-logica geimplementeerd is
-
+            generatePupil(vertical_offset_pupil, horizontal_offset_pupil, is_scared, pupil_mask);
 
             if (blinking){
                 if (blink_state == 5){
@@ -158,25 +165,14 @@ void Matrix_LED::render(void) {
                     blink_state -= 1;
                 }
             }
-
-            switch(blink_state){                
-                case 1:
-                    memcpy(blink_mask,blink_1,8);
-                    break;
-                case 2:
-                    memcpy(blink_mask,blink_2,8);
-                    break;
-                case 3:
-                    memcpy(blink_mask,blink_3,8);
-                    break;
-                case 4:
-                    memcpy(blink_mask,blink_4,8);
-                    break;
-                case 5:
-                    memcpy(blink_mask,blink_5,8);
-                    break;
+            switch(blink_state){
+                case 1: memcpy(blink_mask,blink_1,8); break;
+                case 2: memcpy(blink_mask,blink_2,8); break;
+                case 3: memcpy(blink_mask,blink_3,8); break;
+                case 4: memcpy(blink_mask,blink_4,8); break;
+                case 5: memcpy(blink_mask,blink_5,8); break;
             }
-            
+
             for (int i = 0; i < 8; i++) {
                 linkeroog[i] = neutraal[i] & pupil_mask[i] & blink_mask[i];
                 rechteroog_unrotated[i] = neutraal[i] & pupil_mask[i] & blink_mask[i];
@@ -190,10 +186,7 @@ void Matrix_LED::render(void) {
     }
 }
 
-
 void Matrix_LED::render_old(void) {
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
-
     for (u_int8_t row = 0; row < 8; row++) {
         switch (state_led) {
             case LedState::S0:
@@ -228,6 +221,6 @@ void Matrix_LED::render_old(void) {
                 mx.setColumn(row, hartoog_groot_links[row]);
                 mx.setColumn(row+8, hartoog_groot_rechts[row]);
                 break;
-            }
+        }
     }
 }

@@ -8,28 +8,6 @@ static void IRAM_ATTR echoISR_wrapper(void* arg) {
     sensor->echoISR();
 }
 
-<<<<<<< HEAD
-bool Ultrasone_sensor::begin() {
-
-  pinMode(trig, OUTPUT);
-  pinMode(echo, INPUT);
-
-  digitalWrite(trig, LOW);
-  delay(50);   // let sensor settle
-
-  // test measurement
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-
-  long testDuration = pulseIn(echo, HIGH, 30000); // 30ms timeout
-
-  if (testDuration == 0) {
-    return false;   // no echo -> problem
-  }
-
-  return true;
-=======
 void Ultrasone_sensor::echoISR() {
     if (digitalRead(echo)) {
         _echoStart = micros();          // rising edge
@@ -93,5 +71,4 @@ bool Ultrasone_sensor::begin() {
     trigger();
     delay(30);
     return (_echoReady);               // begin() returns true if echo came back
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
 }

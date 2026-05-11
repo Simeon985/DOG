@@ -23,6 +23,7 @@ from lerobot.robots.so_follower import SO100Follower, SO100FollowerConfig
 from lerobot.utils.robot_utils import precise_sleep
 
 from coordinates_from_picture import get_coordinates_from_picture
+from coordinates_from_picture import get_M_and_radius_from_picture
 from coordinates_from_picture import get_coordinates_from_picture_2
 
 FPS = 30
@@ -42,6 +43,14 @@ VER_DISTANCE_MOTOR_4_CAM = 6 + math.cos(math.radians(ANGLE_CAM_WRT_GRIPPER))*2.3
 DISTANCE_MOTOR_4_GRIPPER = 17
 START_HEIGHT_TO_GRIP = 20
 
+
+IK_JOINT_TRIM_DEG = {
+    "shoulder_pan": 0.0,
+    "shoulder_lift": 0.0,
+    "elbow_flex": 0.0,
+    "wrist_flex": 0.0,
+}
+
 # Set the target motor positions here.
 # Arm joints use degrees because `use_degrees=True`.
 # Gripper uses its native normalized range [0, 100].
@@ -53,6 +62,34 @@ TARGET_ANGLES = {
     "wrist_roll": 0, # ID 5
     "gripper": 2, # ID 6
 }
+
+def gstreamer_pipeline(
+    sensor_id=0,
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=2,
+):
+    return (
+        "nvarguscamerasrc sensor-id=%d ! "
+        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! "
+        "appsink max-buffers=1 drop=true"  # ← changed from just "appsink"
+        % (
+            sensor_id,
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
 
 def coordinates_to_angles(x,y,a1,a2):
     """ zie https://robotacademy.net.au/lesson/inverse-kinematics-for-a-2-joint-robot-arm-using-geometry/ voor formule """
@@ -89,6 +126,10 @@ def coordinates_3D_to_angles(x,y,z):
 
 def move_to_xyz(x,y,z,robot,gripping=False,view_mode=False):
     shoulder_pan, shoulder_lift, elbow_flex, wrist_flex = coordinates_3D_to_angles(x=x,y=y,z=z)
+    shoulder_pan += IK_JOINT_TRIM_DEG["shoulder_pan"]
+    shoulder_lift += IK_JOINT_TRIM_DEG["shoulder_lift"]
+    elbow_flex += IK_JOINT_TRIM_DEG["elbow_flex"]
+    wrist_flex += IK_JOINT_TRIM_DEG["wrist_flex"]
     if gripping == False:
         gripper = 90
     else:
@@ -323,7 +364,7 @@ def move_to_target_angles(robot: SO100Follower, target_angles: dict[str, float])
     current_joints = {name: float(current_obs[f"{name}.pos"]) for name in motor_names}
     target_joints = {name: float(target_angles[name]) for name in motor_names}
     joint_limits = get_calibrated_joint_limits(robot, motor_names)
-    validate_target_joints(target_joints, joint_limits, motor_names)
+    # validate_target_joints(target_joints, joint_limits, motor_names)
     
     motor_names = list(robot.bus.motors.keys())
 
@@ -345,10 +386,10 @@ def move_to_target_angles(robot: SO100Follower, target_angles: dict[str, float])
         precise_sleep(max(1.0 / FPS, STEP_DELAY_S))
 
 
-    print(f"Current joints: {current_joints}")
-    print(f"Target joints:  {target_joints}")
-    print(f"Joint limits:   {joint_limits}")
-    print("Move complete.")
+    # print(f"Current joints: {current_joints}")
+    # print(f"Target joints:  {target_joints}")
+    # print(f"Joint limits:   {joint_limits}")
+    # print("Move complete.")
 
 
 def print_current_angles(robot: SO100Follower):
@@ -363,12 +404,12 @@ def gradually_get_to_ball(start_x,start_y,start_z,robot):
     for i in range(1,5):
         cam_x, cam_y, cam_z = get_coordinates_from_picture()
         cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
-        M = get_trans_matrix_cam(start_x,start_y,start_z,0)
+        M = get_trans_matrix_cam(arm_x, arm_y, arm_z,0)
         coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
         x,y,z = coordinates_wrt_motor_1[0], coordinates_wrt_motor_1[1], coordinates_wrt_motor_1[2]
         print("COORINDATES WRT MOTOR 1")
         print(coordinates_wrt_motor_1)
-        arm_x, arm_y, arm_z = x,y,START_HEIGHT_TO_GRIP - (START_HEIGHT_TO_GRIP-(z+DISTANCE_MOTOR_4_GRIPPER)/i)
+        arm_x, arm_y, arm_z = x,y,START_HEIGHT_TO_GRIP - ((START_HEIGHT_TO_GRIP-(z+DISTANCE_MOTOR_4_GRIPPER))*i/5)
         move_to_xyz(arm_x, arm_y, arm_z,robot)
     
     move_to_xyz(x,y,z+DISTANCE_MOTOR_4_GRIPPER,robot)
@@ -398,27 +439,41 @@ def main():
 
 
     try:
-        print_current_angles(robot)
-        start_x,start_y,start_z = 0,20,20
-        move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot)
-        time.sleep(1)
+        # print_current_angles(robot)
+        start_x,start_y,start_z = 0,15,25
+        move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
+
 
         #gradually_get_to_ball(start_x,start_y,start_z,robot)
 
 
         # trek foto met camera => coordinaten in camera-assenstelsel
         cam_x, cam_y, cam_z = get_coordinates_from_picture()
+        #cam_x, cam_y, cam_z = 9.6,3.33,-20
         print("COORINDATES WRT CAM")
         print(cam_x, cam_y, cam_z)
+        
         cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
         M = get_trans_matrix_cam(start_x,start_y,start_z,0)
         coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
+        #coordinates_wrt_motor_1 = np.array([5,10,-15])
         print("COORINDATES WRT MOTOR 1")
         print(coordinates_wrt_motor_1)
+
+
+        # cap = cv2.VideoCapture(gstreamer_pipeline())
+        # while True:
+        #     ret, frame = cap.read()
+        #     if not ret:
+        #         break
+            
+            
+
         grab_at_coordinates(robot, coordinates_wrt_motor_1[0], coordinates_wrt_motor_1[1], coordinates_wrt_motor_1[2])
 
-    except:
+    except Exception as e:
         print("ERROR!")
+        print(e)
     finally:
         time.sleep(1)
         reset_arm(robot)
@@ -429,6 +484,8 @@ def main():
     #move_vertically(robot)
     # print_current_angles(robot)
     time.sleep(1)
+
+
 
 
 if __name__ == "__main__":

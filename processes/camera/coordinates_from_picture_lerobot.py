@@ -75,7 +75,7 @@ def get_M_and_radius_from_frame(frame: "np.ndarray") -> tuple[float, float, floa
 		raise RuntimeError("Frame is None")
 
 	# Ultralytics can take numpy arrays directly. Keep it in-memory for realtime performance.
-	results = model.predict(frame, verbose=False )#, device = 0)
+	results = model.predict(frame, verbose=False, device = 0)
 	if not results:
 		raise RuntimeError("Model returned no results")
 	result = results[0]

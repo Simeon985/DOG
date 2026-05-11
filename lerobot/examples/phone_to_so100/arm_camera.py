@@ -21,11 +21,10 @@ import numpy as np
 
 CALIBRATION_FILE = Path(os.environ["ARM_CAMERA_CALIBRATION_FILE"])
 
-
 def csi_pipeline():
     return (
         "nvarguscamerasrc sensor-id=0 wbmode=0 awblock=true ! "
-        "video/x-raw(memory:NVMM),width=1280,height=720,framerate=30/1 ! "
+        "video/x-raw(memory:NVMM),width=640,height=360,framerate=30/1 ! "
         "nvvidconv ! "
         "video/x-raw,format=BGRx ! "
         "videoconvert ! "

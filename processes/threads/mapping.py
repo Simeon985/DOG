@@ -33,7 +33,7 @@ class PeripheralEstimator:
         stop_signal = the threading.Event() of the main thread
         """
         while not stop_signal.is_set():
-            print("beginning of mapping thread loop")
+            #print("beginning of mapping thread loop")
             #request the sensor data
             get_sensor_data(ser, data)
 
@@ -46,6 +46,7 @@ class PeripheralEstimator:
             if data[5] > 10: #max height
                with self.lock:
                    self.brake = True
+            #print("data: ", data)
 
             # Convert heading: in the original code they use -raw_orientation_x
             p_a = math.radians(data[0])   # this becomes the current orientation angle
@@ -64,6 +65,12 @@ class PeripheralEstimator:
             v_x = (v_x1 + v_x2) / 2.0
             v_y = (v_y1 + v_y2) / 2.0
 
+            # zorg dat als heading 0 is, rechte beweging vooruit de y-richting is
+            # zodat het in lijn is met de andere 'robot frame' conventies
+            v_x, v_y = -v_y, v_x
+            # v_x en v_y zijn nu dus correct in het robot-frame,
+            # dx en dy zetten dit dan om naar het world frame
+
             # Calculate displacements first
             dx = (v_x * math.cos(p_a) - v_y * math.sin(p_a)) * dt
             dy = (v_x * math.sin(p_a) + v_y * math.cos(p_a)) * dt
@@ -72,11 +79,13 @@ class PeripheralEstimator:
             with self.lock:
                 self.pose[0] += dx
                 self.pose[1] += dy
-                self.history.append((self.pose[0], self.pose[1], data[0], self.history[-1][-1] + dt))
-            # print(data)
-            # print(f"history: {self.history[-1]}")
-            time.sleep(0.1)
+
+                #self.history.append((self.pose[0], self.pose[1], data[0], self.history[-1][-1] + dt))
+                self.history.append((float(self.pose[0]), float(self.pose[1]), float(data[0]), float(self.history[-1][-1] + dt)))
+            #print(f"history: {self.history[-1]}")
+            time.sleep(0.01)
         print("mapping thread closing")
+
 
     def start_mission(self):
         self.mission = True

@@ -1,4 +1,5 @@
 from processes.camera.utils import *
+from coordinates_from_picture_lerobot import *
 
 
 TEMP_MATCH_THRESHOLD = 0.4
@@ -61,8 +62,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     print(f"Loaded {len(known_faces)} known faces")
     print("Starting webcam...")
 
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+    cap = cv2.VideoCapture(gstreamer_pipeline)
     cam_info_faces = initialize_coordinate_detection_faces()
 
     M = load_matrix()
@@ -72,6 +72,25 @@ def camera_process(shared_array: SynchronizedArray) -> None:
 
     temp_faces = {}
     pending_faces = {}
+
+    # robot_config = SO100FollowerConfig(port="/dev/ttyACM0", id="dog", use_degrees=True)
+    # robot = SO100Follower(robot_config)
+    # robot.connect()
+
+    # if not robot.is_connected:
+    #     raise ValueError("Robot is not connected!")
+
+
+    # try:
+    #     # print_current_angles(robot)
+    #     start_x,start_y,start_z = 0,15,25
+    #     move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
+    # except Exception as e:
+    #     print("ERROR!")
+    #     print(e)
+    # finally:
+    #     time.sleep(1)
+    #     reset_arm(robot)
 
     while True:
         ret, frame = cap.read()
@@ -206,7 +225,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
             print("no face detected")
 
 
-
+    
 
         # for face in faces:
         #     emb = face.normed_embedding
@@ -245,9 +264,59 @@ def camera_process(shared_array: SynchronizedArray) -> None:
         score = sharpness_score(frame, face.bbox)
         cv2.putText(frame, f"sharp: {score:.0f}", (box[0], box[3] + 20),
             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
-        cv2.imshow("Face Recognition", frame) 
+        #cv2.imshow("Face Recognition", frame) 
+
+
+        # robot_config = SO100FollowerConfig(port="/dev/ttyACM0", id="dog", use_degrees=True)
+        # robot = SO100Follower(robot_config)
+        # robot.connect()
+
+        # if not robot.is_connected:
+        #     raise ValueError("Robot is not connected!")
+
+
+        # try:
+        #     # print_current_angles(robot)
+        #     start_x,start_y,start_z = 0,15,25
+        #     move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
+
+
+        #     #gradually_get_to_ball(start_x,start_y,start_z,robot)
+
+
+        #     # trek foto met camera => coordinaten in camera-assenstelsel
+        #     cam_x, cam_y, cam_z = get_coordinates_from_picture()
+        #     #cam_x, cam_y, cam_z = 9.6,3.33,-20
+        #     print("COORINDATES WRT CAM")
+        #     print(cam_x, cam_y, cam_z)
+            
+        #     cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
+        #     M = get_trans_matrix_cam(start_x,start_y,start_z,0)
+        #     coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
+        #     #coordinates_wrt_motor_1 = np.array([5,10,-15])
+        #     print("COORINDATES WRT MOTOR 1")
+        #     print(coordinates_wrt_motor_1)
+        #     grab_at_coordinates(robot, coordinates_wrt_motor_1[0], coordinates_wrt_motor_1[1], coordinates_wrt_motor_1[2])
+
+        # except Exception as e:
+        #     print("ERROR!")
+        #     print(e)
+        # finally:
+        #     time.sleep(1)
+        #     reset_arm(robot)
+
+        # # inspect_floor_motors(robot)
+        # # grab_ball(robot)
+        # #test_coordinates_to_angles(robot)
+        # #move_vertically(robot)
+        # # print_current_angles(robot)
+        # time.sleep(1)
+
+
         if cv2.waitKey(1) == 27:  # ESC to exit
             break
 
     cap.release()
     cv2.destroyAllWindows()
+
+camera_process([0.0] * 11)

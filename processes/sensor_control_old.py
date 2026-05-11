@@ -11,19 +11,12 @@ from processes.threads.control import *
 from processes.threads.control_help_commands import *
 
 # global ani
-robot = None
-est= None
-def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desired_angle: int=00) -> None:
+def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desired_angle: int=120) -> None:
     """Process running the control and sensor threads."""
     ser = initialize_esp()
-    #old calibration
-    #scale_1, scale_2, angle_1, angle_2 = 5.963691140961605e-05, 5.8920022248807314e-05, -46.31328914736247, 117.43771136252667
-    #newer calibration
-    # scale_1, scale_2, angle_1, angle_2 = 6.096668242094706e-05, 6.370891224635226e-05, -43.696952942756894, 117.94623106591115
-    #calibration on floor airo lab
-    scale_1, scale_2, angle_1, angle_2 = 5.803293347508479e-05, 5.973355990292423e-05, -43.941917924421915, 120.27700785358547
+    scale_1, scale_2, angle_1, angle_2 = 5.963691140961605e-05, 5.8920022248807314e-05, -46.31328914736247, 117.43771136252667
     data = np.zeros(11)
-    global est
+
 
     if estimator == "Peripheral":
         est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)
@@ -43,11 +36,10 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desi
     else:
         direction = "right"
 
-
     # t3 = threading.Thread(target=init_robot, args=(stop_event,direction))
     t1.start()
     t2.start()
-    time.sleep(4)  # Ensure the control thread is running before starting the mapping thread
+    time.sleep(2)  # Ensure the control thread is running before starting the mapping thread
     # t3.start()
     robot=init_robot()
     start_angle = est.history[10][2]
@@ -57,32 +49,18 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desi
     try:
         while(1):
             current_angle = est.history[-1][2]
+            #print("current position 's and IMu: ", est.history[-1][0]," ",est.history[-1][1]," ",(current_angle-start_angle)%360)
             error = (current_angle- start_angle - desired_angle) % 360
             if error > 180:
                 error -= 360
             rotation_velocity_normalized=min(20,abs(error))*0.05
             direction = "left" if error <0 else "right"
-            #print("IMU: now, error, begin: ", current_angle, error ,start_angle)
-
+            print("IMU: now, error, begin: ", current_angle, error ,start_angle)
             #rotate_platform(robot.bus, False, rotation_velocity_normalized, direction)
-            move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, 1, error)
-            #vierkant_maken(robot.bus, False, rotation_velocity_normalized, direction, 1, error)
-            #print("-------------------------------------------------------------")
-
-            # while not (-1 <error < 1):
-            #     current_angle = est.history[-1][2]
-            #     error = (current_angle- start_angle - desired_angle) % 360
-            #     if error > 180:
-            #         error -= 360
-            #     #print("error: ", error)
-            #     continue
-            # start_angle= current_angle
-            # continue
-
-
+            move_straight_to_object(robot.bus, 1, -60)
+            print("-------------------------------------------------------------")
+            #if ((current_angle-start_angle)%360>desired_angle and (current_angle-start_angle)%360 < upper_lim_desired_angle) or ((current_angle-start_angle)%360<360-desired_angle and (current_angle-start_angle)%360 > 360-upper_lim_desired_angle):
             if (-1 <error < 2):
-                continue
-                print("Desired angle reached. Stopping the robot.")
                 rotate_platform(robot.bus, True)
                 stop_event.set()
                 break
@@ -90,20 +68,46 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desi
 
             time.sleep(0.1)
     except KeyboardInterrupt:
-        print("\nKeyboardInterrupt in sensor_control_process")
-        print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
-        move_rot_and_straight(robot.bus, True, 0, "", 0, 0)
-        stop_event.set()
-        print("Stopping the robot and exiting sensor_control_process...")
-    finally:
         print("\nKeyboardInterrupt")
-        print(est.history)
         stop_event.set()
         rotate_platform(robot.bus, True)
-        t1.join()
-        t2.join()
-#sensor_control_process("Peripheral", [0.0] * 11)
-#overriding the terminate in process to stop the motion
-def end():
-    print("Terminating process and stopping the robot.")
-    rotate_platform(robot.bus, True)  # Stop the robot
+    finally:
+        print("\nKeyboardInterrupt")
+        stop_event.set()
+        rotate_platform(robot.bus, True)
+    t1.join()
+    t2.join()
+
+    # fig, ax = plt.subplots()
+    # line, = ax.plot([], [], 'b-')
+
+    # def update(_):
+    #     with lock:
+    #         if not est.history:
+    #             return line,
+    #         xs = [p[0] for p in est.history]
+    #         ys = [p[1] for p in est.history]
+    #     line.set_data(xs, ys)
+    #     ax.relim()
+    #     ax.autoscale_view()
+    #     return line,
+
+    # ani = FuncAnimation(fig, update, frames=itertools.count(),
+    #                     interval=100, blit=False, cache_frame_data=False)
+    # plt.show()
+
+    # try:
+    #     while True:
+    #         time.sleep(0.1)
+    # except KeyboardInterrupt:
+    #     stop_event.set()
+
+    # t1.join()
+    # t2.join()
+    # init_robot()
+
+    # print(f"counter  = {test_counter}")
+    # print(f"x = {est.pose[0]}, y = {est.pose[1]}")
+    # print(f"history  = {est.history[-5]}")
+    # print("sensor/control process closing")
+sensor_control_process("Peripheral", [0.0] * 11)

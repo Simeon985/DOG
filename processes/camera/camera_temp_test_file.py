@@ -1,6 +1,7 @@
 from utils import *
 import uuid
 from skimage.exposure import match_histograms
+import time
 
 
 TEMP_MATCH_THRESHOLD = 0.4
@@ -37,15 +38,15 @@ def correct_face_region(frame: np.ndarray, bbox: np.ndarray, references: list) -
                 best_ref = ref
         face = match_histograms(face, best_ref, channel_axis=-1).astype(np.uint8)
 
-    # Step 2: Gray world to fix any residual per-frame color cast
-    mean = face.mean(axis=(0, 1))
-    scale = mean.mean() / (mean + 1e-6)
-    face = np.clip(face * scale, 0, 255).astype(np.uint8)
+    # # Step 2: Gray world to fix any residual per-frame color cast
+    # mean = face.mean(axis=(0, 1))
+    # scale = mean.mean() / (mean + 1e-6)
+    # face = np.clip(face * scale, 0, 255).astype(np.uint8)
 
-    # Step 3: CLAHE for local contrast
-    lab = cv2.cvtColor(face, cv2.COLOR_BGR2LAB)
-    lab[:, :, 0] = clahe.apply(lab[:, :, 0])
-    face = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
+    # # Step 3: CLAHE for local contrast
+    # lab = cv2.cvtColor(face, cv2.COLOR_BGR2LAB)
+    # lab[:, :, 0] = clahe.apply(lab[:, :, 0])
+    # face = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
 
     # Write corrected region back into frame
     frame[y1:y2, x1:x2] = face
@@ -403,5 +404,51 @@ def camera_process_2() -> None:
     for i in range(len(emb)-1):
         sim = float(np.dot(emb[i] , emb[i+1]))
         print(sim)
+
+
+def deform_stream():
+    references_dir = 'AI/images/references'
+    original_stream_dir = 'debug/captured_stream'
+    deformed_stream_dir = 'debug/deformed_stream'
+
+    # Load reference face crops for histogram matching
+    # These should be face crops (not full frames) taken under ideal lighting
+    references = []
+    os.makedirs(references_dir, exist_ok=True)
+    for filename in os.listdir(references_dir):
+        if filename.endswith(('.jpg', '.png')):
+            ref = cv2.imread(os.path.join(references_dir, filename))
+            if ref is not None:
+                faces = app.get(ref)
+                for face in faces:
+                    x1, y1, x2, y2 = face.bbox
+                    references.append(ref[x1 : y1, x2: y2])
+                print(f"Loaded reference: {filename}")
+    print(f"Loaded {len(references)} reference images")
+
+    stream = []
+    os.makedirs(original_stream_dir, exist_ok=True)
+    for filename in os.listdir(original_stream_dir):
+        if filename.endswith(('.jpg', '.png')):
+            ref = cv2.imread(os.path.join(original_stream_dir, filename))
+            if ref is not None:
+                faces = app.get(ref)
+                for face in faces:
+                    x1, y1, x2, y2 = face.bbox
+                    stream.append(ref[x1 : y1, x2: y2])
+                print(f"Loaded reference: {filename}")
+    print(f"Loaded {len(stream)} stream images")
+
+    for frame in streams:
+
+        faces = app.get(frame)
+            for face in faces:
+                frame = correct_face_region(frame, bbox, references)
+                os.makedirs(deformed_stream_dir, exist_ok=True)
+                im_path = os.path.join(save_path, f"ref_{time.time()}.png")
+                cv2.imwrite(im_path, frame)
+
+
+
 
 camera_process_2()

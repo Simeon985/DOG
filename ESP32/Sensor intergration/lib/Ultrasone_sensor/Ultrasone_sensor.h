@@ -6,14 +6,11 @@ class Ultrasone_sensor{
          : trig{trigPin}, echo{echoPin}{}
         void read_distance(float &distance);
         bool begin();
-<<<<<<< HEAD
-=======
         void IRAM_ATTR echoISR();  // called by static wrapper
         void trigger();
         void update();
         float get_distance();      // non-blocking read
         unsigned long lastTrigger = 0;
->>>>>>> e48cb9e3ee88c59a8769192c9f5b5818bb4a5d08
     private:
         uint8_t trig;
         uint8_t echo;

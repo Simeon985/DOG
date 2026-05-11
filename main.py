@@ -2,7 +2,8 @@ import time
 import argparse
 from multiprocessing import Process, Array
 from processes.sensor_control import sensor_control_process
-from processes.camera import camera_process
+from processes.sensor_control import end
+# from processes.camera import camera_process
 import numpy as np
 
 
@@ -12,26 +13,31 @@ def main(estimator: str) -> None:
     start = time.time()
     timeout = 20
 
-    p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control")
-    p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
+    p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control", daemon = True)
+    # set terminate target function on process
+    #p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
 
-    p_camera.start()
-    print("initializing camera")
-    while np.isclose(shared_array[10],0):
-        if time.time() - start > timeout:
-            break
-        time.sleep(0.1)
-    print("camera initialized")
+    # p_camera.start()
+    # print("initializing camera")
+    # while np.isclose(shared_array[10],0):
+    #     if time.time() - start > timeout:
+    #         break
+    #     time.sleep(0.1)
+    # print("camera initialized")
+
     p_sensor.start()
 
     try:
         while True:
             time.sleep(0.1)
     except KeyboardInterrupt:
+        print("Trying to shut down")
+        end()
+        #rotate_platform(p_sensor.robot.bus, True)
         print("Shutting down...")
 
     p_sensor.join()
-    p_camera.join()
+    # p_camera.join()
     print("All processes closed")
 
 

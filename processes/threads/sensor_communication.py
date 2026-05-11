@@ -1,6 +1,7 @@
 import serial
 from serial.tools.list_ports import comports
 import numpy as np
+import time
 
 def initialize_esp(baudrate=921600):
     #standard Espressif vendor id's
@@ -17,7 +18,9 @@ def initialize_esp(baudrate=921600):
         #connect to the correct device name (e.g. /dev/ttyUSB0)
         if p.device == "/dev/ttyUSB0":
             print(f"Connecting to ESP on {p.device} with baudrate {baudrate}")
-            ser = serial.Serial(p.device, baudrate=baudrate)
+            ser = serial.Serial(p.device, baudrate=baudrate, timeout = 0.1)
+            ser.reset_input_buffer()
+            ser.write(b'r')
             ser.read()  # wait for connection
             return ser
 
@@ -29,10 +32,17 @@ def get_sensor_data(ser: serial.Serial, data_array):
     [heading, gyro, lin_acc_x, lin_acc_y, US_1_distance, US_2_distance,  OFS_1_X, OFS_1_Y, OFS_2_X, OFS_2_Y, elapsed time]
     """
     ser.reset_input_buffer()
+    ser.write(b'r')
+    ser.flush()
+    time.sleep(0.2)  # wait for the data to be sent
+    # wait when data is available
+    # while ser.in_waiting == 0:
+    #     time.sleep(0.01)
     data = ser.readline()
     data_list = data.split()
-    print(data_list)
-    if len(data_list) != 11:
+    if len(data_list) == 11:
+        print(float(data_list[0])," ",float(data_list[1])," ",float(data_list[2])," ",float(data_list[3])," ",float(data_list[4])," ",float(data_list[5])," ",int(data_list[6])," ",int(data_list[7])," ",int(data_list[8])," ",int(data_list[9])," ",float(data_list[10]))
+    else:
         print("Error reading line, expected 11 elements but got ", len(data_list))
         return
 
