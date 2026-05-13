@@ -3,9 +3,12 @@ import argparse
 from multiprocessing import Process, Array
 from processes.sensor_control import sensor_control_process
 from processes.sensor_control import end
+from states import opstart, search_loop, drive_to_ball
 # from processes.camera import camera_process
 import numpy as np
 
+# States =
+state = "START"
 
 def main(estimator: str) -> None:
     shared_array = Array('d', [0.0] * 11)
@@ -28,7 +31,34 @@ def main(estimator: str) -> None:
     p_sensor.start()
 
     try:
+        opstart()
         while True:
+            # Main loop
+            face = search_loop(subject="ball_air")
+
+            # x,y,z in centimeters; x is left/right, y is forward, z is vertical
+            ball = search_loop(subject="ball_floor")
+            while ball is not None:
+                x, y, z = ball
+                moved = drive_to_ball(x, y, step_cm=50.0)
+                if not moved:
+                    break
+                ball = search_loop(subject="ball_floor")
+            
+            grab_ball()
+
+            person = search_loop(subject="person")
+            while person is not None:
+                x, y, z = ball
+                moved = drive_to_ball(x, y, step_cm=50.0)
+                if not moved:
+                    break
+                person = search_loop(subject="person")
+                        
+            # Rijd terug
+            x,y,z = search_loop(subject="person")
+
+
             time.sleep(0.1)
     except KeyboardInterrupt:
         print("Trying to shut down")
