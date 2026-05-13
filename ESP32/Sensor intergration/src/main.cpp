@@ -90,6 +90,9 @@ int16_t deltaX1, deltaY1;
 int16_t deltaX2, deltaY2;
 unsigned long previous_time = micros();
 unsigned long current_time;
+unsigned long previous_time_animation = micros();
+unsigned long current_time_animation;
+
 float distance1=0;
 float distance2=0;
 imu::Vector<3> euler;
@@ -126,16 +129,16 @@ void loop() {
 
 
   // updating animation
-  animation.update(current_time,distance1);
+  animation.update(current_time_animation,distance1);
   //}
     //print everything in one line
 
 
-
-
-  // if (Serial.available() > 0) {
-  //     char cmd = Serial.read();
-  //     if (cmd == 'r'){
+  current_time_animation = micros();
+  previous_time_animation = current_time_animation;
+  if (Serial.available() > 0) {
+      char cmd = Serial.read();
+      if (cmd == 'r'){
           id++;
 
 
@@ -171,8 +174,8 @@ void loop() {
 
 
 
-  //     }
-  // }
+      }
+  }
 
 
 }

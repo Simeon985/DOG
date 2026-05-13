@@ -25,7 +25,8 @@ from lerobot.utils.robot_utils import precise_sleep
 from coordinates_from_picture import get_coordinates_from_picture
 from coordinates_from_picture import get_M_and_radius_from_picture
 from coordinates_from_picture import get_coordinates_from_picture_2
-from coordinates_from_picture import *
+from coordinates_from_picture import get_M_and_radius_from_frame
+from coordinates_from_picture import get_coordinates_from_frame
 import json
 import os
 import sys
@@ -442,12 +443,205 @@ def move_to_aRz(a,R,z,robot,gripping=False,view_mode=False):
     y=R*math.sin(a)
     move_to_xyz(x,y,z,robot,gripping,view_mode)
 
+
+#van Andreas: afblijven!
+CALIBRATION_FILE = Path(__file__).parent / "color_calibration.json"
+
+def load_matrix():
+    if not CALIBRATION_FILE.exists():
+        print(f"calibration file not found!")
+        return None
+    with open(CALIBRATION_FILE, "r") as f:
+        print(f"calibration file found!")
+        return np.array(json.load(f), dtype=np.float32)
+
+import time
+
+def apply_matrix(image, M):
+    img = image.astype(np.float32) / 255.0
+    img = np.dot(img, M)
+    img = np.clip(img, 0, 1)
+    return (img * 255).astype(np.uint8)
+
+# class PID:
+#     def __init__(self, Kp, Ki, Kd, setpoint=0.0, 
+#                  integral_limit=None, output_limit=None):
+#         self.Kp = Kp
+#         self.Ki = Ki
+#         self.Kd = Kd
+#         self.setpoint = setpoint
+#         self.integral_limit = integral_limit  # anti-windup clamp
+#         self.output_limit = output_limit      # clamp total output
+
+#         self._integral = 0.0
+#         self._prev_error = None
+#         self._prev_time = None
+
+#     def reset(self):
+#         self._integral = 0.0
+#         self._prev_error = None
+#         self._prev_time = None
+
+#     def update(self, measurement: float) -> float:
+#         now = time.monotonic()
+#         error = self.setpoint - measurement
+
+#         # dt
+#         if self._prev_time is None:
+#             dt = 0.0
+#         else:
+#             dt = now - self._prev_time
+
+#         # Integral with anti-windup
+#         self._integral += error * dt
+#         if self.integral_limit is not None:
+#             self._integral = max(-self.integral_limit,
+#                                   min(self.integral_limit, self._integral))
+
+#         # Derivative (on measurement, not error — avoids "derivative kick")
+#         if self._prev_error is None or dt == 0.0:
+#             derivative = 0.0
+#         else:
+#             derivative = (error - self._prev_error) / dt
+
+#         self._prev_error = error
+#         self._prev_time = now
+
+#         output = self.Kp * error + self.Ki * self._integral + self.Kd * derivative
+
+#         if self.output_limit is not None:
+#             output = max(-self.output_limit, min(self.output_limit, output))
+
+#         return output
+
+
+# def main():
+#     robot_config = SO100FollowerConfig(port="/dev/ttyACM0", id="dog", use_degrees=True)
+#     robot = SO100Follower(robot_config)
+#     robot.connect()
+
+#     if not robot.is_connected:
+#         raise ValueError("Robot is not connected!")
+
+
+#     try:
+#         # PID_sequentie(robot)
+        
+
+#         # # print_current_angles(robot)
+#         start_x,start_y,start_z = 0.01,15,25
+#         move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
+
+
+#         # #gradually_get_to_ball(start_x,start_y,start_z,robot)
+
+
+#         # # trek foto met camera => coordinaten in camera-assenstelsel
+#         # cam_x, cam_y, cam_z = get_coordinates_from_picture()
+#         # #cam_x, cam_y, cam_z = 9.6,3.33,-20
+#         # print("COORINDATES WRT CAM")
+#         # print(cam_x, cam_y, cam_z)
+        
+#         # cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
+#         # M = get_trans_matrix_cam(start_x,start_y,start_z,0)
+#         # coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
+#         # #coordinates_wrt_motor_1 = np.array([5,10,-15])
+#         # print("COORINDATES WRT MOTOR 1")
+#         # print(coordinates_wrt_motor_1)
+
+
+#         #van Andreas: afblijven!
+#         cap = cv2.VideoCapture(gstreamer_pipeline())
+#         arm_x, arm_y, arm_z = start_x, start_y, start_z
+#         arm_R = math.sqrt(arm_x**2 + arm_y**2)
+#         arm_a = math.atan2(arm_y,arm_x)
+#         pid_a = PID(Kp=0.003, Ki=0.0000, Kd=0.0000, setpoint=420,
+#             integral_limit=5.0, output_limit=3.0)
+#         pid_R = PID(Kp=0.03, Ki=0.0000, Kd=0.0000, setpoint=120,
+#                     integral_limit=5.0, output_limit=3.0)
+#         pid_z = PID(Kp=0.01, Ki=0.0000, Kd=0.0000, setpoint=-20.0,  # 20 cm depth
+#                     integral_limit=5.0, output_limit=3.0)
+#         while True:
+#             ret, frame = cap.read()
+#             if not ret:
+#                 break
+#                 frame = capture_frame()
+
+#             M = load_matrix()
+#             if M is not None:
+#                 frame = apply_matrix(frame, M)
+            
+#             try:
+#                 Mx, My, _ = get_M_and_radius_from_frame(frame)
+#             except RuntimeError:
+#                 # Ball not detected — let integral hold, don't update
+#                 continue
+            
+#             cam_dx = pid_a.update(Mx)   # error = 0 - cam_x
+#             cam_dy = pid_R.update(My)   # error = 0 - cam_y
+#             #cam_dz = pid_z.update(cam_z)   # error = -20 - cam_z
+#             print(f"cam_dx: {cam_dx}")
+#             print(f"cam_dy: {cam_dy}")
+#             #print(f"cam_dz: {cam_dz}")
+#             # cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
+#             # M = get_trans_matrix_cam(arm_x, arm_y, arm_z,0)
+#             # coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
+
+#             # x,y,z,_ = coordinates_wrt_motor_1
+#             # R = math.sqrt(x*2+y*2) # 10 minder zodat grijper erboven staat -> vervang later de 10 nog met magic value MOTOR4_TO_GRIPPER
+#             # a = math.atan2(y/x) % math.PI
+
+#             # arm_x += coordinates_wrt_motor_1[0]
+#             # arm_y += coordinates_wrt_motor_1[1]   # moving forward closes depth
+#             # arm_z += coordinates_wrt_motor_1[2]
+#             arm_a += cam_dx 
+#             arm_R += cam_dy
+#             #arm_z += cam_dz
+#             #move_to_xyz(arm_x, arm_y, arm_z,robot)
+#             move_to_aRz(arm_a,arm_R,z=PID_HEIGHT,robot=robot, view_mode=True)
+#         cap.release()
+
+            
+            
+            
+
+#         #grab_at_coordinates(robot, coordinates_wrt_motor_1[0], coordinates_wrt_motor_1[1], coordinates_wrt_motor_1[2])
+
+#     except Exception as e:
+#         print("ERROR!")
+#         print(e)
+#     finally:
+#         time.sleep(1)
+#         reset_arm(robot)
+
+#     # inspect_floor_motors(robot)
+#     # grab_ball(robot)
+#     #test_coordinates_to_angles(robot)
+#     #move_vertically(robot)
+#     # print_current_angles(robot)
+#     time.sleep(1)
+
+
+# if __name__ == "__main__":
+#     main()
+
+
 def PID_sequentie(robot):
     start_x,start_y,start_z = 0,15,25
     move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
+    # cap = cv2.VideoCapture(gstreamer_pipeline())
+    # ret, frame = cap.read()
+    # if not ret:
+    #     return
+    #     frame = capture_frame()
+
+    N = load_matrix()
+    # if M is not None:
+    #     frame = apply_matrix(frame, M)
+
     cam_x, cam_y, cam_z = get_coordinates_from_picture()
     print("COORINDATES WRT CAM")
-    print(cam_x, cam_y, cam_z)        
+    print(cam_x, cam_y, cam_z)
     cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
     M = get_trans_matrix_cam(start_x,start_y,start_z,0)
     coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
@@ -455,84 +649,49 @@ def PID_sequentie(robot):
     print("COORINDATES WRT MOTOR 1")
     print(coordinates_wrt_motor_1)
     x,y,z,_ = coordinates_wrt_motor_1
-    R = math.sqrt(x*2+y*2)  - 10 # 10 minder zodat grijper erboven staat -> vervang later de 10 nog met magic value MOTOR4_TO_GRIPPER
-    a = math.atan2(y/x) % math.PI
+
+    # tijdelijk:
+    x,y,z = start_x,start_y,start_z
+    R = math.sqrt(x*2+y*2)  +5 # 10 minder zodat grijper erboven staat -> vervang later de 10 nog met magic value MOTOR4_TO_GRIPPER
+    a = math.atan2(y,x) % math.pi
 
     print("R en a")
     print(R, a)
-    
-    conditie_PID = True
-    C1 = .1
-    C2 = .001
-    while conditie_PID:
+
+    conditie_PID = False
+    C1 = .003
+    C2 = .03
+    cap = cv2.VideoCapture(gstreamer_pipeline())
+    while not conditie_PID:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        if N is not None:
+            print(f"N has been found!")
+            frame = apply_matrix(frame, N)
+        print(R)
         move_to_aRz(a,R,z=PID_HEIGHT,robot=robot, view_mode=True)
-        Mx,My,_ = get_M_and_radius_from_picture()
+        Mx,My,_ = get_M_and_radius_from_frame(frame)
         # nu moet je R en a aanpassen om (Mx, My) tot (420,120) te brengen
+        if (abs(Mx-420) < 3) and (abs(My-120) < 3):
+            conditie_PID = True
+            break
+        print("errors")
         a += (Mx-420)*C1
+        print(Mx-420)
         R += (My-120)*C2
+        
+        print(My-120)
+        print("a, R")
+        print(a, R)
+    move_to_aRz(a,R,z=0,robot=robot, view_mode=True)
+    move_to_aRz(a,R,z=0,robot=robot, view_mode=True, gripping=True)
+    move_to_aRz(a,R,z=20,robot=robot, view_mode=True, gripping=True)
 
+    time.sleep(1)
+    cap.release()
 
-#van Andreas: afblijven!
-CALIBRATION_FILE = Path("color_calibration.json")
-
-def load_matrix():
-    if not CALIBRATION_FILE.exists():
-        return None
-    with open(CALIBRATION_FILE, "r") as f:
-        return np.array(json.load(f), dtype=np.float32)
-
-import time
-
-class PID:
-    def __init__(self, Kp, Ki, Kd, setpoint=0.0, 
-                 integral_limit=None, output_limit=None):
-        self.Kp = Kp
-        self.Ki = Ki
-        self.Kd = Kd
-        self.setpoint = setpoint
-        self.integral_limit = integral_limit  # anti-windup clamp
-        self.output_limit = output_limit      # clamp total output
-
-        self._integral = 0.0
-        self._prev_error = None
-        self._prev_time = None
-
-    def reset(self):
-        self._integral = 0.0
-        self._prev_error = None
-        self._prev_time = None
-
-    def update(self, measurement: float) -> float:
-        now = time.monotonic()
-        error = self.setpoint - measurement
-
-        # dt
-        if self._prev_time is None:
-            dt = 0.0
-        else:
-            dt = now - self._prev_time
-
-        # Integral with anti-windup
-        self._integral += error * dt
-        if self.integral_limit is not None:
-            self._integral = max(-self.integral_limit,
-                                  min(self.integral_limit, self._integral))
-
-        # Derivative (on measurement, not error — avoids "derivative kick")
-        if self._prev_error is None or dt == 0.0:
-            derivative = 0.0
-        else:
-            derivative = (error - self._prev_error) / dt
-
-        self._prev_error = error
-        self._prev_time = now
-
-        output = self.Kp * error + self.Ki * self._integral + self.Kd * derivative
-
-        if self.output_limit is not None:
-            output = max(-self.output_limit, min(self.output_limit, output))
-
-        return output
 
 
 def main():
@@ -545,87 +704,31 @@ def main():
 
 
     try:
-        # PID_sequentie(robot)
-        
-
-        # # print_current_angles(robot)
-        start_x,start_y,start_z = 0.01,15,25
-        move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
+        PID_sequentie(robot)
 
 
-        # #gradually_get_to_ball(start_x,start_y,start_z,robot)
+        # print_current_angles(robot)
+        #start_x,start_y,start_z = 0,15,25
+        #move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
 
 
-        # # trek foto met camera => coordinaten in camera-assenstelsel
-        # cam_x, cam_y, cam_z = get_coordinates_from_picture()
-        # #cam_x, cam_y, cam_z = 9.6,3.33,-20
-        # print("COORINDATES WRT CAM")
-        # print(cam_x, cam_y, cam_z)
-        
-        # cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
-        # M = get_trans_matrix_cam(start_x,start_y,start_z,0)
-        # coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
-        # #coordinates_wrt_motor_1 = np.array([5,10,-15])
-        # print("COORINDATES WRT MOTOR 1")
-        # print(coordinates_wrt_motor_1)
+        #gradually_get_to_ball(start_x,start_y,start_z,robot)
 
 
-        #van Andreas: afblijven!
-        cap = cv2.VideoCapture(gstreamer_pipeline())
-        arm_x, arm_y, arm_z = start_x, start_y, start_z
-        arm_R = math.sqrt(arm_x**2 + arm_y**2)
-        arm_a = math.atan2(arm_y,arm_x)
-        pid_a = PID(Kp=0.003, Ki=0.0000, Kd=0.0000, setpoint=420,
-            integral_limit=5.0, output_limit=3.0)
-        pid_R = PID(Kp=0.03, Ki=0.0000, Kd=0.0000, setpoint=120,
-                    integral_limit=5.0, output_limit=3.0)
-        pid_z = PID(Kp=0.01, Ki=0.0000, Kd=0.0000, setpoint=-20.0,  # 20 cm depth
-                    integral_limit=5.0, output_limit=3.0)
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-                frame = capture_frame()
+        # trek foto met camera => coordinaten in camera-assenstelsel
+        #cam_x, cam_y, cam_z = get_coordinates_from_picture()
+        #cam_x, cam_y, cam_z = 9.6,3.33,-20
+        print("COORINDATES WRT CAM")
+        #print(cam_x, cam_y, cam_z)
 
-            M = load_matrix()
-            if M is not None:
-                frame = apply_matrix(frame, M)
-            
-            try:
-                Mx, My, _ = get_M_and_radius_from_frame(frame)
-            except RuntimeError:
-                # Ball not detected — let integral hold, don't update
-                continue
-            
-            cam_dx = pid_a.update(Mx)   # error = 0 - cam_x
-            cam_dy = pid_R.update(My)   # error = 0 - cam_y
-            #cam_dz = pid_z.update(cam_z)   # error = -20 - cam_z
-            print(f"cam_dx: {cam_dx}")
-            print(f"cam_dy: {cam_dy}")
-            #print(f"cam_dz: {cam_dz}")
-            # cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
-            # M = get_trans_matrix_cam(arm_x, arm_y, arm_z,0)
-            # coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
+        #cam_coordinates = np.array([cam_x, cam_y, cam_z, 1.])
+        #M = get_trans_matrix_cam(start_x,start_y,start_z,0)
+        #coordinates_wrt_motor_1 = np.linalg.inv(M) @ cam_coordinates # from_cam_to_robot_perspective
+        #coordinates_wrt_motor_1 = np.array([5,10,-15])
+        print("COORINDATES WRT MOTOR 1")
+        #print(coordinates_wrt_motor_1)
 
-            # x,y,z,_ = coordinates_wrt_motor_1
-            # R = math.sqrt(x*2+y*2) # 10 minder zodat grijper erboven staat -> vervang later de 10 nog met magic value MOTOR4_TO_GRIPPER
-            # a = math.atan2(y/x) % math.PI
-
-            # arm_x += coordinates_wrt_motor_1[0]
-            # arm_y += coordinates_wrt_motor_1[1]   # moving forward closes depth
-            # arm_z += coordinates_wrt_motor_1[2]
-            arm_a += cam_dx 
-            arm_R += cam_dy
-            #arm_z += cam_dz
-            #move_to_xyz(arm_x, arm_y, arm_z,robot)
-            move_to_aRz(arm_a,arm_R,z=PID_HEIGHT,robot=robot, view_mode=True)
-        cap.release()
-
-            
-            
-            
-
-        #grab_at_coordinates(robot, coordinates_wrt_motor_1[0], coordinates_wrt_motor_1[1], coordinates_wrt_motor_1[2])
+        grab_at_coordinates(robot, coordinates_wrt_motor_1[0], coordinates_wrt_motor_1[1], coordinates_wrt_motor_1[2])
 
     except Exception as e:
         print("ERROR!")
