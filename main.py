@@ -34,8 +34,8 @@ def main(estimator: str) -> None:
         #opstart()
         while True:
             # Main loop
-            face = search_loop(subject="ball_air")
-            print(face)
+            ball_air = search_loop(subject="ball_air")
+            print(ball_air)
             break
 
             # # x,y,z in centimeters; x is left/right, y is forward, z is vertical

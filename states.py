@@ -1,4 +1,3 @@
-import os
 import math
 import sys
 import time
@@ -32,23 +31,12 @@ from processes.threads.control_help_commands import *
 
 
 
-import cv2
-
-from camera import (
-    apply_color_correction,
-    initialize_camera,
-    detect_ball,
-    get_video_capture,
-    read_bgr_frame,
-)
+from camera import initialize_camera, detect_ball, get_video_capture, read_bgr_frame
 
 
 _robot = None
 _arm_robot = None
 
-# While searching: save a few frames every N loop iterations (raw + color-corrected for YOLO).
-SEARCH_DEBUG_SAVE_EVERY = 8
-SEARCH_DEBUG_MAX_FRAMES = 12
 YOLO_MODEL_PATH = "lerobot/examples/phone_to_so100/balls_ourdata_augmented.pt"
 shared_array = Array("d", [0.0] * 11)
 
@@ -83,10 +71,6 @@ def search_loop(
 
     Returns:
         (x, y, z) coordinates in cm in the camera frame, or None if not detected.
-
-    While rotating, saves up to SEARCH_DEBUG_MAX_FRAMES snapshots every SEARCH_DEBUG_SAVE_EVERY
-    iterations under recordings/search_<subject>_<timestamp>/ (raw + _corr JPEGs). Set
-    DOG_SKIP_SEARCH_DEBUG_FRAMES=1 to disable.
     """
     # Define arm angles for each subject type
     arm_angles = {
@@ -94,24 +78,24 @@ def search_loop(
             "shoulder_pan": 0,
             "shoulder_lift": -99,
             "elbow_flex": 90,
-            "wrist_flex": -3,
-            "wrist_roll": 107,
+            "wrist_flex": 0,
+            "wrist_roll": 92,
             "gripper": 60,
         },
         "ball_air": {
-            "shoulder_pan": -6,
-            "shoulder_lift": -2,
+            "shoulder_pan": 0,
+            "shoulder_lift": 0,
             "elbow_flex": -48,
-            "wrist_flex": -6,
-            "wrist_roll": 111,
+            "wrist_flex": 0,
+            "wrist_roll": 92,
             "gripper": 60,
         },
         "person": {
             "shoulder_pan": 0,
-            "shoulder_lift": -30,
-            "elbow_flex": 30,
+            "shoulder_lift": -99,
+            "elbow_flex": 90,
             "wrist_flex": 0,
-            "wrist_roll": 100,
+            "wrist_roll": 92,
             "gripper": 60,
         },
     }
@@ -138,41 +122,11 @@ def search_loop(
             return None
 
         coords = None
-        _search_iter = 0
-        _debug_saved = 0
-        _debug_dir: Path | None = None
-        skip_debug = os.environ.get("DOG_SKIP_SEARCH_DEBUG_FRAMES", "").lower() in (
-            "1",
-            "true",
-            "yes",
-        )
-
         while coords is None:
-            _search_iter += 1
             ret, frame = read_bgr_frame(timeout_sec=3.0)
             if not ret or frame is None:
                 print("Failed to read frame")
                 return None
-
-            if (
-                not skip_debug
-                and _debug_saved < SEARCH_DEBUG_MAX_FRAMES
-                and _search_iter % SEARCH_DEBUG_SAVE_EVERY == 0
-            ):
-                if _debug_dir is None:
-                    _debug_dir = (
-                        Path(__file__).resolve().parent
-                        / "recordings"
-                        / f"search_{subject}_{int(time.time())}"
-                    )
-                    _debug_dir.mkdir(parents=True, exist_ok=True)
-                    print(f"[camera] Saving debug frames under {_debug_dir}")
-                stem = _debug_dir / f"rot_{_debug_saved:03d}"
-                cv2.imwrite(str(stem) + "_raw.jpg", frame)
-                corr = apply_color_correction(frame)
-                if corr is not None:
-                    cv2.imwrite(str(stem) + "_corr.jpg", corr)
-                _debug_saved += 1
 
             # Always use ball detection for now
             coords = detect_ball(frame)
@@ -320,6 +274,7 @@ def grab_ball() -> None:
     """
     arm = _get_arm_robot()
     arm_grab_ball(arm)
+
 def stop_movement():
     robot = _get_robot()
     bus = robot.bus
