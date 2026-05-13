@@ -29,7 +29,7 @@
 //put function declarations here:
 Optical_Flow_Sensor flow1(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_1, PAA5100);
 Optical_Flow_Sensor flow2(PIN_SCK_OFS, PIN_MISO_OFS, PIN_MOSI_OFS, PIN_CS_OFS_2, PAA5100);
-//Ultrasone_sensor ultra1(PIN_TRIG_US_1, PIN_ECHO_US_1);
+Ultrasone_sensor ultra1(PIN_TRIG_US_1, PIN_ECHO_US_1);
 Ultrasone_sensor ultra2(PIN_TRIG_US_2, PIN_ECHO_US_2);
 Adafruit_BNO055 bno = Adafruit_BNO055(IMU_SENSOR_ID);
 Matrix_LED animation;
@@ -62,8 +62,8 @@ void setup() {
   if (!flow2.begin()) { print_error("Flow sensor 2)");}
   //Serial.println("Flow sensor 2 initialized");
 
-  // if (!ultra1.begin()) {print_error("Ultrasone sensor 1");}
-  // Serial.println("Ultrasone sensor 1 initialized");
+  if (!ultra1.begin()) {print_error("Ultrasone sensor 1");}
+  Serial.println("Ultrasone sensor 1 initialized");
   if (!ultra2.begin()) {print_error("Ultrasone sensor 2");}
   Serial.println("Ultrasone sensor 2 initialized");
   // if (!Wire.begin(PIN_SDA_IMU, PIN_SCL_IMU)) { print_error("BNO055 sensor)");}
@@ -111,7 +111,7 @@ void loop() {
 
 
 
-  //distance1=ultra1.get_distance();
+  distance1=ultra1.get_distance();
   distance2=ultra2.get_distance();
 
 
@@ -133,9 +133,9 @@ void loop() {
 
 
 
-  if (Serial.available() > 0) {
-      char cmd = Serial.read();
-      if (cmd == 'r'){
+  // if (Serial.available() > 0) {
+  //     char cmd = Serial.read();
+  //     if (cmd == 'r'){
           id++;
 
 
@@ -171,8 +171,8 @@ void loop() {
 
 
 
-      }
-  }
+  //     }
+  // }
 
 
 }

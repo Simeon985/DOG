@@ -13,7 +13,7 @@ from processes.threads.control_help_commands import *
 # global ani
 robot = None
 est= None
-def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desired_angle: int=00) -> None:
+def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desired_angle: int=40, desired_distance: float=0.6, seperate_movements: bool=True) -> None:
     """Process running the control and sensor threads."""
     ser = initialize_esp()
     #old calibration
@@ -51,41 +51,47 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desi
     # t3.start()
     robot=init_robot()
     start_angle = est.history[10][2]
+    x = est.history[10][0]
+    y = est.history[10][1]
     # desired_angle = (desired_angle ) % 360
-    upper_lim_desired_angle= (desired_angle+2) %360
+    #upper_lim_desired_angle= (desired_angle+2) %360
     current_angle = est.history[-1][2]
     try:
         while(1):
             current_angle = est.history[-1][2]
-            error = (current_angle- start_angle - desired_angle) % 360
-            if error > 180:
-                error -= 360
-            rotation_velocity_normalized=min(20,abs(error))*0.05
-            direction = "left" if error <0 else "right"
-            #print("IMU: now, error, begin: ", current_angle, error ,start_angle)
-
-            #rotate_platform(robot.bus, False, rotation_velocity_normalized, direction)
-            move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, 1, error)
-            #vierkant_maken(robot.bus, False, rotation_velocity_normalized, direction, 1, error)
-            #print("-------------------------------------------------------------")
-
-            # while not (-1 <error < 1):
-            #     current_angle = est.history[-1][2]
-            #     error = (current_angle- start_angle - desired_angle) % 360
-            #     if error > 180:
-            #         error -= 360
-            #     #print("error: ", error)
-            #     continue
-            # start_angle= current_angle
-            # continue
+            error_rotation = (current_angle- start_angle - desired_angle) % 360
+            if error_rotation > 180:
+                error_rotation -= 360
+            rotation_velocity_normalized=min(20,abs(error_rotation))*0.05
+            direction = "left" if error_rotation <0 else "right"
 
 
-            if (-1 <error < 2):
-                continue
-                print("Desired angle reached. Stopping the robot.")
-                rotate_platform(robot.bus, True)
-                stop_event.set()
-                break
+            x,y = est.history[-1][0], est.history[-1][1]
+            distance_from_start = np.sqrt(x**2 + y**2)
+            error_distance = desired_distance - distance_from_start
+            straight_velocity_normalized = min(0.1,abs(error_distance))*10
+
+            print("rotation error: ", error_rotation, " distance error: ", error_distance, " current angle: ", current_angle, " current distance: ", distance_from_start)
+            move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
+            #vierkant_maken(robot.bus, False, rotation_velocity_normalized, direction, 1, error_rotation)
+            if (seperate_movements):
+                if abs(error_rotation) > 2:
+                    print("Rotating to desired angle")
+                    move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, 0, error_rotation)
+                elif abs(error_distance) > 0.05:
+                    print("Moving straight to desired distance")
+                    move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
+                else:
+                    print("Desired position reached. Stopping the robot.")
+                    move_rot_and_straight(robot.bus, True, 0, "", 0, 0)
+                    stop_event.set()
+                    break
+            else:
+                if (-1 <error_rotation < 2 and abs(error_distance) < 0.05):
+                    print("Desired angle reached. Stopping the robot.")
+                    rotate_platform(robot.bus, True)
+                    stop_event.set()
+                    break
 
 
             time.sleep(0.1)
@@ -103,7 +109,7 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desi
         t1.join()
         t2.join()
 #sensor_control_process("Peripheral", [0.0] * 11)
-#overriding the terminate in process to stop the motion
+
 def end():
     print("Terminating process and stopping the robot.")
     rotate_platform(robot.bus, True)  # Stop the robot

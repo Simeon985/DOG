@@ -6,7 +6,7 @@ Matrix_LED::Matrix_LED(void) {
     delta_time_animation=0;                  // restored
     previous_timestamp_animation=0;          // restored
     state_led = LedState::S0;
-    emotional_state = EmotionalState::hart;
+    emotional_state = EmotionalState::neutraal;
     if (!mx.begin()){
         Serial.println("\nMD_MAX72XX initialization failed");
     }

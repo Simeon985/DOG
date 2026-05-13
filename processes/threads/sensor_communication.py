@@ -35,7 +35,6 @@ def get_sensor_data(ser: serial.Serial, data_array):
     ser.write(b'r')
     ser.flush()
     time.sleep(0.2)  # wait for the data to be sent
-    # wait when data is available
     # while ser.in_waiting == 0:
     #     time.sleep(0.01)
     data = ser.readline()
@@ -46,13 +45,9 @@ def get_sensor_data(ser: serial.Serial, data_array):
         print("Error reading line, expected 11 elements but got ", len(data_list))
         return
 
-    #data_list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 1]
     for i in range(6):
         data_array[i] = float(data_list[i])
     for i in range(6,11):
         data_array[i] = int(data_list[i])
     return
-# data_array = np.zeros(12)
-# ser = initialize_esp()
-# get_sensor_data(ser, data_array)
-# print(data_array)
+
