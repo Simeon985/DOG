@@ -122,6 +122,7 @@ def angles_vertical_movement(height, distance):
         print("ONMOGELIJK")
         print(height, distance)
         return (0,0,0)
+        
 def coordinates_3D_to_angles(x,y,z):
     r = math.sqrt(x**2+y**2)
     if x == 0:
@@ -480,7 +481,7 @@ def PID_sequentie(robot):
         a += (Mx-420)*C1
         print(Mx-420)
         R += (My-120)*C2
-        
+
         print(My-120)
         print("a, R")
         print(a, R)

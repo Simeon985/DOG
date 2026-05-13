@@ -47,7 +47,7 @@ void print_error(String sensor){
     Serial.println(" failed");
   }
 }
-
+bool using_ultrasone1=true;
 void setup() {
   Serial.begin(921600);
   delay(1000);
@@ -57,13 +57,14 @@ void setup() {
 
 
   if (!flow1.begin()) { print_error("Flow sensor 1)");}
-  //Serial.println("Flow sensor 1 initialized");
+  Serial.println("Flow sensor 1 initialized");
 
   if (!flow2.begin()) { print_error("Flow sensor 2)");}
-  //Serial.println("Flow sensor 2 initialized");
+  Serial.println("Flow sensor 2 initialized");
 
-  if (!ultra1.begin()) {print_error("Ultrasone sensor 1");}
-  Serial.println("Ultrasone sensor 1 initialized");
+  if (!ultra1.begin()) {printf("Ultrasone sensor 1"); using_ultrasone1=false; }
+  else {Serial.println("Ultrasone sensor 1 initialized");}
+
   if (!ultra2.begin()) {print_error("Ultrasone sensor 2");}
   Serial.println("Ultrasone sensor 2 initialized");
   // if (!Wire.begin(PIN_SDA_IMU, PIN_SCL_IMU)) { print_error("BNO055 sensor)");}
@@ -113,8 +114,8 @@ void loop() {
   // reading data ultrasone sensors
 
 
+  if (using_ultrasone1){distance1=ultra1.get_distance();}
 
-  distance1=ultra1.get_distance();
   distance2=ultra2.get_distance();
 
 

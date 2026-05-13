@@ -3,7 +3,7 @@ import argparse
 from multiprocessing import Process, Array
 from processes.sensor_control import sensor_control_process
 from processes.sensor_control import end
-from states import opstart, search_loop, drive_to_ball
+from states import opstart, search_loop, drive_to_ball, stop_movement, grab_ball
 # from processes.camera import camera_process
 import numpy as np
 
@@ -16,7 +16,7 @@ def main(estimator: str) -> None:
     start = time.time()
     timeout = 20
 
-    p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control", daemon = True)
+    # p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control", daemon = True)
     # set terminate target function on process
     #p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
 
@@ -28,43 +28,47 @@ def main(estimator: str) -> None:
     #     time.sleep(0.1)
     # print("camera initialized")
 
-    p_sensor.start()
+    #p_sensor.start()
 
     try:
-        opstart()
+        #opstart()
         while True:
             # Main loop
             face = search_loop(subject="ball_air")
+            print(face)
+            break
 
-            # x,y,z in centimeters; x is left/right, y is forward, z is vertical
-            ball = search_loop(subject="ball_floor")
+            # # x,y,z in centimeters; x is left/right, y is forward, z is vertical
+            #ball = search_loop(subject="ball_floor")
+            ###HET VOLGENDE IS HARDCODED
+            ball= (10.0, -10.0, 0.0) # x=10cm right, y=50cm forward, z=0cm height
             while ball is not None:
                 x, y, z = ball
                 moved = drive_to_ball(x, y, step_cm=50.0)
                 if not moved:
                     break
                 ball = search_loop(subject="ball_floor")
-            
-            grab_ball()
 
-            person = search_loop(subject="person")
-            while person is not None:
-                x, y, z = ball
-                moved = drive_to_ball(x, y, step_cm=50.0)
-                if not moved:
-                    break
-                person = search_loop(subject="person")
-                        
-            x,y,z = search_loop(subject="person")
+            # grab_ball()
+
+            # person = search_loop(subject="person")
+            # while person is not None:
+            #     x, y, z = ball
+            #     moved = drive_to_ball(x, y, step_cm=50.0)
+            #     if not moved:
+            #         break
+            #     person = search_loop(subject="person")
+
+            # x,y,z = search_loop(subject="person")
 
             time.sleep(0.1)
     except KeyboardInterrupt:
         print("Trying to shut down")
-        end()
+        stop_movement()
         #rotate_platform(p_sensor.robot.bus, True)
         print("Shutting down...")
 
-    p_sensor.join()
+    # p_sensor.join()
     # p_camera.join()
     print("All processes closed")
 

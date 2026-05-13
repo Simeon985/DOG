@@ -11,9 +11,8 @@ from processes.threads.control import *
 from processes.threads.control_help_commands import *
 
 # global ani
-robot = None
 est= None
-def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desired_angle: int=0, desired_distance: float=0.06, seperate_movements: bool=True) -> None:
+def sensor_control_process(shared_array: SynchronizedArray, desired_angle: int=0, desired_distance: float=0.06, seperate_movements: bool=True, robot: any=None) -> None:
     """Process running the control and sensor threads."""
     ser = initialize_esp()
     #old calibration
@@ -24,14 +23,7 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desi
     scale_1, scale_2, angle_1, angle_2 = 5.803293347508479e-05, 5.973355990292423e-05, -43.941917924421915, 120.27700785358547
     data = np.zeros(11)
     global est
-
-    if estimator == "Peripheral":
-        est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)
-    elif estimator == "Kalman":
-        raise RuntimeError("Kalman is not implemented yet")
-    else:
-        raise RuntimeError("Provided estimator isn't implemented")
-
+    est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)
     stop_event = threading.Event()
     test_counter = [0]
 
@@ -49,7 +41,7 @@ def sensor_control_process(estimator: str, shared_array: SynchronizedArray, desi
     t2.start()
     time.sleep(4)  # Ensure the control thread is running before starting the mapping thread
     # t3.start()
-    robot=init_robot()
+    #robot=init_robot()
     start_angle = est.history[10][2]
     x = est.history[10][0]
     y = est.history[10][1]

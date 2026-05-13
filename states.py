@@ -1,67 +1,92 @@
+import os
 import math
+import sys
 import time
+from pathlib import Path
+import pygame
 
-from processes.threads.control_help_commands import init_robot, move_rot_and_straight
-from lerobot.examples.phone_to_so100.arm_move_angles import (
-    grab_ball as arm_grab_ball,
-    move_to_target_angles,
-)
+# Vendored LeRobot: `examples/` is not inside the installable `lerobot` package on PyPI.
+_lerobot_root = Path(__file__).resolve().parent / "lerobot"
+_so100_examples = _lerobot_root / "examples" / "phone_to_so100"
+for _p in (_lerobot_root / "src", _so100_examples):
+    _s = str(_p)
+    if _s not in sys.path:
+        sys.path.insert(0, _s)
+
+import torch
+from multiprocessing import Array
+from arm_move_angles import grab_ball as arm_grab_ball, move_to_target_angles
 from lerobot.robots.so_follower import SO100Follower, SO100FollowerConfig
+from processes.threads.control_help_commands import init_robot, move_rot_and_straight, rotate_platform
+
+import threading
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import itertools
+from multiprocessing.sharedctypes import SynchronizedArray
+from processes.threads.mapping import *
+from processes.threads.control import *
+from processes.threads.control_help_commands import *
+
+
+
+
+import cv2
 
 from camera import (
+    apply_color_correction,
     initialize_camera,
     detect_ball,
     get_video_capture,
+    read_bgr_frame,
 )
 
 
 _robot = None
 _arm_robot = None
 
-# Camera and detection setup
-_cap = None
-_model = None
-_gst_proc = None
+# While searching: save a few frames every N loop iterations (raw + color-corrected for YOLO).
+SEARCH_DEBUG_SAVE_EVERY = 8
+SEARCH_DEBUG_MAX_FRAMES = 12
+YOLO_MODEL_PATH = "lerobot/examples/phone_to_so100/balls_ourdata_augmented.pt"
+shared_array = Array("d", [0.0] * 11)
 
-# Detection constants
-YOLO_MODEL_PATH = "./balls.pt"
-YOLO_DEVICE = 0 if torch.cuda.is_available() else "cpu"
-YOLO_HALF = torch.cuda.is_available()
-YOLO_IMGSZ = 224
-CONF_THRESHOLD = 0.2
-GREEN_CLASS_INDEX = 2
-CAMERA_H_FOV_DEG = 60
-
-# CSI camera config
-CSI_SENSOR_ID = 0
-CSI_FLIP_METHOD = 0
-CSI_WIDTH = 320
-CSI_HEIGHT = 240
-CSI_FPS = 10
-TCP_HOST = "127.0.0.1"
-TCP_PORT = 5000
-SYSTEM_GST_LAUNCH = "/usr/bin/gst-launch-1.0"
-SYSTEM_GST_INSPECT = "/usr/bin/gst-inspect-1.0"
-SYSTEM_GST_PLUGIN_SCANNER = "/usr/lib/aarch64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
-SYSTEM_GST_PLUGIN_PATH = "/usr/lib/aarch64-linux-gnu/gstreamer-1.0"
 
 
 def opstart():
+    sound= "/home/dog/DOG/audio/Eekhoorn3.mp3"
+    pygame.mixer.init()
+    pygame.mixer.music.load(sound)
+    pygame.mixer.music.play()
+
+    # Keep the script alive until playback finishes
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+
     # Speel geluidje
     # Stuur bepaalde oogjes
     # Draai rondje
     pass
 
 
-def search_loop(subject: str) -> tuple[float, float, float] | None:
+def search_loop(
+    subject: str,
+    model_path: str | Path | None = None,
+) -> tuple[float, float, float] | None:
     """
     Search for an object by positioning the arm and detecting it from the camera feed.
-    
+
     Args:
         subject: One of "ball_floor", "ball_air", or "person"
-    
+        model_path: YOLO .pt weights; defaults to YOLO_MODEL_PATH in this module.
+
     Returns:
         (x, y, z) coordinates in cm in the camera frame, or None if not detected.
+
+    While rotating, saves up to SEARCH_DEBUG_MAX_FRAMES snapshots every SEARCH_DEBUG_SAVE_EVERY
+    iterations under recordings/search_<subject>_<timestamp>/ (raw + _corr JPEGs). Set
+    DOG_SKIP_SEARCH_DEBUG_FRAMES=1 to disable.
     """
     # Define arm angles for each subject type
     arm_angles = {
@@ -90,52 +115,78 @@ def search_loop(subject: str) -> tuple[float, float, float] | None:
             "gripper": 60,
         },
     }
-    
+
     if subject not in arm_angles:
         print(f"Unknown subject: {subject}")
         return None
-    
+
+
     try:
-        # Initialize camera if needed
-        initialize_camera()
-        
+        mp = model_path if model_path is not None else YOLO_MODEL_PATH
+        initialize_camera(model_path=mp)
+
         # Position arm for this subject
         arm = _get_arm_robot()
         target_angles = arm_angles[subject]
         move_to_target_angles(arm, target_angles)
         time.sleep(0.5)  # Allow arm to settle
-        
+
         # Capture and detect
         cap = get_video_capture()
         if cap is None or not cap.isOpened():
             print("Camera not available")
             return None
-        
-        ret, frame = cap.read()
-        if not ret:
-            print("Failed to read frame")
-            return None
-        
-        # Always use ball detection for now
-        coords = detect_ball(frame)
-        
-        if coords is None:
+
+        coords = None
+        _search_iter = 0
+        _debug_saved = 0
+        _debug_dir: Path | None = None
+        skip_debug = os.environ.get("DOG_SKIP_SEARCH_DEBUG_FRAMES", "").lower() in (
+            "1",
+            "true",
+            "yes",
+        )
+
+        while coords is None:
+            _search_iter += 1
+            ret, frame = read_bgr_frame(timeout_sec=3.0)
+            if not ret or frame is None:
+                print("Failed to read frame")
+                return None
+
+            if (
+                not skip_debug
+                and _debug_saved < SEARCH_DEBUG_MAX_FRAMES
+                and _search_iter % SEARCH_DEBUG_SAVE_EVERY == 0
+            ):
+                if _debug_dir is None:
+                    _debug_dir = (
+                        Path(__file__).resolve().parent
+                        / "recordings"
+                        / f"search_{subject}_{int(time.time())}"
+                    )
+                    _debug_dir.mkdir(parents=True, exist_ok=True)
+                    print(f"[camera] Saving debug frames under {_debug_dir}")
+                stem = _debug_dir / f"rot_{_debug_saved:03d}"
+                cv2.imwrite(str(stem) + "_raw.jpg", frame)
+                corr = apply_color_correction(frame)
+                if corr is not None:
+                    cv2.imwrite(str(stem) + "_corr.jpg", corr)
+                _debug_saved += 1
+
+            # Always use ball detection for now
+            coords = detect_ball(frame)
+            _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, False, 1, "right"))
             print(f"No {subject} detected")
         else:
+            _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, True, 0, "right"))
             print(f"Detected {subject} at {coords}")
-        
+
         return coords
-        
+
     except Exception as e:
         print(f"Error in search_loop({subject}): {e}")
         return None
-
-
-    global _robot
-    if _robot is None:
-        _robot = init_robot()
-    return _robot
-
 
 def drive_to_ball(
     x,
@@ -156,46 +207,98 @@ def drive_to_ball(
     Returns True when a step was executed, otherwise False if the ball is already
     close enough to stop.
     """
-    if x is None or y is None:
-        return False
-
+    x =x/100
+    y =y/100
+    step_m = step_cm / 100.0
+    desired_angle = math.degrees(math.atan2(float(x), max(1e-6, -float(y))))
+    desired_distance = min(step_m, math.sqrt(float(x) ** 2 + float(y) ** 2))
+    seperate_movements = True
     robot = _get_robot()
-    bus = robot.bus
+    ser = initialize_esp()
+    scale_1, scale_2, angle_1, angle_2 = 5.803293347508479e-05, 5.973355990292423e-05, -43.941917924421915, 120.27700785358547
+    data = np.zeros(11)
+    global est
+    est = PeripheralEstimator(scale_1, scale_2, angle_1, angle_2)
+    stop_event = threading.Event()
+    test_counter = [0]
 
-    # y is negative for objects in front of the camera in this project.
-    depth_cm = max(1e-6, -float(y))
-    distance_cm = math.sqrt(float(x) ** 2 + depth_cm ** 2)
-    error_distance = distance_cm - final_stop_distance_cm
+    t1 = threading.Thread(target=control, args=(stop_event, test_counter, shared_array), daemon = True)
+    print("sensor_mapping_should_begin")
+    t2 = threading.Thread(target=est.update, args=(ser, data, stop_event), daemon = True)
+    if desired_angle < 0:
+        direction = "left"
+    else:
+        direction = "right"
 
-    if error_distance <= 0:
-        move_rot_and_straight(bus, True, 0, "", 0, 0)
-        return False
 
-    error_rotation = math.degrees(math.atan2(float(x), depth_cm))
-    rotation_velocity_normalized = min(20.0, abs(error_rotation)) * 0.05
-    direction = "left" if error_rotation < 0 else "right"
+    # t3 = threading.Thread(target=init_robot, args=(stop_event,direction))
+    t1.start()
+    t2.start()
+    time.sleep(4)  # Ensure the control thread is running before starting the mapping thread
+    # t3.start()
+    #robot=init_robot()
+    start_angle = est.history[10][2]
+    x = est.history[10][0]
+    y = est.history[10][1]
+    # desired_angle = (desired_angle ) % 360
+    #upper_lim_desired_angle= (desired_angle+2) %360
+    current_angle = est.history[-1][2]
+    try:
+        while(1):
+            current_angle = est.history[-1][2]
+            error_rotation = (current_angle- start_angle - desired_angle) % 360
+            if error_rotation > 180:
+                error_rotation -= 360
+            rotation_velocity_normalized=min(20,abs(error_rotation))*0.05
+            direction = "left" if error_rotation <0 else "right"
 
-    # Move in bounded chunks so the next `search_loop("ball_floor")` can re-evaluate.
-    step_distance = min(max(step_cm, 1.0), error_distance)
-    step_duration_s = step_distance / max(step_speed_cm_s, 1e-6)
 
-    # Match sensor_control_process-style control split: first correct heading, then move straight.
-    straight_velocity_normalized = min(0.1, step_distance / 100.0) * 10.0
+            x,y = est.history[-1][0], est.history[-1][1]
+            distance_from_start = np.sqrt(x**2 + y**2)
+            error_distance = desired_distance - distance_from_start
+            straight_velocity_normalized = min(0.1,abs(error_distance))*10
 
-    start_t = time.time()
-    while time.time() - start_t < max(step_duration_s, 0.2):
-        if abs(error_rotation) > rotation_tolerance_deg:
-            move_rot_and_straight(bus, False, rotation_velocity_normalized, direction, 0, error_rotation)
+            #print("rotation error: ", error_rotation, " distance error: ", error_distance, " current angle: ", current_angle, " current distance: ", distance_from_start)
+            move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
+            #vierkant_maken(robot.bus, False, rotation_velocity_normalized, direction, 1, error_rotation)
+            if (seperate_movements):
+                if abs(error_rotation) > 2:
+                    move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, 0, error_rotation)
+                elif abs(error_distance) > 0.05:
+                    move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
+                else:
+                    print("Desired position reached. Stopping the robot.")
+                    move_rot_and_straight(robot.bus, True, 0, "", 0, 0)
+                    stop_event.set()
+                    break
+            else:
+                if (-1 <error_rotation < 2 and abs(error_distance) < 0.05):
+                    print("Desired angle reached. Stopping the robot.")
+                    #aanpassen rotate_platform(robot.bus, True)
+                    stop_event.set()
+                    break
+
+
             time.sleep(0.1)
-        elif error_distance > distance_tolerance_cm:
-            move_rot_and_straight(bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
-            time.sleep(0.1)
-        else:
-            move_rot_and_straight(bus, True, 0, "", 0, 0)
-            return False
 
-    move_rot_and_straight(bus, True, 0, "", 0, 0)
-    return True
+    except KeyboardInterrupt:
+        print("\nKeyboardInterrupt in sensor_control_process")
+        print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
+        stop_event.set()
+    finally:
+        print("\nfinally: KeyboardInterrupt in sensor_control_process")
+        stop_event.set()
+        print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
+        t1.join()
+        t2.join()
+    return
+
+
+def _get_robot():
+    global _robot
+    if _robot is None:
+        _robot = init_robot()
+    return _robot
 
 
 def _get_arm_robot():
@@ -217,4 +320,8 @@ def grab_ball() -> None:
     """
     arm = _get_arm_robot()
     arm_grab_ball(arm)
+def stop_movement():
+    robot = _get_robot()
+    bus = robot.bus
+    move_rot_and_straight(bus, True, 0, "", 0, 0)
 

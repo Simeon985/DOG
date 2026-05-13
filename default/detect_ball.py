@@ -40,9 +40,10 @@ YOLO_HALF = torch.cuda.is_available()
 
 CSI_SENSOR_ID = 0
 CSI_FLIP_METHOD = 0
-CSI_WIDTH = 320
-CSI_HEIGHT = 240
-CSI_FPS = 10
+# Match lerobot/examples/phone_to_so100/arm_camera.py csi_pipeline()
+CSI_WIDTH = 640
+CSI_HEIGHT = 360
+CSI_FPS = 30
 TCP_HOST = "127.0.0.1"
 TCP_PORT = 5000
 SYSTEM_GST_LAUNCH = "/usr/bin/gst-launch-1.0"
@@ -131,9 +132,9 @@ def _start_csi_to_tcp_mpegts_stream() -> subprocess.Popen:
         "x264enc",
         "tune=zerolatency",
         "speed-preset=ultrafast",
-        "bitrate=4000",
+        "bitrate=8000",
         "bframes=0",
-        "key-int-max=15",
+        "key-int-max=30",
         "byte-stream=true",
         "!",
         "h264parse",

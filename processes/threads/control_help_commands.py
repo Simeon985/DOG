@@ -30,6 +30,7 @@ def move_forward(bus, velocity: int = 800, duration_s: float = 10.0) -> dict[str
     time.sleep(duration_s)
     bus.sync_write("Goal_Velocity", dict.fromkeys(FORWARD_MOTORS, 0), num_retry=5)
     return goal_velocities
+    
 def move_straight_to_object(bus, velocity_normalized: float, angle: float) -> dict[str, int]:
     if velocity_normalized < 0.05:
         print("Already at the object")
@@ -101,6 +102,7 @@ def rotate_platform(
     Rotate the base in place.
     Give a normalized velocity between 0 and 1 where 0 is no movement and 1 is maximum speed, and a direction ("left" or "right"), and a stoping event
     """
+    
     if(stop == True):
         print("Stopping rotation")
         bus.sync_write("Goal_Velocity", dict.fromkeys(WHEEL_MOTORS, 0), num_retry=5)
