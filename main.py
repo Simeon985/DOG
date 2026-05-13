@@ -55,9 +55,7 @@ def main(estimator: str) -> None:
                     break
                 person = search_loop(subject="person")
                         
-            # Rijd terug
             x,y,z = search_loop(subject="person")
-
 
             time.sleep(0.1)
     except KeyboardInterrupt:
