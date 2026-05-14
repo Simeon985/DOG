@@ -1,8 +1,8 @@
 """
 Camera module: CSI via system GStreamer (nvarguscamerasrc) → MPEG-TS/TCP → OpenCV FFmpeg → BGR + YOLO.
 
-Conda OpenCV often lacks a working CAP_GSTREAMER appsink path; we use /usr/bin/gst-launch-1.0
-with Jetson plugins and read the stream with cv2.CAP_FFMPEG (same approach as before).
+Uses the same reliable TCP/FFmpeg method that previously worked.
+Detection logic (color correction, coordinates from picture) is unchanged.
 """
 
 import json
@@ -10,6 +10,9 @@ import os
 import subprocess
 import time
 import ctypes
+import math
+import atexit
+import signal
 from pathlib import Path
 
 import cv2
@@ -33,9 +36,12 @@ _gst_proc: subprocess.Popen | None = None
 _loaded_model_path: str | None = None
 _color_matrix: np.ndarray | None = None
 _color_matrix_loaded: bool = False
+_frame_count: int = 0
+_save_debug_frames: bool = False
+_debug_frames_dir: Path | None = None
 
-CALIBRATION_FILE = "color_calibration.json"
-DEFAULT_YOLO_MODEL_PATH = "./balls_ourdata_augmented.pt"
+CALIBRATION_FILE = "lerobot/color_calibration.json"
+DEFAULT_YOLO_MODEL_PATH = "models/balls_ourdata_augmented.pt"
 
 YOLO_DEVICE = 0 if torch.cuda.is_available() else "cpu"
 YOLO_HALF = torch.cuda.is_available()
@@ -44,15 +50,13 @@ CONF_THRESHOLD = 0.2
 GREEN_CLASS_INDEX = 0
 CAMERA_H_FOV_DEG = 60
 
-# CSI — match lerobot/examples/phone_to_so100/arm_camera.py (640x360 @ 30)
-CSI_SENSOR_ID = 0
+CSI_SENSOR_ID = 0  # override with env DOG_CSI_SENSOR_ID=1 for the other CSI connector
 CSI_FLIP_METHOD = 0
 CSI_WIDTH = 640
 CSI_HEIGHT = 360
 CSI_FPS = 30
 
-# Argus → nvvidconv → BGRx → BGR (arm_camera.py). TCP path uses I420+x264; we force the same WxH and 1:1 PAR.
-
+# TCP streaming (same as old working version)
 TCP_STREAM_BIND_HOST = "0.0.0.0"
 TCP_STREAM_CLIENT_HOST = "127.0.0.1"
 TCP_PORT = 5000
@@ -79,6 +83,12 @@ def _build_system_gst_env() -> dict:
     if os.path.isdir(SYSTEM_GSTREAMER_PLUGINS):
         env["GST_PLUGIN_SYSTEM_PATH"] = SYSTEM_GSTREAMER_PLUGINS
         env["GST_PLUGIN_PATH"] = SYSTEM_GSTREAMER_PLUGINS
+    # nvarguscamerasrc / NVMM often need EGL; SSH terminals may lack DISPLAY
+    if not (env.get("DISPLAY") or "").strip():
+        env["DISPLAY"] = ":0"
+    xa = Path.home() / ".Xauthority"
+    if xa.is_file() and not (env.get("XAUTHORITY") or "").strip():
+        env["XAUTHORITY"] = str(xa)
     return env
 
 
@@ -92,58 +102,29 @@ def _calibration_json_path() -> Path:
     if env_path:
         return Path(env_path)
     here = Path(__file__).resolve().parent
-    shared = here / "lerobot" / "examples" / "phone_to_so100" / CALIBRATION_FILE
+    shared = here / "lerobot" / CALIBRATION_FILE
     if shared.is_file():
         return shared
     return here / CALIBRATION_FILE
 
 
+def _csi_sensor_id() -> int:
+    raw = os.environ.get("DOG_CSI_SENSOR_ID", "").strip()
+    if not raw:
+        return CSI_SENSOR_ID
+    try:
+        return int(raw)
+    except ValueError:
+        return CSI_SENSOR_ID
+
+
 def _nvarguscamerasrc_args() -> list[str]:
     return [
         "nvarguscamerasrc",
-        f"sensor-id={CSI_SENSOR_ID}",
+        f"sensor-id={_csi_sensor_id()}",
         "wbmode=0",
         "awblock=true",
     ]
-
-
-def _probe_csi_camera(env: dict) -> str | None:
-    inspect = subprocess.run(
-        [SYSTEM_GST_INSPECT, "nvarguscamerasrc"],
-        env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-    if inspect.returncode != 0:
-        message = inspect.stderr.strip() or "System GStreamer could not find nvarguscamerasrc."
-        return f"CSI camera support is unavailable: {message}"
-
-    probe = subprocess.run(
-        [
-            SYSTEM_GST_LAUNCH,
-            "-q",
-            *_nvarguscamerasrc_args(),
-            "num-buffers=1",
-            "!",
-            "fakesink",
-        ],
-        env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-    if probe.returncode == 0:
-        return None
-
-    message = probe.stderr.strip() or "Unknown Argus camera failure."
-    if "No cameras available" in message or "Sensor could not be opened" in message:
-        return (
-            "Argus cannot detect/open the CSI camera. "
-            "Check the ribbon cable orientation and seating, the correct CSI port, "
-            "and whether this camera module is supported by the current Jetson image/device-tree."
-        )
-    return f"CSI camera probe failed: {message}"
 
 
 def normalize_frame_to_csi_size(frame: np.ndarray | None) -> np.ndarray | None:
@@ -167,8 +148,10 @@ def normalize_frame_to_csi_size(frame: np.ndarray | None) -> np.ndarray | None:
 
 
 def _start_csi_tcp_mpegts_stream() -> subprocess.Popen:
-    # Same Argus + NVMM NV12 + nvvidconv front-end as arm_camera.py; then explicit I420 WxH + square PAR for x264.
-    caps_nvmm = f"video/x-raw(memory:NVMM),width={CSI_WIDTH},height={CSI_HEIGHT},format=NV12,framerate={CSI_FPS}/1"
+    # Same Argus + NVMM NV12 + nvvidconv front-end as arm_camera.py; then I420 + square PAR for x264.
+    caps_nvmm = (
+        f"video/x-raw(memory:NVMM),width={CSI_WIDTH},height={CSI_HEIGHT},format=NV12,framerate={CSI_FPS}/1"
+    )
     caps_i420 = (
         f"video/x-raw,format=I420,width={CSI_WIDTH},height={CSI_HEIGHT},"
         "pixel-aspect-ratio=(fraction)1/1"
@@ -208,11 +191,15 @@ def _start_csi_tcp_mpegts_stream() -> subprocess.Popen:
     ]
     gst_log = open(GST_LOG_PATH, "w", encoding="utf-8")
     gst_env = _build_system_gst_env()
-    csi_error = _probe_csi_camera(gst_env)
-    if csi_error is not None:
-        gst_log.close()
-        raise RuntimeError(csi_error)
-    proc = subprocess.Popen(gst_cmd, stdout=subprocess.DEVNULL, stderr=gst_log, env=gst_env)
+
+    # No probe – it can lock the camera. Just start the pipeline.
+    proc = subprocess.Popen(
+        gst_cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=gst_log,
+        env=gst_env,
+        start_new_session=True,
+    )
     print(f"[camera] Started gst-launch (log: {GST_LOG_PATH})")
     return proc
 
@@ -228,6 +215,64 @@ def _stop_gst_stream() -> None:
         except subprocess.TimeoutExpired:
             _gst_proc.kill()
     _gst_proc = None
+
+
+def _cleanup_all() -> None:
+    """Clean up all resources on program exit."""
+    global _cap
+    try:
+        if _cap is not None and _cap.isOpened():
+            _cap.release()
+    except Exception:
+        pass
+    _stop_gst_stream()
+
+
+# Register cleanup on program exit
+atexit.register(_cleanup_all)
+
+
+def _signal_handler(signum, frame):
+    """Handle termination signals gracefully."""
+    _cleanup_all()
+    exit(0)
+
+
+# Register signal handlers for Ctrl+C and kill signals
+signal.signal(signal.SIGINT, _signal_handler)
+signal.signal(signal.SIGTERM, _signal_handler)
+
+
+def enable_debug_frame_saving(enable: bool = True, max_frames: int = 50) -> None:
+    """Enable or disable saving debug frames to disk."""
+    global _save_debug_frames, _debug_frames_dir, _frame_count
+    _save_debug_frames = enable
+    _frame_count = 0
+    if enable:
+        _debug_frames_dir = Path("debug/camera_frames")
+        _debug_frames_dir.mkdir(parents=True, exist_ok=True)
+        # Clear old frames
+        for f in _debug_frames_dir.glob("*.png"):
+            f.unlink()
+        print(f"[camera] Debug frame saving enabled. Saving up to {max_frames} frames to {_debug_frames_dir}")
+
+
+def _save_debug_frame(frame: np.ndarray, label: str = "") -> None:
+    """Save a frame to the debug directory."""
+    global _frame_count, _save_debug_frames
+    if not _save_debug_frames or _debug_frames_dir is None:
+        return
+    if _frame_count >= 50:
+        return
+    if frame is None or frame.size == 0:
+        return
+    try:
+        filename = _debug_frames_dir / f"frame_{_frame_count:03d}_{label}.png"
+        cv2.imwrite(str(filename), frame)
+        print(f"[camera] Saved {filename}")
+        _frame_count += 1
+    except Exception as e:
+        print(f"[camera] Failed to save debug frame: {e}")
 
 
 def _load_color_matrix() -> np.ndarray | None:
@@ -295,30 +340,50 @@ def initialize_camera(model_path: str | os.PathLike | None = None) -> None:
             _stop_gst_stream()
 
             _gst_proc = _start_csi_tcp_mpegts_stream()
-            time.sleep(0.5)
+            # Give Argus and the pipeline time to initialise and bind the TCP port
+            time.sleep(2.0)
 
+            # Wait for the TCP port to become listening (up to 8 seconds)
             deadline = time.time() + 8.0
+            port_open = False
             while time.time() < deadline:
                 if _gst_proc.poll() is not None:
+                    # gst-launch died – read its stderr from the log file
+                    with open(GST_LOG_PATH, "r", encoding="utf-8") as logf:
+                        log_content = logf.read()
                     raise RuntimeError(
-                        f"gst-launch exited early; see {GST_LOG_PATH} for Argus/encoder errors."
+                        f"gst-launch exited early. Log:\n{log_content}"
                     )
-                _cap = cv2.VideoCapture(
-                    f"tcp://{TCP_STREAM_CLIENT_HOST}:{TCP_PORT}", cv2.CAP_FFMPEG
-                )
-                if _cap.isOpened():
+                # Simple check: try to connect to the port using a dummy socket
+                import socket
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.settimeout(0.2)
+                try:
+                    s.connect((TCP_STREAM_CLIENT_HOST, TCP_PORT))
+                    s.close()
+                    port_open = True
                     break
-                if _cap is not None:
-                    _cap.release()
-                    _cap = None
-                time.sleep(0.2)
+                except (ConnectionRefusedError, socket.timeout):
+                    pass
+                time.sleep(0.3)
 
-            if _cap is None or not _cap.isOpened():
+            if not port_open:
+                _stop_gst_stream()
+                raise RuntimeError(
+                    f"TCP port {TCP_PORT} never became listening. See {GST_LOG_PATH} for gst-launch errors."
+                )
+
+            # Now open the stream with OpenCV
+            _cap = cv2.VideoCapture(
+                f"tcp://{TCP_STREAM_CLIENT_HOST}:{TCP_PORT}", cv2.CAP_FFMPEG
+            )
+            if not _cap.isOpened():
                 _stop_gst_stream()
                 raise RuntimeError(
                     f"Failed to open TCP MPEG-TS stream (FFmpeg). See {GST_LOG_PATH}."
                 )
 
+            # Drain a few frames to stabilise
             for _ in range(30):
                 _cap.read()
                 time.sleep(0.03)
@@ -354,59 +419,42 @@ def calculate_depth(radius: float) -> float:
     return None
 
 
-def detect_ball(frame) -> tuple[float, float, float] | None:
+def detect_ball(frame, zoek_in_lucht: bool) -> tuple[float, float, float] | None:
+    """
+    cam_angle = vertical camera angle (0 = parallel to floor, positive = upwards).
+    When searching in air: distance_cam_to_middle = 24 cm, cam_angle = 18°.
+    When searching on ground: distance_cam_to_middle = 24 cm, cam_angle = -30°.
+    """
     if _model is None or frame is None:
         return None
 
     try:
+        if _save_debug_frames:
+            _save_debug_frame(frame, "input")
+
+        if zoek_in_lucht:
+            distance_cam_to_middle, cam_angle = 24, math.radians(18)
+        else:
+            distance_cam_to_middle, cam_angle = 24, math.radians(-30)
+
         frame = apply_color_correction(frame)
         if frame is None:
             return None
-        results = _model(
-            frame,
-            verbose=False,
-            imgsz=YOLO_IMGSZ,
-            device=YOLO_DEVICE,
-            half=YOLO_HALF,
-            classes=[GREEN_CLASS_INDEX],
-            conf=CONF_THRESHOLD,
-        )
 
-        best_conf = -1.0
-        best_center = None
-        diameter = None
+        if _save_debug_frames:
+            _save_debug_frame(frame, "color_corrected")
 
-        for r in results:
-            for box in r.boxes:
-                conf = float(box.conf[0])
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-                cls = int(box.cls[0])
+        # Lazy import to avoid circular import at module import time.
+        from coordinates_from_picture import get_coordinates_from_frame
 
-                if cls == GREEN_CLASS_INDEX and conf > best_conf:
-                    cx = int((x1 + x2) / 2)
-                    cy = int((y1 + y2) / 2)
-                    best_conf = conf
-                    best_center = (cx, cy)
-                    diameter = x2 - x1
-
-        if best_center is None:
-            return None
-
-        cx, cy = best_center
-        frame_h, frame_w = frame.shape[:2]
-
-        pixel_to_cm = 0.1
-        x_cm = (cx - frame_w / 2.0) * pixel_to_cm
-        z_cm = 0.0
-
-        radius = diameter / 2.0
-        depth_cm = calculate_depth(radius)
-        y_cm = -depth_cm if depth_cm else None
-
-        if y_cm is None:
-            return None
-
-        return (x_cm, y_cm, z_cm)
+        x_cam, y_cam, z_cam = get_coordinates_from_frame(frame)
+        # Transform camera coordinates to robot coordinates
+        x = x_cam
+        z = math.sin(cam_angle) * abs(z_cam) + math.cos(cam_angle) * y_cam
+        y = math.cos(cam_angle) * abs(z_cam) - math.sin(cam_angle) * y_cam - distance_cam_to_middle
+        print("x,y,z")
+        print(x, y, z)
+        return x, y, z
 
     except Exception as e:
         print(f"Error in detection: {e}")
@@ -417,13 +465,30 @@ def read_bgr_frame(timeout_sec: float = 2.0) -> tuple[bool, np.ndarray | None]:
     """Read one decoded BGR frame (640x360), retrying briefly; geometry matches arm_camera.py."""
     global _cap
     deadline = time.time() + timeout_sec
+    print(f"[camera] read_bgr_frame: checking _cap (exists={_cap is not None}, opened={_cap.isOpened() if _cap is not None else 'N/A'}) timeout={timeout_sec}")
     while time.time() < deadline:
         if _cap is None or not _cap.isOpened():
-            return False, None
+            print("[camera] read_bgr_frame: _cap is None or not opened — attempting to reinitialize camera")
+            try:
+                initialize_camera()
+            except Exception as e:
+                print(f"[camera] read_bgr_frame: reinitialize failed: {e}")
+                # wait briefly and continue retrying until deadline
+                time.sleep(0.05)
+                continue
+            # after attempting reinit, re-check _cap
+            print(f"[camera] read_bgr_frame: reinitialized, cap exists={_cap is not None}, opened={_cap.isOpened() if _cap is not None else 'N/A'}")
+            if _cap is None or not _cap.isOpened():
+                time.sleep(0.05)
+                continue
         ret, frame = _cap.read()
         if ret and frame is not None and frame.size > 0:
-            return True, normalize_frame_to_csi_size(frame)
+            frame = normalize_frame_to_csi_size(frame)
+            if _save_debug_frames:
+                _save_debug_frame(frame, "raw")
+            return True, frame
         time.sleep(0.02)
+    print("[camera] read_bgr_frame: timed out waiting for frame")
     return False, None
 
 

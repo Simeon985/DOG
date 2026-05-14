@@ -23,9 +23,6 @@ if _conda_prefix:
 from ultralytics import YOLO
 import cv2
 import torch
-import threading
-from http import server
-from socketserver import ThreadingMixIn
 import time
 import numpy as np
 import subprocess
@@ -67,10 +64,17 @@ def _build_system_gst_env() -> dict:
         env["GST_PLUGIN_SCANNER"] = SYSTEM_GST_PLUGIN_SCANNER
     if os.path.exists(SYSTEM_GST_PLUGIN_PATH):
         env["GST_PLUGIN_SYSTEM_PATH"] = SYSTEM_GST_PLUGIN_PATH
+        env["GST_PLUGIN_PATH"] = SYSTEM_GST_PLUGIN_PATH
+    if not (env.get("DISPLAY") or "").strip():
+        env["DISPLAY"] = ":0"
+    xa = os.path.expanduser("~/.Xauthority")
+    if os.path.isfile(xa) and not (env.get("XAUTHORITY") or "").strip():
+        env["XAUTHORITY"] = xa
     return env
 
 
-def _probe_csi_camera(env: dict) -> str | None:
+def _nvarguscamerasrc_plugin_available(env: dict) -> str | None:
+    """gst-inspect only — do not open Argus here; a fakesink probe races the real pipeline on Jetson."""
     inspect = subprocess.run(
         [SYSTEM_GST_INSPECT, "nvarguscamerasrc"],
         env=env,
@@ -81,33 +85,7 @@ def _probe_csi_camera(env: dict) -> str | None:
     if inspect.returncode != 0:
         message = inspect.stderr.strip() or "System GStreamer could not find nvarguscamerasrc."
         return f"CSI camera support is unavailable: {message}"
-
-    probe = subprocess.run(
-        [
-            SYSTEM_GST_LAUNCH,
-            "-q",
-            "nvarguscamerasrc",
-            f"sensor-id={CSI_SENSOR_ID}",
-            "num-buffers=1",
-            "!",
-            "fakesink",
-        ],
-        env=env,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
-    if probe.returncode == 0:
-        return None
-
-    message = probe.stderr.strip() or "Unknown Argus camera failure."
-    if "No cameras available" in message or "Sensor could not be opened" in message:
-        return (
-            "Argus cannot detect/open the CSI camera. "
-            "Check the ribbon cable orientation and seating, the correct CSI port, "
-            "and whether this camera module is supported by the current Jetson image/device-tree."
-        )
-    return f"CSI camera probe failed: {message}"
+    return None
 
 
 def _start_csi_to_tcp_mpegts_stream() -> subprocess.Popen:
@@ -122,7 +100,7 @@ def _start_csi_to_tcp_mpegts_stream() -> subprocess.Popen:
         f"nvarguscamerasrc",
         f"sensor-id={CSI_SENSOR_ID}",
         "!",
-        f"video/x-raw(memory:NVMM),width={CSI_WIDTH},height={CSI_HEIGHT},format=NV12,framerate={CSI_FPS}/1",
+        f"video/x-raw(memory:NVMM),width={CSI_WIDTH},height={CSI_HEIGHT},framerate={CSI_FPS}/1",
         "!",
         "nvvidconv",
         f"flip-method={CSI_FLIP_METHOD}",
@@ -151,11 +129,17 @@ def _start_csi_to_tcp_mpegts_stream() -> subprocess.Popen:
     gst_log_path = "/tmp/detect_ball_gst.log"
     gst_log = open(gst_log_path, "w")  # noqa: SIM115
     gst_env = _build_system_gst_env()
-    csi_error = _probe_csi_camera(gst_env)
-    if csi_error is not None:
+    plugin_error = _nvarguscamerasrc_plugin_available(gst_env)
+    if plugin_error is not None:
         gst_log.close()
-        raise RuntimeError(csi_error)
-    proc = subprocess.Popen(gst_cmd, stdout=subprocess.DEVNULL, stderr=gst_log, env=gst_env)
+        raise RuntimeError(plugin_error)
+    proc = subprocess.Popen(
+        gst_cmd,
+        stdout=subprocess.DEVNULL,
+        stderr=gst_log,
+        env=gst_env,
+        start_new_session=True,
+    )
     print(f"[camera] Started gst-launch pipeline (logs: {gst_log_path})")
     return proc
 
@@ -187,92 +171,10 @@ CONF_THRESHOLD = 0.2
 GREEN_CLASS_INDEX = 2  # index in `colors` that corresponds to "green"
 CAMERA_H_FOV_DEG = 60  # adjust to your camera's horizontal field of view
 
-STREAM_HOST = "0.0.0.0"
-STREAM_PORT = 8000
-JPEG_QUALITY = 45
-STREAM_EVERY_N_FRAMES = 2
-
 robot = LeKiwi(LeKiwiConfig(id=ROBOT_ID, port=PORT))
 bus = robot.bus
 bus.connect()
 configure_wheels(bus)
-
-_latest_jpeg: bytes | None = None
-_jpeg_lock = threading.Lock()
-
-
-class _ThreadingHTTPServer(ThreadingMixIn, server.HTTPServer):
-    daemon_threads = True
-
-
-class _StreamHandler(server.BaseHTTPRequestHandler):
-    def do_GET(self):  # noqa: N802
-        if self.path in ("/", "/index.html"):
-            html = (
-                "<html><body>"
-                "<h3>detect_ball stream</h3>"
-                "<img src='/mjpeg' />"
-                "</body></html>"
-            ).encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(html)))
-            self.end_headers()
-            self.wfile.write(html)
-            return
-
-        if self.path == "/jpeg":
-            with _jpeg_lock:
-                frame = _latest_jpeg
-            if frame is None:
-                self.send_response(503)
-                self.end_headers()
-                return
-            self.send_response(200)
-            self.send_header("Content-Type", "image/jpeg")
-            self.send_header("Content-Length", str(len(frame)))
-            self.end_headers()
-            self.wfile.write(frame)
-            return
-
-        if self.path == "/mjpeg":
-            self.send_response(200)
-            self.send_header("Cache-Control", "no-cache, private")
-            self.send_header("Pragma", "no-cache")
-            self.send_header("Content-Type", "multipart/x-mixed-replace; boundary=frame")
-            self.end_headers()
-            try:
-                while True:
-                    with _jpeg_lock:
-                        frame = _latest_jpeg
-                    if frame is None:
-                        time.sleep(0.05)
-                        continue
-                    self.wfile.write(b"--frame\r\n")
-                    self.wfile.write(b"Content-Type: image/jpeg\r\n")
-                    self.wfile.write(f"Content-Length: {len(frame)}\r\n\r\n".encode("utf-8"))
-                    self.wfile.write(frame)
-                    self.wfile.write(b"\r\n")
-                    time.sleep(0.05)
-            except BrokenPipeError:
-                return
-
-        self.send_response(404)
-        self.end_headers()
-
-    def log_message(self, format, *args):  # noqa: A002
-        # Keep stdout clean (YOLO already logs)
-        return
-
-
-def _start_stream_server() -> None:
-    httpd = _ThreadingHTTPServer((STREAM_HOST, STREAM_PORT), _StreamHandler)
-    t = threading.Thread(target=httpd.serve_forever, daemon=True)
-    t.start()
-    print(f"[stream] MJPEG: http://localhost:{STREAM_PORT}/  (or http://<robot_ip>:{STREAM_PORT}/)")
-
-
-_start_stream_server()
 
 
 def calculate_depth(radius):
@@ -345,7 +247,7 @@ try:
             x1, y1, x2, y2 = best_box
             cx, cy = best_center
 
-            # Draw bounding box + center + info (this is what the stream shows)
+            # Draw bounding box + center + info (local overlay; no network stream)
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.circle(frame, (cx, cy), 5, (0, 255, 0), -1)
             if diameter is not None:
@@ -363,13 +265,6 @@ try:
             frame_h, frame_w = frame.shape[:2]
             angle = compute_rotation_angle(frame_w, cx)
             rotate_platform(bus, angle_deg=angle)
-
-        # Update stream
-        if frame_idx % STREAM_EVERY_N_FRAMES == 0:
-            ok, buf = cv2.imencode(".jpg", frame, [int(cv2.IMWRITE_JPEG_QUALITY), JPEG_QUALITY])
-            if ok:
-                with _jpeg_lock:
-                    _latest_jpeg = buf.tobytes()
 
 except KeyboardInterrupt:
     print("Stopping detect_ball...")
