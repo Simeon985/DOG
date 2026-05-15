@@ -45,19 +45,15 @@ def main(estimator: str) -> None:
             _set_ser(ser)
             # Main loop
             # # x,y,z in centimeters; x is left/right, y is forward, z is vertical
-            ball = search_loop(subject="ball_floor")
-            break
-            #print(ball)
-            #break
-            ###HET VOLGENDE IS HARDCODED
-            ball= (10.0, 10.0, 0.0) # x=10cm right, y=50cm forward, z=0cm height
+            # ball = search_loop(subject="ball_floor")
+            # print(ball)
+            ball = (40,-40,0)
             while ball is not None:
                 x, y, z = ball
                 moved = drive_to_ball(x, y, step_cm=50.0)
                 if not moved:
                     break
-                ball = (0,20.0,0)
-                #ball = search_loop(subject="ball_floor")
+                ball = search_loop(subject="ball_floor")
 
             # grab_ball()
             

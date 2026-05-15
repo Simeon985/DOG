@@ -56,7 +56,6 @@ def opstart():
     # Draai rondje
     pass
 
-
 def search_loop(
     subject: str,
     model_path: str | Path | None = None,
@@ -110,9 +109,9 @@ def search_loop(
         initialize_camera(model_path=mp)
 
         # Position arm for this subject
-        # arm = _get_arm_robot()
-        # target_angles = arm_angles[subject]
-        # move_to_target_angles(arm, target_angles)
+        arm = _get_arm_robot()
+        target_angles = arm_angles[subject]
+        move_to_target_angles(arm, target_angles)
         time.sleep(0.5)  # Allow arm to settle
 
         # Capture and detect
@@ -129,11 +128,13 @@ def search_loop(
                 return None
 
             # Always use ball detection for now
-            coords = detect_ball(frame, zoek_in_lucht=False if subject == "ball_floor" else False)
-            # _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, False, 1, "right"))
+            coords = detect_ball(frame, zoek_in_lucht=False if subject == "ball_floor" else True)
+            _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, False, 1, "right"))
             print(f"No {subject} detected")
         else:
-            # _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, True, 0, "right"))
+            _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, True, 0, "right"))
+            time.sleep(0.5)
+            coords = detect_ball(frame, zoek_in_lucht=False if subject == "ball_floor" else True)
             print(f"Detected {subject} at {coords}")
 
         return coords
@@ -141,6 +142,7 @@ def search_loop(
     except Exception as e:
         print(f"Error in search_loop({subject}): {e}")
         return None
+
 
 def drive_to_ball(
     x,
@@ -164,7 +166,7 @@ def drive_to_ball(
     x =x/100
     y =y/100
     step_m = step_cm / 100.0
-    desired_angle = math.degrees(math.atan2(float(x), max(1e-6, -float(y))))
+    desired_angle = math.degrees(math.atan2(float(x), float(y)))
     desired_distance = min(step_m, math.sqrt(float(x) ** 2 + float(y) ** 2))
     seperate_movements = True
     robot = _get_robot()
@@ -192,17 +194,12 @@ def drive_to_ball(
     start_angle = est.history[-1][2]
     start_x = est.history[-1][0]
     start_y = est.history[-1][1]
-    desired_x = start_x + x*math.cos(start_angle) + y*math.sin(start_angle)
-    desired_y = start_y + y*math.cos(start_angle) - x*math.sin(start_angle)
     # zet om naar world frame ipv robot frame:
     desired_angle = (desired_angle + start_angle) % 360
     #upper_lim_desired_angle= (desired_angle+2) %360
     try:
         while(1):
-            x,y = est.history[-1][0], est.history[-1][1]
-            desired_angle = math.degrees(math.atan2(float(desired_y-y), max(1e-6, float(desired_x-x))))
             current_angle = est.history[-1][2]
-
             error_rotation = (desired_angle - current_angle) % 360
             if error_rotation > 180:
                 error_rotation -= 360
@@ -211,7 +208,11 @@ def drive_to_ball(
             rotation_velocity_normalized=min(20,abs(error_rotation))*0.05
             direction = "left" if error_rotation >0 else "right"
 
-            error_distance =  np.sqrt((desired_x-x)**2 + (desired_y-y)**2)
+
+            x,y = est.history[-1][0], est.history[-1][1]
+            distance_from_start = np.sqrt((x-start_x)**2 + (y-start_y)**2)
+            print(distance_from_start)
+            error_distance = desired_distance - distance_from_start
             straight_velocity_normalized = min(0.1,abs(error_distance))*10
 
             #print("rotation error: ", error_rotation, " distance error: ", error_distance, " current angle: ", current_angle, " current distance: ", distance_from_start)
@@ -233,8 +234,6 @@ def drive_to_ball(
                     #aanpassen rotate_platform(robot.bus, True)
                     stop_event.set()
                     break
-                else:
-                    move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
 
 
             time.sleep(0.1)
@@ -242,7 +241,6 @@ def drive_to_ball(
     except KeyboardInterrupt:
         print("\nKeyboardInterrupt in sensor_control_process")
         print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
-        move_rot_and_straight(robot.bus, True, 0, "", 0, 0)
         stop_event.set()
     finally:
         print("\nfinally: KeyboardInterrupt in sensor_control_process")
@@ -316,5 +314,16 @@ def stop_movement():
 
 
 def return_with_ball():
-    est.history
-    pass
+    step_size = 50
+    hist_len = len(est.history)
+    for tup in range(hist_len, 0, -step_size):
+        x_now,y_now = est.history[-1][0], est.history[-1][1]
+        x_dest,y_dest = tup
+        x_diff,y_diff = x_dest-x_now,y_dest-y_now
+        total_distance = math.sqrt(x_diff**2+y_diff**2)
+        angle_now = est.history[-1][2]
+        angle_dest = math.atan2(y_diff,x_diff)
+        angle_diff = angle_dest-angle_now
+        y = math.cos(angle_diff)*total_distance
+        x = math.sin(angle_diff)*total_distance
+        drive_to_ball(x,y)
