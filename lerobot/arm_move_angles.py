@@ -477,6 +477,47 @@ def PID_sequentie2(robot):
 
 
 
+def PID_air_tracking(robot):
+    while True:
+        
+        motor_names = list(robot.bus.motors.keys())
+        current_obs = robot.get_observation()
+        current_joints = {name: float(current_obs[f"{name}.pos"]) for name in motor_names}
+        a = current_obs["shoulder_pan.pos"]
+        b = current_obs["wrist_flex.pos"]
+
+        C1 = .002
+        C2 = .04
+        Mx_perfect = 320
+        My_perfect = 180
+        Mx = Mx_perfect
+        My = My_perfect
+        times_failed_PID = 0
+        while times_failed_PID < 30:
+            a += -(Mx-Mx_perfect)*C2
+            b += -(My-My_perfect)*C2
+            
+            TARGET_ANGLES = {
+                "shoulder_pan": a,
+                "shoulder_lift": float(current_obs["shoulder_lift.pos"]),
+                "elbow_flex": float(current_obs["elbow_flex.pos"]),
+                "wrist_flex": b,
+                "wrist_roll": float(current_obs["wrist_roll.pos"]),
+                "gripper": float(current_obs["gripper.pos"]),
+            }
+            move_to_target_angles(robot, TARGET_ANGLES)
+
+            time.sleep(.1)
+            Mx,My,_ = get_M_and_radius_from_picture()
+            if Mx == None:
+                Mx = Mx_perfect
+                My = My_perfect
+                times_failed_PID += 1
+
+        print("uit PID")
+        # nu moet hij beginnen zoeken
+
+
 
 def main():
     robot_config = SO100FollowerConfig(port="/dev/ttyACM0", id="dog", use_degrees=True)
@@ -487,7 +528,8 @@ def main():
         raise ValueError("Robot is not connected!")
 
     try:
-        PID_sequentie2(robot)
+        PID_air_tracking(robot)
+        #PID_sequentie2(robot)
 
 
     except Exception as e:

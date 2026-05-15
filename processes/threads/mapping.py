@@ -77,8 +77,10 @@ class PeripheralEstimator:
 
             # Update position using current heading (p_a)
             with self.lock:
-                self.pose[0] += dx
-                self.pose[1] += dy
+                if not math.isnan(dx):
+                    self.pose[0] += dx
+                if not math.isnan(dy):   
+                    self.pose[1] += dy
 
                 #self.history.append((self.pose[0], self.pose[1], data[0], self.history[-1][-1] + dt))
                 self.history.append((float(self.pose[0]), float(self.pose[1]), float(data[0]), float(self.history[-1][-1] + dt)))

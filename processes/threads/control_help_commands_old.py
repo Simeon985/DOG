@@ -31,7 +31,7 @@ def move_forward(bus, velocity: int = 800, duration_s: float = 10.0) -> dict[str
     bus.sync_write("Goal_Velocity", dict.fromkeys(FORWARD_MOTORS, 0), num_retry=5)
     return goal_velocities
 def move_straight_to_object(bus, distance: float, angle: float) -> None:
-    if distance < 0.1:
+    if distance < 0.01:
         print("Already at the object")
         return
 

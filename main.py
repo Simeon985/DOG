@@ -3,7 +3,8 @@ import argparse
 from multiprocessing import Process, Array
 from processes.sensor_control import sensor_control_process
 from processes.sensor_control import end
-from states import opstart, search_loop, drive_to_ball, stop_movement, grab_ball, _set_est, _set_ser
+from states import *
+from states import opstart, search_loop, drive_to_ball, stop_movement, grab_ball, _set_est, _set_ser, _set_hist_stupid
 # from processes.camera import camera_process
 import numpy as np
 from processes.threads.mapping import *
@@ -20,6 +21,7 @@ def main(estimator: str) -> None:
 
     start = time.time()
     timeout = 20
+
 
     # p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control", daemon = True)
     # set terminate target function on process
@@ -43,17 +45,50 @@ def main(estimator: str) -> None:
             ser = initialize_esp()
             _set_est(est)
             _set_ser(ser)
+            _set_hist_stupid()
+
+            stop_event = threading.Event()
+            test_counter = [0]
+            data = np.zeros(11)
+
+            t1 = threading.Thread(target=control, args=(stop_event, test_counter, shared_array), daemon = True)
+            print("sensor_mapping_should_begin")
+            time.sleep(0.3)
+            t2 = threading.Thread(target=est.update, args=(ser, data, stop_event), daemon = True)
+
+            t1.start()
+            t2.start()
+
+            time.sleep(0.3)
+
             # Main loop
             # # x,y,z in centimeters; x is left/right, y is forward, z is vertical
             # ball = search_loop(subject="ball_floor")
             # print(ball)
-            ball = (40,-40,0)
+            print("search loop should start")
+            ball = search_loop(subject="ball_floor", wrist_angle=0)
+
+            step_size = 50
+
             while ball is not None:
-                x, y, z = ball
-                moved = drive_to_ball(x, y, step_cm=50.0)
-                if not moved:
-                    break
-                ball = search_loop(subject="ball_floor")
+                if ball[1] > step_size:
+                    drive_to_ball(ball[0],step_size)
+                    wrist_angle = atan2((ball[1]-50) / 25)
+                    ball = search_loop(subject="ball_floor", wrist_angle=wrist_angle-30)  # OF +30 NOG TESTEN
+                else:
+                    drive_to_ball(ball[0], step_size)
+                    print("AT BALL!")
+                    ball = None
+            return_with_ball_stupid()
+            # grab_ball()
+
+            # ball = (40,-40,0)
+            # while ball is not None:
+            #     x, y, z = ball
+            #     moved = drive_to_ball(x, y, step_cm=50.0)
+            #     if not moved:
+            #         break
+            #     ball = search_loop(subject="ball_floor")
 
             # grab_ball()
             
@@ -74,6 +109,9 @@ def main(estimator: str) -> None:
         stop_movement()
         #rotate_platform(p_sensor.robot.bus, True)
         print("Shutting down...")
+    finally:
+        t1.join()
+        t2.join()
 
     # p_sensor.join()
     # p_camera.join()
