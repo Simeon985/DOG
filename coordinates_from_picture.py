@@ -110,7 +110,7 @@ def get_coordinates_from_frame(frame: "np.ndarray") -> tuple[float, float, float
 	x, y, z = calculate_3D_coordinates(Mx, My, radius)
 	print("x, y, z")
 	print(x, y, z)
-	return -y, x, z
+	return -x,-y, z
 
 
 def _capture_frame(timeout_sec: float = 3.0):

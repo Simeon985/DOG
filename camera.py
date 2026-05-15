@@ -147,6 +147,23 @@ def normalize_frame_to_csi_size(frame: np.ndarray | None) -> np.ndarray | None:
     return cv2.resize(frame, (tw, th), interpolation=cv2.INTER_AREA)
 
 
+def csi_appsink_pipeline() -> str:
+    """Return a GStreamer appsink pipeline string for direct nvarguscamerasrc capture.
+
+    This mirrors the pipeline used in `lerobot/arm_camera.py` for fast, in-process
+    capture (no external gst-launch process).
+    """
+    return (
+        "nvarguscamerasrc sensor-id=%d wbmode=0 awblock=true ! "
+        "video/x-raw(memory:NVMM),width=%d,height=%d,framerate=%d/1 ! "
+        "nvvidconv ! "
+        "video/x-raw,format=BGRx ! "
+        "videoconvert ! "
+        "video/x-raw,format=BGR ! "
+        "appsink emit-signals=false sync=false max-buffers=2 drop=true"
+    ) % (_csi_sensor_id(), CSI_WIDTH, CSI_HEIGHT, CSI_FPS)
+
+
 def _start_csi_tcp_mpegts_stream() -> subprocess.Popen:
     # Same Argus + NVMM NV12 + nvvidconv front-end as arm_camera.py; then I420 + square PAR for x264.
     caps_nvmm = (
@@ -331,74 +348,99 @@ def initialize_camera(model_path: str | os.PathLike | None = None) -> None:
         return
 
     try:
-        need_camera = _cap is None or not _cap.isOpened() or _gst_proc is None or _gst_proc.poll() is not None
+        need_camera = _cap is None or not _cap.isOpened() or _model is None or _loaded_model_path != mp
 
         if need_camera:
+            # First, try to open a direct appsink GStreamer pipeline (fast in-process capture).
             if _cap is not None:
                 _cap.release()
                 _cap = None
             _stop_gst_stream()
 
-            _gst_proc = _start_csi_tcp_mpegts_stream()
-            # Give Argus and the pipeline time to initialise and bind the TCP port
-            time.sleep(2.0)
-
-            # Wait for the TCP port to become listening (up to 8 seconds)
-            deadline = time.time() + 8.0
-            port_open = False
-            while time.time() < deadline:
-                if _gst_proc.poll() is not None:
-                    # gst-launch died – read its stderr from the log file
-                    with open(GST_LOG_PATH, "r", encoding="utf-8") as logf:
-                        log_content = logf.read()
-                    raise RuntimeError(
-                        f"gst-launch exited early. Log:\n{log_content}"
-                    )
-                # Simple check: try to connect to the port using a dummy socket
-                import socket
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(0.2)
+            appsink_pipeline = csi_appsink_pipeline()
+            try:
+                test_cap = cv2.VideoCapture(appsink_pipeline, cv2.CAP_GSTREAMER)
+                if test_cap.isOpened():
+                    # Drain quickly to stabilise
+                    for _ in range(5):
+                        test_cap.read()
+                        time.sleep(0.02)
+                    # Assign to global _cap and prefer this path
+                    _cap = test_cap
+                    print(f"[camera] Opened appsink pipeline (GStreamer) {CSI_WIDTH}x{CSI_HEIGHT}@{CSI_FPS}")
+                else:
+                    test_cap.release()
+                    test_cap = None
+            except Exception:
+                # Appsink approach failed; ensure it's cleaned up and fall back
                 try:
-                    s.connect((TCP_STREAM_CLIENT_HOST, TCP_PORT))
-                    s.close()
-                    port_open = True
-                    break
-                except (ConnectionRefusedError, socket.timeout):
+                    if test_cap is not None:
+                        test_cap.release()
+                except Exception:
                     pass
-                time.sleep(0.3)
 
-            if not port_open:
-                _stop_gst_stream()
-                raise RuntimeError(
-                    f"TCP port {TCP_PORT} never became listening. See {GST_LOG_PATH} for gst-launch errors."
+            # If appsink didn't work, fall back to the reliable TCP gst-launch method
+            if _cap is None or not _cap.isOpened():
+                _gst_proc = _start_csi_tcp_mpegts_stream()
+                # Give Argus and the pipeline time to initialise and bind the TCP port
+                time.sleep(2.0)
+
+                # Wait for the TCP port to become listening (up to 8 seconds)
+                deadline = time.time() + 8.0
+                port_open = False
+                while time.time() < deadline:
+                    if _gst_proc.poll() is not None:
+                        # gst-launch died – read its stderr from the log file
+                        with open(GST_LOG_PATH, "r", encoding="utf-8") as logf:
+                            log_content = logf.read()
+                        raise RuntimeError(
+                            f"gst-launch exited early. Log:\n{log_content}"
+                        )
+                    # Simple check: try to connect to the port using a dummy socket
+                    import socket
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    s.settimeout(0.2)
+                    try:
+                        s.connect((TCP_STREAM_CLIENT_HOST, TCP_PORT))
+                        s.close()
+                        port_open = True
+                        break
+                    except (ConnectionRefusedError, socket.timeout):
+                        pass
+                    time.sleep(0.3)
+
+                if not port_open:
+                    _stop_gst_stream()
+                    raise RuntimeError(
+                        f"TCP port {TCP_PORT} never became listening. See {GST_LOG_PATH} for gst-launch errors."
+                    )
+
+                # Now open the stream with OpenCV
+                _cap = cv2.VideoCapture(
+                    f"tcp://{TCP_STREAM_CLIENT_HOST}:{TCP_PORT}", cv2.CAP_FFMPEG
                 )
+                if not _cap.isOpened():
+                    _stop_gst_stream()
+                    raise RuntimeError(
+                        f"Failed to open TCP MPEG-TS stream (FFmpeg). See {GST_LOG_PATH}."
+                    )
 
-            # Now open the stream with OpenCV
-            _cap = cv2.VideoCapture(
-                f"tcp://{TCP_STREAM_CLIENT_HOST}:{TCP_PORT}", cv2.CAP_FFMPEG
-            )
-            if not _cap.isOpened():
-                _stop_gst_stream()
-                raise RuntimeError(
-                    f"Failed to open TCP MPEG-TS stream (FFmpeg). See {GST_LOG_PATH}."
-                )
+                # Drain a few frames to stabilise
+                for _ in range(30):
+                    _cap.read()
+                    time.sleep(0.03)
 
-            # Drain a few frames to stabilise
-            for _ in range(30):
-                _cap.read()
-                time.sleep(0.03)
-
-            ok, _ = read_bgr_frame(timeout_sec=10.0)
-            if not ok:
-                if _cap is not None:
-                    _cap.release()
-                    _cap = None
-                _stop_gst_stream()
-                raise RuntimeError(
-                    f"No decoded frames from tcp://{TCP_STREAM_CLIENT_HOST}:{TCP_PORT}. "
-                    f"See {GST_LOG_PATH}."
-                )
-            print(f"[camera] Stream OK {CSI_WIDTH}x{CSI_HEIGHT}@{CSI_FPS} (TCP decode)")
+                ok, _ = read_bgr_frame(timeout_sec=10.0)
+                if not ok:
+                    if _cap is not None:
+                        _cap.release()
+                        _cap = None
+                    _stop_gst_stream()
+                    raise RuntimeError(
+                        f"No decoded frames from tcp://{TCP_STREAM_CLIENT_HOST}:{TCP_PORT}. "
+                        f"See {GST_LOG_PATH}."
+                    )
+                print(f"[camera] Stream OK {CSI_WIDTH}x{CSI_HEIGHT}@{CSI_FPS} (TCP decode)")
 
         if _model is None or _loaded_model_path != mp:
             _model = YOLO(mp)
@@ -448,10 +490,12 @@ def detect_ball(frame, zoek_in_lucht: bool) -> tuple[float, float, float] | None
         from coordinates_from_picture import get_coordinates_from_frame
 
         x_cam, y_cam, z_cam = get_coordinates_from_frame(frame)
+        print("x_cam,y_cam,z_cam")
+        print(x_cam, y_cam, z_cam)
         # Transform camera coordinates to robot coordinates
         x = x_cam
         z = math.sin(cam_angle) * abs(z_cam) + math.cos(cam_angle) * y_cam
-        y = math.cos(cam_angle) * abs(z_cam) - math.sin(cam_angle) * y_cam - distance_cam_to_middle
+        y = math.cos(cam_angle) * abs(z_cam) - math.sin(cam_angle) * y_cam + distance_cam_to_middle
         print("x,y,z")
         print(x, y, z)
         return x, y, z
