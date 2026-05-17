@@ -16,10 +16,12 @@
 
 import math
 import sys
+import os
 import time
 from pathlib import Path
-
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
+from social_functions import neutraal, boos, sad, hart
 
 # This file lives in `DOG/lerobot/`. `main.py` imports it as top-level `arm_move_angles`, and it may
 # also be run as `python arm_move_angles.py` from this directory — so parent `DOG/` must be on
@@ -343,7 +345,7 @@ def grab_ball(robot: SO100Follower):
 
 
 
-def move_to_target_angles(robot: SO100Follower, target_angles: dict[str, float]):
+def move_to_target_angles(robot: SO100Follower, target_angles: dict[str, float], step_delay=0.05):
     motor_names = list(robot.bus.motors.keys())
     current_obs = robot.get_observation()
     current_joints = {name: float(current_obs[f"{name}.pos"]) for name in motor_names}
@@ -368,7 +370,7 @@ def move_to_target_angles(robot: SO100Follower, target_angles: dict[str, float])
             for name in motor_names
         }
         robot.send_action(joint_action)
-        precise_sleep(max(1.0 / FPS, STEP_DELAY_S))
+        precise_sleep(max(0.01, step_delay))
 
 
 def print_current_angles(robot: SO100Follower):
@@ -414,11 +416,19 @@ def find_good_scan_pos(robot):
 
 def PID_sequentie2(robot):
     opgepakt = False
+    neutraal()
     while True:
         
         start_x,start_y,start_z = find_good_scan_pos(robot)
         if start_x == None:
+            if opgepakt:
+                hart()
+            else:
+                sad()
             return opgepakt
+        elif opgepakt:
+            boos()
+            opgepakt = False
 
         move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
         #print("net voor hij de eerste keer get_coordinates_from_picture oproept")
@@ -528,8 +538,8 @@ def main():
         raise ValueError("Robot is not connected!")
 
     try:
-        PID_air_tracking(robot)
-        #PID_sequentie2(robot)
+        #PID_air_tracking(robot)
+        PID_sequentie2(robot)
 
 
     except Exception as e:

@@ -42,6 +42,47 @@ void Matrix_LED::update(unsigned long current_time, float distance){
     }
 }
 
+
+void Matrix_LED::update2(unsigned long current_time, EmotionalState emotion, float distance){
+    delta_time = current_time - previous_timestamp;
+    delta_time_animation = current_time - previous_timestamp_animation;  // restored
+
+    if(2<distance && distance<10){
+        
+        if (delta_time>1000000){
+            is_scared = false;
+            scarable = false;
+        } else if (scarable) {
+            is_scared = true;          
+        }
+    } else {
+        previous_timestamp=current_time;
+        is_scared = false;
+        scarable = true;
+    }
+
+    if (emotion != emotional_state){
+        previous_timestamp=current_time;
+        emotional_state = emotion;
+    }
+
+    if (delta_time_animation>50000){        // restored: throttled animation
+        previous_timestamp_animation=current_time;
+        if (rand() < RAND_MAX / 5){
+            left = !left;
+        }
+        render();
+    }
+
+    delta_time_blink = current_time - previous_timestamp_blink;
+    if(delta_time_blink > 5000000){
+        previous_timestamp_blink = current_time;
+        blinking = true;
+        unblinking = false;                  // restored
+        blink_state = 1;                     // restored
+    }
+}
+
 #include <cstdint>
 void rotate180(const uint8_t in[8], uint8_t out[8]) {
     for (int i = 0; i < 8; i++) {
@@ -92,7 +133,7 @@ void Matrix_LED::render(void) {
     static uint8_t rechteroog[8];
     switch (emotional_state) {
         case EmotionalState::boos:
-            if (random_bool()){
+            if (left){
                 for (int i = 0; i < 8; i++) {
                     linkeroog[i] = boos_links[i] & sad_pupil_naar_links[i];
                     rechteroog_unrotated[i] = boos_rechts[i] & sad_pupil_naar_links[i];
@@ -105,7 +146,7 @@ void Matrix_LED::render(void) {
             }
             break;
         case EmotionalState::sad:
-            if (random_bool()){
+            if (left){
                 for (int i = 0; i < 8; i++) {
                     linkeroog[i] = sad_links[i] & sad_pupil_naar_links[i];
                     rechteroog_unrotated[i] = sad_rechts[i] & sad_pupil_naar_links[i];
@@ -118,7 +159,7 @@ void Matrix_LED::render(void) {
             }
             break;
         case EmotionalState::hart:
-            if (random_bool()){
+            if (left){
                 for (int i = 0; i < 8; i++) {
                     linkeroog[i] = hart_naar_links[i];
                     rechteroog_unrotated[i] = hart_naar_links[i];
@@ -147,6 +188,7 @@ void Matrix_LED::render(void) {
                     vertical_offset_pupil = min(2,vertical_offset_pupil+1);
                 }
             }
+            
 
             generatePupil(vertical_offset_pupil, horizontal_offset_pupil, is_scared, pupil_mask);
 

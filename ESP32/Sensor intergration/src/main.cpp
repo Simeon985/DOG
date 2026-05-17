@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <Adafruit_BNO055.h>
 #include <Adafruit_Sensor.h>
+#include <stdint.h>
 
 
 
@@ -104,6 +105,7 @@ float gyro_x = 0;
 float lin_acc_x = 0;
 float lin_acc_y = 0;
 int state_led=0;
+Matrix_LED::EmotionalState emotie = Matrix_LED::EmotionalState::neutraal;
 
 
 void loop() {
@@ -128,9 +130,8 @@ void loop() {
   lin_acc_x = lin_acc.x();
   lin_acc_y = lin_acc.y();
 
-
   // updating animation
-  animation.update(current_time_animation,distance1);
+  animation.update2(current_time_animation,emotie,distance1);
   //}
     //print everything in one line
 
@@ -173,8 +174,18 @@ void loop() {
           Serial.println(current_time-previous_time);
           previous_time = current_time;
 
-
-
+      }
+      else if (cmd == 'n'){
+        emotie = Matrix_LED::EmotionalState::neutraal;
+      }
+      else if (cmd == 'b'){
+        emotie = Matrix_LED::EmotionalState::boos;
+      }
+      else if (cmd == 's'){
+        emotie = Matrix_LED::EmotionalState::sad;
+      }
+      else if (cmd == 'h'){
+        emotie = Matrix_LED::EmotionalState::hart;
       }
   }
 

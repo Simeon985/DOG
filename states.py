@@ -140,7 +140,8 @@ def search_loop(
             print(f"No {subject} detected")
         else:
             _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, True, 0, "right"))
-            time.sleep(0.5)
+            print("FINAL CHECK:")
+            time.sleep(2)
             coords = detect_ball(frame, zoek_in_lucht=False if subject == "ball_floor" else True)
             end_angle = est.history[-1][2]
             _get_hist_stupid().append(("rot", end_angle-start_angle))
@@ -200,8 +201,7 @@ def drive_to_ball(
         while(1):
             current_angle = est.history[-1][2]
             error_rotation = (desired_angle - current_angle) % 360
-            print("current_angle")
-            print(current_angle)
+
             if error_rotation > 180:
                 error_rotation -= 360
             if error_rotation < -180:
@@ -238,10 +238,10 @@ def drive_to_ball(
 
     except KeyboardInterrupt:
         print("\nKeyboardInterrupt in sensor_control_process")
-        print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
+        # print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
     finally:
         print("\nfinally: KeyboardInterrupt in sensor_control_process")
-        print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
+        # print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
 
         return (desired_distance == step_m) # pas dit nog aan
 

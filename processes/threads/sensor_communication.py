@@ -40,14 +40,17 @@ def get_sensor_data(ser: serial.Serial, data_array):
     data = ser.readline()
     data_list = data.split()
     if len(data_list) == 11:
-        print(float(data_list[0])," ",float(data_list[1])," ",float(data_list[2])," ",float(data_list[3])," ",float(data_list[4])," ",float(data_list[5])," ",int(data_list[6])," ",int(data_list[7])," ",int(data_list[8])," ",int(data_list[9])," ",float(data_list[10]))
+        pass
+        # print(float(data_list[0])," ",float(data_list[1])," ",float(data_list[2])," ",float(data_list[3])," ",float(data_list[4])," ",float(data_list[5])," ",int(data_list[6])," ",int(data_list[7])," ",int(data_list[8])," ",int(data_list[9])," ",float(data_list[10]))
     else:
-        print("Error reading line, expected 11 elements but got ", len(data_list))
+        # print("Error reading line, expected 11 elements but got ", len(data_list))
         return
-
-    for i in range(6):
-        data_array[i] = float(data_list[i])
-    for i in range(6,11):
-        data_array[i] = int(data_list[i])
+    try:
+        for i in range(6):
+            data_array[i] = float(data_list[i])
+        for i in range(6,11):
+            data_array[i] = int(data_list[i])
+    except:
+        return
     return
 

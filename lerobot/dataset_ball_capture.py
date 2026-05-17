@@ -4,7 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-SYSTEM_PYTHON = "/usr/bin/python3"
+# Use the interpreter that launched this script so the child process sees the same environment.
+SYSTEM_PYTHON = sys.executable
 GST_PLUGIN_SCANNER = "/usr/lib/aarch64-linux-gnu/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner"
 GST_PLUGIN_SYSTEM_PATH = "/usr/lib/aarch64-linux-gnu/gstreamer-1.0"
 SCRIPT_DIR = Path(__file__).resolve().parent

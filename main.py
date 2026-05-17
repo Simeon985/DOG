@@ -8,6 +8,8 @@ from states import opstart, search_loop, drive_to_ball, stop_movement, grab_ball
 # from processes.camera import camera_process
 import numpy as np
 from processes.threads.mapping import *
+from social_functions import neutraal, boos, sad, hart, eekhoorn, random_sounds
+from arm_move_angles import PID_sequentie2
 
 # States =
 state = "START"
@@ -21,21 +23,6 @@ def main(estimator: str) -> None:
 
     start = time.time()
     timeout = 20
-
-
-    # p_sensor = Process(target=sensor_control_process, args=(estimator, shared_array), name="sensor_control", daemon = True)
-    # set terminate target function on process
-    #p_camera = Process(target=camera_process,         args=(shared_array,),           name="camera")
-
-    # p_camera.start()
-    # print("initializing camera")
-    # while np.isclose(shared_array[10],0):
-    #     if time.time() - start > timeout:
-    #         break
-    #     time.sleep(0.1)
-    # print("camera initialized")
-
-    #p_sensor.start()
 
     try:
         #opstart()
@@ -56,10 +43,25 @@ def main(estimator: str) -> None:
             time.sleep(0.3)
             t2 = threading.Thread(target=est.update, args=(ser, data, stop_event), daemon = True)
 
+            sound_thread = threading.Thread(target=random_sounds, daemon=True)
+            
             t1.start()
             t2.start()
+            sound_thread.start()
 
-            time.sleep(0.3)
+
+            print("tot hier gekomen")
+            #hart()
+
+            robot_config = SO100FollowerConfig(port="/dev/ttyACM0", id="dog", use_degrees=True)
+            robot = SO100Follower(robot_config)
+            robot.connect()
+            eekhoorn(robot)
+            print("tot einde geraakt")
+            break
+
+            PID_sequentie2(robot)
+
 
             # Main loop
             # # x,y,z in centimeters; x is left/right, y is forward, z is vertical
@@ -67,19 +69,28 @@ def main(estimator: str) -> None:
             # print(ball)
             print("search loop should start")
             ball = search_loop(subject="ball_floor", wrist_angle=0)
+            print(ball)
+            drive_to_ball(ball[0], ball[1]-5)
+            PID_sequentie2(robot)
 
             step_size = 50
 
-            while ball is not None:
-                if ball[1] > step_size:
-                    drive_to_ball(ball[0],step_size)
-                    wrist_angle = atan2((ball[1]-50) / 25)
-                    ball = search_loop(subject="ball_floor", wrist_angle=wrist_angle-30)  # OF +30 NOG TESTEN
-                else:
-                    drive_to_ball(ball[0], step_size)
-                    print("AT BALL!")
-                    ball = None
-            return_with_ball_stupid()
+            # while ball is not None:
+            #     # if ball[1] > step_size:
+            #     #     print("BIGGER STEP SIZE")
+            #     #     drive_to_ball(ball[0],step_size)
+            #     #     print("AFTER DRIVE TO BALL")
+            #     #     wrist_angle = atan2((ball[1]-50) / 25)
+            #     #     print("wrist_angle:")
+            #     #     print(wrist_angle)
+            #     #     ball = search_loop(subject="ball_floor", wrist_angle=wrist_angle-30)  # OF +30 NOG TESTEN
+            #     # else:
+            #     print("FINAL DRIVE")
+            #     drive_to_ball(ball[0], ball[1])
+            #     print("AT BALL!")
+            #     ball = None
+
+            # return_with_ball_stupid()
             # grab_ball()
 
             # ball = (40,-40,0)
@@ -112,9 +123,8 @@ def main(estimator: str) -> None:
     finally:
         t1.join()
         t2.join()
+        sound_thread.join()
 
-    # p_sensor.join()
-    # p_camera.join()
     print("All processes closed")
 
 
