@@ -36,7 +36,7 @@ for _p in (_this_dir / "src", _this_dir, _dog_root):
 from lerobot.robots.so_follower import SO100Follower, SO100FollowerConfig
 from lerobot.utils.robot_utils import precise_sleep
 
-from coordinates_from_picture import get_coordinates_from_picture, get_M_and_radius_from_picture
+from coordinates_from_picture import get_coordinates_from_picture, get_M_and_radius_from_picture, get_face_middle_and_radius_from_picture
 
 FPS = 30
 STEP_DELAY_S = 0.05
@@ -370,7 +370,7 @@ def move_to_target_angles(robot: SO100Follower, target_angles: dict[str, float],
             for name in motor_names
         }
         robot.send_action(joint_action)
-        precise_sleep(max(0.01, step_delay))
+        precise_sleep(max(0.005, step_delay))
 
 
 def print_current_angles(robot: SO100Follower):
@@ -487,7 +487,13 @@ def PID_sequentie2(robot):
 
 
 
-def PID_air_tracking(robot):
+def PID_air_tracking_oud(robot, ball = True):
+    if ball == True:
+        def get_M_and_radius():
+            return get_M_and_radius_from_picture()
+    else:
+        def get_M_and_radius():
+            return get_face_middle_and_radius_from_picture()
     while True:
         
         motor_names = list(robot.bus.motors.keys())
@@ -497,7 +503,7 @@ def PID_air_tracking(robot):
         b = current_obs["wrist_flex.pos"]
 
         C1 = .002
-        C2 = .04
+        C2 = .075
         Mx_perfect = 320
         My_perfect = 180
         Mx = Mx_perfect
@@ -515,10 +521,10 @@ def PID_air_tracking(robot):
                 "wrist_roll": float(current_obs["wrist_roll.pos"]),
                 "gripper": float(current_obs["gripper.pos"]),
             }
-            move_to_target_angles(robot, TARGET_ANGLES)
+            move_to_target_angles(robot, TARGET_ANGLES,step_delay=0.02)
 
             time.sleep(.1)
-            Mx,My,_ = get_M_and_radius_from_picture()
+            Mx,My,_ = get_M_and_radius()
             if Mx == None:
                 Mx = Mx_perfect
                 My = My_perfect
@@ -526,6 +532,63 @@ def PID_air_tracking(robot):
 
         print("uit PID")
         # nu moet hij beginnen zoeken
+
+
+def PID_air_tracking(robot, ball = True):
+
+    ball_tracking = False
+    motor_names = list(robot.bus.motors.keys())
+    current_obs = robot.get_observation()
+    current_joints = {name: float(current_obs[f"{name}.pos"]) for name in motor_names}
+    a = current_obs["shoulder_pan.pos"]
+    b = current_obs["wrist_flex.pos"]
+
+    C1 = .002
+    C2 = .075
+    Mx_perfect = 320
+    My_perfect = 180
+    Mx = Mx_perfect
+    My = My_perfect
+    times_failed_PID = 0
+    counter_ball_seen = 0
+    while times_failed_PID < 30:
+        a += -(Mx-Mx_perfect)*C2
+        b += -(My-My_perfect)*C2
+        
+        TARGET_ANGLES = {
+            "shoulder_pan": a,
+            "shoulder_lift": float(current_obs["shoulder_lift.pos"]),
+            "elbow_flex": float(current_obs["elbow_flex.pos"]),
+            "wrist_flex": b,
+            "wrist_roll": float(current_obs["wrist_roll.pos"]),
+            "gripper": float(current_obs["gripper.pos"]),
+        }
+        move_to_target_angles(robot, TARGET_ANGLES,step_delay=0.02)
+
+        time.sleep(.1)
+        if not ball_tracking:
+            Mx,My,_ = get_face_middle_and_radius_from_picture()
+            Mx_ball,My_ball,_ = get_M_and_radius_from_picture()
+            if Mx == None:
+                Mx = Mx_perfect
+                My = My_perfect
+            if Mx_ball == None:
+                counter_ball_seen = 0
+            else:
+                counter_ball_seen += 1
+            
+        else:
+            Mx,My,_ = get_M_and_radius_from_picture()
+            if Mx == None:
+                Mx = Mx_perfect
+                My = My_perfect
+                times_failed_PID += 1
+            else:
+                times_failed_PID = 0
+        if counter_ball_seen > 5:
+            ball_tracking = True
+    print("uit PID")
+    # nu moet hij beginnen zoeken
 
 
 
@@ -536,10 +599,9 @@ def main():
 
     if not robot.is_connected:
         raise ValueError("Robot is not connected!")
-
     try:
-        #PID_air_tracking(robot)
-        PID_sequentie2(robot)
+        PID_air_tracking(robot, ball=False)
+        #PID_sequentie2(robot)
 
 
     except Exception as e:

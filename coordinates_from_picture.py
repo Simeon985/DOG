@@ -2,6 +2,8 @@ import ctypes
 import os
 from pathlib import Path
 import numpy as np
+from insightface.app import FaceAnalysis
+import cv2
 
 from arm_camera import take_image
 
@@ -78,6 +80,7 @@ def get_M_and_radius_from_frame(frame: "np.ndarray") -> tuple[float, float, floa
 		return None,None,None
 
 	# Ultralytics can take numpy arrays directly. Keep it in-memory for realtime performance.
+	frame = cv2.rotate(frame, cv2.ROTATE_180)
 
 	results = model.predict(frame, verbose=False, device=YOLO_DEVICE)
 
@@ -101,7 +104,53 @@ def get_M_and_radius_from_frame(frame: "np.ndarray") -> tuple[float, float, floa
 	radius = (coordinates[2] - coordinates[0]) / 2
 	print("Mx, My, radius")
 	print(Mx, My, radius)
-	return Mx,My,radius
+	return pixels_width-Mx,pixels_height-My,radius
+
+def get_face_middle_and_radius_from_frame(frame: "np.ndarray") -> tuple[float, float, float]:
+    """
+    Run face detection on an in-memory BGR frame and return (center_x, center_y, radius) in pixel coordinates.
+    Returns (Mx, My, radius) or (None, None, None) if no face detected.
+    """
+    if frame is None:
+        return None, None, None
+    frame = cv2.rotate(frame, cv2.ROTATE_180)
+
+    # Initialize face detection model (static/global to avoid re-initialization)
+    if not hasattr(get_face_middle_and_radius_from_frame, "face_app"):
+        print("Loading face detection model...")
+        get_face_middle_and_radius_from_frame.face_app = FaceAnalysis(
+            name='buffalo_sc',
+            providers=[
+                ('TensorrtExecutionProvider', {
+                    'trt_engine_cache_enable': True,
+                    'trt_engine_cache_path': '/home/dog/.insightface/trt_cache'
+                }),
+                'CUDAExecutionProvider',
+                'CPUExecutionProvider'
+            ]
+        )
+        get_face_middle_and_radius_from_frame.face_app.prepare(ctx_id=0, det_size=(640, 640))
+    
+    faces = get_face_middle_and_radius_from_frame.face_app.get(frame)
+    
+    if not faces:
+        print("NO FACES DETECTED")
+        return None, None, None
+    
+    # Use the first face detected
+    face = faces[0]
+    box = face.bbox.astype(int)  # [x1, y1, x2, y2]
+    
+    # Calculate center
+    Mx = (box[0] + box[2]) / 2
+    My = (box[1] + box[3]) / 2
+    
+    # Calculate radius (half of width)
+    radius = (box[2] - box[0]) / 2
+    
+    print(f"Face detected - center: ({Mx:.1f}, {My:.1f}), radius: {radius:.1f}")
+    return pixels_width-Mx,pixels_height-My, radius
+
 
 def get_coordinates_from_frame(frame: "np.ndarray") -> tuple[float, float, float]:
 	Mx,My,radius = get_M_and_radius_from_frame(frame)
@@ -147,6 +196,14 @@ def get_M_and_radius_from_picture():
 	if img is None:
 		raise RuntimeError(f"Failed to read image: {image_path}")
 	return get_M_and_radius_from_frame(img)
+
+def get_face_middle_and_radius_from_picture():
+	image_path = Path(__file__).with_name("image.png")
+	take_image(image_path)
+	img = cv2.imread(str(image_path))
+	if img is None:
+		raise RuntimeError(f"Failed to read image: {image_path}")
+	return get_face_middle_and_radius_from_frame(img)
 
 
 def get_coordinates_from_picture_2():

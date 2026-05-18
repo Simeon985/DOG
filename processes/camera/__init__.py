@@ -1,5 +1,5 @@
-from processes.camera.utils import *
-from coordinates_from_picture_lerobot import *
+from utils import *
+from coordinates_from_picture import *
 
 
 TEMP_MATCH_THRESHOLD = 0.4
@@ -33,7 +33,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     embeddings_dir = 'AI/images/embeddings'
 
     print("Loading known faces from images...")
-    for filename in ['robin.jpg', 'thomas.jpg', 'jorien.jpg', 'Wannes.jpg']:
+    for filename in ['robin.jpg', 'thomas.jpg', 'jorien.jpg', 'Wannes.jpg','kobe.jpeg']:
         image_path = os.path.join(images_dir, filename)
         if os.path.exists(image_path):
             img = cv2.imread(image_path)
@@ -62,7 +62,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
     print(f"Loaded {len(known_faces)} known faces")
     print("Starting webcam...")
 
-    cap = cv2.VideoCapture(gstreamer_pipeline)
+    cap = cv2.VideoCapture(gstreamer_pipeline())
     cam_info_faces = initialize_coordinate_detection_faces()
 
     M = load_matrix()
@@ -124,7 +124,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
                         best_temp = track_id
                 print(f"temp sim: {best_temp_sim}")
 
-                if best_temp and best_temp_sim >= TEMP_MATCH_THRESHOLD:
+                if False: #best_temp and best_temp_sim >= TEMP_MATCH_THRESHOLD:
                     temp_faces[best_temp]['embedding'] = emb
                     temp_faces[best_temp]['frame_count'] += 1
                     temp_faces[best_temp]['last_seen'] = now
@@ -155,6 +155,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
                             best_gallery_name = name
                             best_gallery_emb = gallery[idx]
                     print(f"gallery sim: {best_gallery_sim}")
+                    print(f"gezicht: {best_gallery_name}")
 
                     if best_gallery_name and best_gallery_sim >= GALLERY_MATCH_THRESHOLD:
                         track_id = uuid.uuid4().hex[:8]
@@ -261,9 +262,9 @@ def camera_process(shared_array: SynchronizedArray) -> None:
         # # Draw fps counter
         # # cv2.putText(frame, f"FPS: {fps:.1f}", (10, 30),
         # #     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        score = sharpness_score(frame, face.bbox)
-        cv2.putText(frame, f"sharp: {score:.0f}", (box[0], box[3] + 20),
-            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
+        #score = sharpness_score(frame, face.bbox)
+        #cv2.putText(frame, f"sharp: {score:.0f}", (box[0], box[3] + 20),
+        #    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
         #cv2.imshow("Face Recognition", frame) 
 
 

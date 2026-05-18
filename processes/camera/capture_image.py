@@ -15,7 +15,7 @@ def gstreamer_pipeline(
     display_width=960,
     display_height=540,
     framerate=30,
-    flip_method=0,
+    flip_method=2,
 ):
     return (
         "nvarguscamerasrc sensor-id=%d ! "
@@ -86,7 +86,7 @@ def capture_image_ssh():
         cap.release()
 
 def capture_stream():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(gstreamer_pipeline())
     save_path = "captured_stream"
     os.makedirs(save_path, exist_ok=True)
     while True:
@@ -95,7 +95,7 @@ def capture_stream():
             break
         im_path = os.path.join(save_path, f"ref_{time.time()}.png")
         cv2.imwrite(im_path, frame)
-        cv2.imshow("Face Recognition", frame)
+        #cv2.imshow("Face Recognition", frame)
         if cv2.waitKey(1) == 27:
             break
     cap.release()

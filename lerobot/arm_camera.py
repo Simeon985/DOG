@@ -28,22 +28,10 @@ os.environ["LD_LIBRARY_PATH"] = "/usr/lib/aarch64-linux-gnu:/lib/aarch64-linux-g
 import cv2
 import numpy as np
 
-from camera import get_video_capture as _get_shared_video_capture
-from camera import initialize_camera as _initialize_shared_camera
-from camera import read_bgr_frame as _read_shared_bgr_frame
-
 # ----------------------------------------------------------------------
 # 2. Persistent camera singleton
 # ----------------------------------------------------------------------
 _camera = None
-
-
-def _ensure_shared_camera():
-    cap = _get_shared_video_capture()
-    if cap is None or not cap.isOpened():
-        _initialize_shared_camera()
-        cap = _get_shared_video_capture()
-    return cap
 
 def csi_pipeline():
     """GStreamer pipeline string for the CSI camera."""
@@ -60,10 +48,18 @@ def csi_pipeline():
 def get_camera():
     """Return the singleton VideoCapture object, opening it if needed."""
     global _camera
-    cap = _ensure_shared_camera()
-    if cap is None or not cap.isOpened():
-        raise RuntimeError("Failed to open CSI camera. Check no other process uses it.")
-    _camera = cap
+    if _camera is None or not _camera.isOpened():
+        if _camera is not None:
+            _camera.release()
+        pipeline = csi_pipeline()
+        _camera = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
+        if not _camera.isOpened():
+            raise RuntimeError("Failed to open CSI camera. Check no other process uses it.")
+        # Drop any stale buffers
+        for _ in range(5):
+            _camera.grab()
+        # Optional: set buffer size (may be ignored by GStreamer, but harmless)
+        _camera.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     return _camera
 
 def capture_frame():
@@ -71,10 +67,10 @@ def capture_frame():
     Grab one BGR frame from the persistent camera.
     Retries a few times if the frame is missing (rare after boot).
     """
-    get_camera()
+    cap = get_camera()
     max_attempts = 3
     for attempt in range(max_attempts):
-        ret, frame = _read_shared_bgr_frame(timeout_sec=0.5)
+        ret, frame = cap.read()
         if ret and frame is not None and frame.size > 0:
             return frame
         time.sleep(0.03)   # short delay before retry
@@ -153,22 +149,9 @@ def calibrate():
 def capture_corrected(output="image.png"):
     """Capture one frame, apply color correction, save to file."""
     frame = capture_frame()
-    # Ensure the shared camera module uses this module's calibration file
-    prev_env = os.environ.get("ARM_CAMERA_CALIBRATION_FILE")
-    os.environ["ARM_CAMERA_CALIBRATION_FILE"] = str(CALIBRATION_FILE)
-    try:
-        try:
-            frame = _apply_shared_color_correction(frame)
-        except Exception:
-            M = load_matrix()
-            if M is not None:
-                frame = apply_matrix(frame, M)
-    finally:
-        # restore previous env var
-        if prev_env is None:
-            os.environ.pop("ARM_CAMERA_CALIBRATION_FILE", None)
-        else:
-            os.environ["ARM_CAMERA_CALIBRATION_FILE"] = prev_env
+    M = load_matrix()
+    if M is not None:
+        frame = apply_matrix(frame, M)
     cv2.imwrite(output, frame)
     print(f"Saved to {output}")
 

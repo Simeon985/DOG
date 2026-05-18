@@ -396,7 +396,6 @@ def camera_process_2() -> None:
     emb = []
 
     for frame in references:
-
         faces = app.get(frame)
         for face in faces:
                 emb.append(face.normed_embedding)
@@ -440,13 +439,12 @@ def deform_stream():
     print(f"Loaded {len(stream)} stream images")
 
     for frame in streams:
-
         faces = app.get(frame)
-            for face in faces:
-                frame = correct_face_region(frame, bbox, references)
-                os.makedirs(deformed_stream_dir, exist_ok=True)
-                im_path = os.path.join(save_path, f"ref_{time.time()}.png")
-                cv2.imwrite(im_path, frame)
+        for face in faces:
+            frame = correct_face_region(frame, bbox, references)
+            os.makedirs(deformed_stream_dir, exist_ok=True)
+            im_path = os.path.join(save_path, f"ref_{time.time()}.png")
+            cv2.imwrite(im_path, frame)
 
 
 

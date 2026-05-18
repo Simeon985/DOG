@@ -56,12 +56,14 @@ def main(estimator: str) -> None:
             robot_config = SO100FollowerConfig(port="/dev/ttyACM0", id="dog", use_degrees=True)
             robot = SO100Follower(robot_config)
             robot.connect()
-            eekhoorn(robot)
-            print("tot einde geraakt")
+            # print("robot conected!")
+            cute(robot)
+            # eekhoorn(robot)
+            # print("tot einde geraakt")
+            
+            # PID_sequentie2(robot)
             break
-
-            PID_sequentie2(robot)
-
+            # drive_to_ball(1,20)
 
             # Main loop
             # # x,y,z in centimeters; x is left/right, y is forward, z is vertical
@@ -115,10 +117,9 @@ def main(estimator: str) -> None:
             # x,y,z = search_loop(subject="person")
 
             time.sleep(0.1)
-    except KeyboardInterrupt:
-        print("Trying to shut down")
+    except Exception as e:
+        print(e)
         stop_movement()
-        #rotate_platform(p_sensor.robot.bus, True)
         print("Shutting down...")
     finally:
         t1.join()
