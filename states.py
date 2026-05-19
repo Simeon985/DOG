@@ -13,7 +13,7 @@ for _p in (_lerobot_root / "src", _lerobot_root):
 
 import torch
 from multiprocessing import Array
-from arm_move_angles import grab_ball as arm_grab_ball, move_to_target_angles
+from arm_move_angles import grab_ball as arm_grab_ball, move_to_target_angles, move_to_xyz
 from lerobot.robots.so_follower import SO100Follower, SO100FollowerConfig
 from processes.threads.control_help_commands import init_robot, move_rot_and_straight, rotate_platform
 
@@ -27,8 +27,10 @@ from processes.threads.mapping import *
 from processes.threads.control import *
 from processes.threads.control_help_commands import *
 
+from coordinates_from_picture import get_coordinates_from_picture
 
-from camera import initialize_camera, detect_ball, get_video_capture, read_bgr_frame, enable_debug_frame_saving
+from merged_camera import initialize_camera, detect_ball, get_video_capture, read_bgr_frame
+import cv2
 
 
 _robot = None
@@ -111,7 +113,6 @@ def search_loop(
 
     try:
         mp = model_path if model_path is not None else YOLO_MODEL_PATH
-        enable_debug_frame_saving(True)
         initialize_camera(model_path=mp)
 
         print("should start moving arms")
@@ -130,6 +131,8 @@ def search_loop(
         coords = None
         while coords is None:
             ret, frame = read_bgr_frame(timeout_sec=3.0)
+            cv2.imwrite("image.png", frame)
+            
             if not ret or frame is None:
                 print("Failed to read frame")
                 return None
@@ -179,7 +182,6 @@ def drive_to_ball(
     step_m = step_cm / 100.0
     desired_angle = math.degrees(math.atan2(float(x), float(y)))
     desired_distance = min(step_m, math.sqrt(float(x) ** 2 + float(y) ** 2))
-    seperate_movements = True
     robot = _get_robot()
     est = _get_est()
     ser = _get_ser()
@@ -212,39 +214,49 @@ def drive_to_ball(
 
             x,y = est.history[-1][0], est.history[-1][1]
             distance_from_start = np.sqrt((x-start_x)**2 + (y-start_y)**2)
-            print(distance_from_start)
+            # print(distance_from_start)
             error_distance = desired_distance - distance_from_start
             straight_velocity_normalized = min(0.1,abs(error_distance))*10
 
             #print("rotation error: ", error_rotation, " distance error: ", error_distance, " current angle: ", current_angle, " current distance: ", distance_from_start)
             move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
             #vierkant_maken(robot.bus, False, rotation_velocity_normalized, direction, 1, error_rotation)
-            if (seperate_movements):
-                if abs(error_rotation) > 2:
-                    move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, 0, error_rotation)
-                elif abs(error_distance) > 0.005:
-                    move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
-                else:
-                    print("Desired position reached. Stopping the robot.")
-                    move_rot_and_straight(robot.bus, True, 0, "", 0, 0)
-                    break
+            # with est.lock:
+                # brake = est.brake
+                # if brake:
+                    # drive_to_ball(x + 100, y)
+            if abs(error_rotation) > 2:
+                move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, 0, error_rotation)
+            elif abs(error_distance) > 0.05:
+                move_rot_and_straight(robot.bus, False, rotation_velocity_normalized, direction, straight_velocity_normalized, error_rotation)
             else:
-                if (-1 <error_rotation < 2 and abs(error_distance) < 0.05):
-                    print("Desired angle reached. Stopping the robot.")
-                    #aanpassen rotate_platform(robot.bus, True)
-                    break
+                print("Desired position reached. Stopping the robot.")
+                move_rot_and_straight(robot.bus, True, 0, "", 0, 0)
+                break
 
             time.sleep(0.1)
 
     except KeyboardInterrupt:
-        print("\nKeyboardInterrupt in sensor_control_process")
+        print("\nKeyboardInterrupt in drive_to_ball")
         # print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
+    except Exception as e:
+        print(e)
+        stop_movement()
     finally:
-        print("\nfinally: KeyboardInterrupt in sensor_control_process")
+        print("\nfinally: KeyboardInterrupt in drive_to_ball")
         # print(est.history, " ", np.sqrt(est.history[-1][0]**2 + est.history[-1][1]**2)," meter")
 
         return (desired_distance == step_m) # pas dit nog aan
 
+def search_locally(robot):
+    positions_to_scan = [(-15,1,25),(-10,5,25),(-5,10,25),(0,15,25),(5,10,25),(10,5,25),(15,1,25)]
+    for coordinate_tup in positions_to_scan:
+        start_x,start_y,start_z = coordinate_tup
+        move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True, gripping=True)
+        cam_x, cam_y, cam_z = get_coordinates_from_picture()
+        if cam_x != None:
+            return True
+    return False
 
 def _get_robot():
     global _robot
@@ -337,8 +349,7 @@ def return_with_ball():
     print(hist_len)
     print(est.history)
     step_size = 20
-    #for index in range(hist_len-step_size, 0, -step_size):
-    for index in range(10,11):
+    for index in range(hist_len-step_size, 0, -step_size):
         print("index in return")
         print(index)
         print(est.history)
@@ -350,11 +361,13 @@ def return_with_ball():
         print(x_dest,y_dest)
         x_diff,y_diff = x_dest-x_now,y_dest-y_now
         total_distance = math.sqrt(x_diff**2+y_diff**2)
-        angle_now = est.history[-1][2]
+        if total_distance < .05:
+            continue
+        angle_now = math.radians(est.history[-1][2])
         angle_dest = math.atan2(y_diff,x_diff)
         angle_diff = angle_dest-angle_now
-        y = -math.cos(angle_diff)*total_distance
-        x = math.sin(angle_diff)*total_distance
+        x = math.cos(angle_diff)*total_distance
+        y = -math.sin(angle_diff)*total_distance
         print("x, y destination van return")
         print(x, y)
         drive_to_ball(x*100,y*100,step_cm=100.)

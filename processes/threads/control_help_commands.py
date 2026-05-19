@@ -32,7 +32,7 @@ def move_forward(bus, velocity: int = 800, duration_s: float = 10.0) -> dict[str
     return goal_velocities
     
 def move_straight_to_object(bus, velocity_normalized: float, angle: float) -> dict[str, int]:
-    if velocity_normalized < 0.005:
+    if velocity_normalized < 0.05:
         # print("Already at the object")
         return {motor: 0 for motor in WHEEL_MOTORS}
     max_velocity = 800

@@ -5,11 +5,10 @@ from processes.sensor_control import sensor_control_process
 from processes.sensor_control import end
 from states import *
 from states import opstart, search_loop, drive_to_ball, stop_movement, grab_ball, _set_est, _set_ser, _set_hist_stupid
-# from processes.camera import camera_process
 import numpy as np
 from processes.threads.mapping import *
-from social_functions import neutraal, boos, sad, hart, eekhoorn, random_sounds
-from arm_move_angles import PID_sequentie2
+from social_functions import neutraal, boos, sad, hart, eekhoorn, cute, random_sounds, six_seven, grom, wenen, celebration
+from arm_move_angles import PID_sequentie2, PID_air_tracking
 
 # States =
 state = "START"
@@ -17,7 +16,7 @@ state = "START"
 est = None
 ser = None
 
-def main(estimator: str) -> None:
+def main() -> None:
     global est, ser
     shared_array = Array('d', [0.0] * 11)
 
@@ -42,79 +41,73 @@ def main(estimator: str) -> None:
             print("sensor_mapping_should_begin")
             time.sleep(0.3)
             t2 = threading.Thread(target=est.update, args=(ser, data, stop_event), daemon = True)
-
             sound_thread = threading.Thread(target=random_sounds, daemon=True)
             
             t1.start()
             t2.start()
             sound_thread.start()
 
-
+            #time.sleep(30)
             print("tot hier gekomen")
-            #hart()
+            # hart()
+        
 
             robot_config = SO100FollowerConfig(port="/dev/ttyACM0", id="dog", use_degrees=True)
             robot = SO100Follower(robot_config)
             robot.connect()
-            # print("robot conected!")
-            cute(robot)
+
+            #PID_air_tracking(robot)
+            # break
+            # motor_names = list(robot.bus.motors.keys())
+            # current_obs = robot.get_observation()
+            # current_joints = {name: float(current_obs[f"{name}.pos"]) for name in motor_names}
+            # print(current_joints)
+            # celebration(robot)
+
+            # break
             # eekhoorn(robot)
-            # print("tot einde geraakt")
-            
+
             # PID_sequentie2(robot)
-            break
-            # drive_to_ball(1,20)
 
-            # Main loop
-            # # x,y,z in centimeters; x is left/right, y is forward, z is vertical
-            # ball = search_loop(subject="ball_floor")
-            # print(ball)
-            print("search loop should start")
-            ball = search_loop(subject="ball_floor", wrist_angle=0)
-            print(ball)
-            drive_to_ball(ball[0], ball[1]-5)
-            PID_sequentie2(robot)
+            # grom(robot)
+            # time.sleep(1)
+            # wenen(robot)
+            # time.sleep(1)
+            # six_seven(robot)
+            # time.sleep(1)
 
-            step_size = 50
-
-            # while ball is not None:
-            #     # if ball[1] > step_size:
-            #     #     print("BIGGER STEP SIZE")
-            #     #     drive_to_ball(ball[0],step_size)
-            #     #     print("AFTER DRIVE TO BALL")
-            #     #     wrist_angle = atan2((ball[1]-50) / 25)
-            #     #     print("wrist_angle:")
-            #     #     print(wrist_angle)
-            #     #     ball = search_loop(subject="ball_floor", wrist_angle=wrist_angle-30)  # OF +30 NOG TESTEN
-            #     # else:
-            #     print("FINAL DRIVE")
-            #     drive_to_ball(ball[0], ball[1])
-            #     print("AT BALL!")
-            #     ball = None
-
-            # return_with_ball_stupid()
-            # grab_ball()
-
-            # ball = (40,-40,0)
-            # while ball is not None:
-            #     x, y, z = ball
-            #     moved = drive_to_ball(x, y, step_cm=50.0)
-            #     if not moved:
-            #         break
-            #     ball = search_loop(subject="ball_floor")
-
-            # grab_ball()
+            # cute(robot)
             
+            # break
 
-            # person = search_loop(subject="person")
-            # while person is not None:
-            #     x, y, z = ball
-            #     moved = drive_to_ball(x, y, step_cm=50.0)
-            #     if not moved:
-            #         break
-            #     person = search_loop(subject="person")
+            # eekhoorn(robot)
+            # PID_sequentie2(robot)
+            #drive_to_ball(0,20)
+            #drive_to_ball(10,0)
+            # print("start returning")
+            # return_with_ball()
+            # print("done returning")
+            # break
+            
+            # drive_to_ball(1,30)
+            # break
+            # drive_to_ball(-1,50)
+            # print("drive1")
+            #drive_to_ball(,1)
+            # print("drive2")
+            # return_with_ball()
+            # break
 
-            # x,y,z = search_loop(subject="person")
+            ball = search_loop(subject="ball_floor", wrist_angle=0)
+            drive_to_ball(ball[0]+5, ball[1]-5) # Rijdt naar de bal
+            for i in range(3):
+                detected = search_locally(robot) # Search on the floor, finds it?
+                if detected:
+                    PID_sequentie2(robot)
+                drive_to_ball(0,-20) # If not detected, drive 20cm back
+                ball = search_loop(subject="ball_floor", wrist_angle=20)
+                drive_to_ball(ball[0], ball[1]-5)
+
 
             time.sleep(0.1)
     except Exception as e:
@@ -130,12 +123,4 @@ def main(estimator: str) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Process sensor data from text file')
-    parser.add_argument(
-        'estimator',
-        nargs='?',
-        default='Peripheral',
-        help='selected type of position estimator. options: Peripheral (default), Kalman'
-    )
-    args = parser.parse_args()
-    main(args.estimator)
+    main()

@@ -124,7 +124,7 @@ def camera_process(shared_array: SynchronizedArray) -> None:
                         best_temp = track_id
                 print(f"temp sim: {best_temp_sim}")
 
-                if False: #best_temp and best_temp_sim >= TEMP_MATCH_THRESHOLD:
+                if best_temp and best_temp_sim >= TEMP_MATCH_THRESHOLD:
                     temp_faces[best_temp]['embedding'] = emb
                     temp_faces[best_temp]['frame_count'] += 1
                     temp_faces[best_temp]['last_seen'] = now

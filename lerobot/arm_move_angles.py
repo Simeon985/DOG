@@ -21,7 +21,7 @@ import time
 from pathlib import Path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
-from social_functions import neutraal, boos, sad, hart
+from social_functions import neutraal, wenen, sad, hart, celebration, six_seven, cute, august, yente, thomas
 
 # This file lives in `DOG/lerobot/`. `main.py` imports it as top-level `arm_move_angles`, and it may
 # also be run as `python arm_move_angles.py` from this directory — so parent `DOG/` must be on
@@ -114,7 +114,7 @@ def coordinates_3D_to_angles(x,y,z):
     shoulder_lift, elbow_flex, wrist_flex = angles_vertical_movement(height,distance)
     return shoulder_pan, shoulder_lift, elbow_flex, wrist_flex
 
-def move_to_xyz(x,y,z,robot,gripping=False,view_mode=False):
+def move_to_xyz(x,y,z,robot,gripping=False,view_mode=False,wrist=None):
     shoulder_pan, shoulder_lift, elbow_flex, wrist_flex = coordinates_3D_to_angles(x=x,y=y,z=z)
 
     if gripping == False:
@@ -128,7 +128,7 @@ def move_to_xyz(x,y,z,robot,gripping=False,view_mode=False):
         "shoulder_pan": shoulder_pan,
         "shoulder_lift": shoulder_lift,
         "elbow_flex": elbow_flex,
-        "wrist_flex": wrist_flex,
+        "wrist_flex": wrist if wrist else wrist_flex,
         "wrist_roll": 100,
         "gripper": gripper,
     }
@@ -397,7 +397,6 @@ def move_to_aRz(a,R,z,robot,gripping=False,view_mode=False):
     move_to_xyz(x,y,z,robot,gripping,view_mode)
 
 def find_good_scan_pos(robot):
-    
     min_distance = np.inf
     positions_to_scan = [(-15,1,25),(-10,5,25),(-5,10,25),(0,15,25),(5,10,25),(10,5,25),(15,1,25)]
     for coordinate_tup in positions_to_scan:
@@ -422,12 +421,12 @@ def PID_sequentie2(robot):
         start_x,start_y,start_z = find_good_scan_pos(robot)
         if start_x == None:
             if opgepakt:
-                hart()
+                celebration(robot)
             else:
-                sad()
+                wenen(robot)
             return opgepakt
         elif opgepakt:
-            boos()
+            wenen(robot)
             opgepakt = False
 
         move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True)
@@ -552,6 +551,7 @@ def PID_air_tracking(robot, ball = True):
     times_failed_PID = 0
     counter_ball_seen = 0
     while times_failed_PID < 30:
+        print("air_tracking ...")
         a += -(Mx-Mx_perfect)*C2
         b += -(My-My_perfect)*C2
         
@@ -567,7 +567,20 @@ def PID_air_tracking(robot, ball = True):
 
         time.sleep(.1)
         if not ball_tracking:
-            Mx,My,_ = get_face_middle_and_radius_from_picture()
+            Mx,My,_, recognition = get_face_middle_and_radius_from_picture()
+            if recognition != None:
+
+                if recognition == "jorien":
+                    celebration(robot)
+                elif recognition == "august":
+                    august(robot)
+                elif recognition == "thomasVA":
+                    thomas(robot)
+                elif recognition == "yente" or recognition == "yente2":
+                    yente(robot)
+                elif recognition == "simeon":
+                    six_seven(robot)
+                
             Mx_ball,My_ball,_ = get_M_and_radius_from_picture()
             if Mx == None:
                 Mx = Mx_perfect
@@ -586,6 +599,7 @@ def PID_air_tracking(robot, ball = True):
             else:
                 times_failed_PID = 0
         if counter_ball_seen > 5:
+            print("ball tracking starts")
             ball_tracking = True
     print("uit PID")
     # nu moet hij beginnen zoeken

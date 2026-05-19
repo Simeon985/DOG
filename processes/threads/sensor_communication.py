@@ -54,3 +54,10 @@ def get_sensor_data(ser: serial.Serial, data_array):
         return
     return
 
+
+# data = np.zeros(11)
+# ser = initialize_esp(baudrate=921600)
+# while True:
+#     get_sensor_data(ser, data)
+#     print(data)
+#     time.sleep(1)
