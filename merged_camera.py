@@ -222,7 +222,7 @@ def calculate_depth(radius_px: float) -> float | None:
         return round(depth, 1)
     return None
 
-def detect_ball(frame: np.ndarray, zoek_in_lucht: bool) -> tuple[float, float, float] | None:
+def detect_ball(frame: np.ndarray, wrist_angle: float) -> tuple[float, float, float] | None:
     """
     Run YOLO detection, then convert image coordinates to 3D world coordinates.
     - zoek_in_lucht: True = ball in air (camera tilted up), False = on ground (tilted down)
@@ -255,12 +255,8 @@ def detect_ball(frame: np.ndarray, zoek_in_lucht: bool) -> tuple[float, float, f
     print(f"[Detection] Raw cam coords: ({x_cam:.2f}, {y_cam:.2f}, {z_cam:.2f})")
 
     # Geometry constants from original script
-    if zoek_in_lucht:
-        distance_cam_to_middle = 24.0
-        cam_angle_rad = math.radians(18)
-    else:
-        distance_cam_to_middle = 24.0
-        cam_angle_rad = math.radians(-30)
+    distance_cam_to_middle = 24.0
+    cam_angle_rad = math.radians(wrist_angle)
 
     # Transform to world coordinates
     x = float(x_cam)

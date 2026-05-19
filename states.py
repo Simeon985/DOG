@@ -43,71 +43,20 @@ YOLO_MODEL_PATH = "models/balls_ourdata_augmented.pt"
 shared_array = Array("d", [0.0] * 11)
 
 
-
-def opstart():
-    sound= "/home/dog/DOG/audio/Eekhoorn3.mp3"
-    pygame.mixer.init()
-    pygame.mixer.music.load(sound)
-    pygame.mixer.music.play()
-
-    # Keep the script alive until playback finishes
-    while pygame.mixer.music.get_busy():
-        pygame.time.Clock().tick(10)
-
-    # Speel geluidje
-    # Stuur bepaalde oogjes
-    # Draai rondje
-    pass
-
 def search_loop(
-    subject: str,
     wrist_angle: float,
     model_path: str | Path | None = None,
 ) -> tuple[float, float, float] | None:
-    """
-    Search for an object by positioning the arm and detecting it from the camera feed.
-
-    Args:
-        subject: One of "ball_floor", "ball_air", or "person"
-        model_path: YOLO .pt weights; defaults to YOLO_MODEL_PATH in this module.
-
-    Returns:
-        (x, y, z) coordinates in cm in the camera frame, or None if not detected.
-    """
-    # Define arm angles for each subject type
-    
     print("nu zit hij in search loop!")
     arm_angles = {
-        "ball_floor": {
-            "shoulder_pan": 0,
-            "shoulder_lift": -90,
-            "elbow_flex": 90,
-            "wrist_flex": wrist_angle,
-            "wrist_roll": 92,
-            "gripper": 60,
-        },
-        "ball_air": {
-            "shoulder_pan": 0,
-            "shoulder_lift": 0,
-            "elbow_flex": -48,
-            "wrist_flex": wrist_angle,
-            "wrist_roll": 92,
-            "gripper": 60,
-        },
-        "person": {
-            "shoulder_pan": 0,
-            "shoulder_lift": -99,
-            "elbow_flex": 90,
-            "wrist_flex": wrist_angle,
-            "wrist_roll": 92,
-            "gripper": 60,
-        },
+        "shoulder_pan": 0,
+        "shoulder_lift": -90,
+        "elbow_flex": 90,
+        "wrist_flex": wrist_angle,
+        "wrist_roll": 92,
+        "gripper": 60,
     }
 
-    if subject not in arm_angles:
-        print(f"Unknown subject: {subject}")
-        return None
-        
     est = _get_est()
     start_angle = est.history[-1][2]
 
@@ -118,7 +67,7 @@ def search_loop(
         print("should start moving arms")
         # Position arm for this subject
         arm = _get_arm_robot()
-        target_angles = arm_angles[subject]
+        target_angles = arm_angles
         move_to_target_angles(arm, target_angles)
         time.sleep(0.5)  # Allow arm to settle
 
@@ -138,22 +87,22 @@ def search_loop(
                 return None
 
             # Always use ball detection for now
-            coords = detect_ball(frame, zoek_in_lucht=False if subject == "ball_floor" else True)
+            coords = detect_ball(frame, wrist_angle=wrist_angle)
             _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, False, 1, "right"))
-            print(f"No {subject} detected")
+            print(f"No ball detected")
         else:
             _get_robot().bus.sync_write("Goal_Velocity", rotate_platform(_get_robot().bus, True, 0, "right"))
             print("FINAL CHECK:")
             time.sleep(2)
-            coords = detect_ball(frame, zoek_in_lucht=False if subject == "ball_floor" else True)
+            coords = detect_ball(frame,wrist_angle=wrist_angle)
             end_angle = est.history[-1][2]
             _get_hist_stupid().append(("rot", end_angle-start_angle))
-            print(f"Detected {subject} at {coords}")
+            print(f"Detected ball at {coords}")
 
         return coords
 
     except Exception as e:
-        print(f"Error in search_loop({subject}): {e}")
+        print(f"Error in search_loop: {e}")
         return None
 
 
@@ -181,6 +130,8 @@ def drive_to_ball(
     y =y/100
     step_m = step_cm / 100.0
     desired_angle = math.degrees(math.atan2(float(x), float(y)))
+    print("desired angle:")
+    print(desired_angle)
     desired_distance = min(step_m, math.sqrt(float(x) ** 2 + float(y) ** 2))
     robot = _get_robot()
     est = _get_est()
@@ -208,6 +159,8 @@ def drive_to_ball(
                 error_rotation -= 360
             if error_rotation < -180:
                 error_rotation += 360
+            print("error rotation")
+            print(error_rotation)
             rotation_velocity_normalized=min(20,abs(error_rotation))*0.05
             direction = "left" if error_rotation >0 else "right"
 
@@ -249,14 +202,34 @@ def drive_to_ball(
         return (desired_distance == step_m) # pas dit nog aan
 
 def search_locally(robot):
-    positions_to_scan = [(-15,1,25),(-10,5,25),(-5,10,25),(0,15,25),(5,10,25),(10,5,25),(15,1,25)]
-    for coordinate_tup in positions_to_scan:
-        start_x,start_y,start_z = coordinate_tup
-        move_to_xyz(x=start_x,y=start_y,z=start_z,robot=robot, view_mode=True, gripping=True)
-        cam_x, cam_y, cam_z = get_coordinates_from_picture()
-        if cam_x != None:
-            return True
-    return False
+    angles_to_scan = [90, 0, -30]
+    for angle in angles_to_scan:
+        time.sleep(5)
+        motor_names = list(robot.bus.motors.keys())
+        current_obs = robot.get_observation()
+        current_joints = {name: float(current_obs[f"{name}.pos"]) for name in motor_names}
+
+        TARGET_ANGLES = {
+            "shoulder_pan": 0,
+            "shoulder_lift": -90,
+            "elbow_flex": 90,
+            "wrist_flex": angle,
+            "wrist_roll": 92,
+            "gripper": 60,
+        }
+
+        move_to_target_angles(robot, TARGET_ANGLES,step_delay=0.05)
+        
+        ret, frame = read_bgr_frame(timeout_sec=3.0)
+        cam_coords = detect_ball(frame, wrist_angle=angle)
+        if not cam_coords:
+            continue
+        cam_x, cam_y, cam_z = cam_coords
+        if cam_y and angle >= 25:
+            return True, -20
+        elif cam_y:
+            return True, cam_y
+    return False, None
 
 def _get_robot():
     global _robot
@@ -343,6 +316,7 @@ def return_with_ball_stupid():
 
 
 def return_with_ball():
+
     est = _get_est()
     hist_len = len(est.history)
     print("hist len")

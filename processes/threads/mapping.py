@@ -141,6 +141,14 @@ class PeripheralEstimator:
         except Exception as e:
             print(f"Warning: Could not clean up old plots: {e}")
 
+    def clear_history_and_reset_pose(self):
+        """Reset only position tracking, preserve mission state"""
+        with self.lock:
+            self.pose[0] = 0.0
+            self.pose[1] = 0.0
+            self.history = [(0.0, 0.0, 0.0, 0)]
+            self.plot_counter = 0
+
     def plot_and_save_history(self):
         """Plot the trajectory history and save to an image file"""
         with self.lock:

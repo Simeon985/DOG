@@ -422,6 +422,9 @@ def PID_sequentie2(robot):
         if start_x == None:
             if opgepakt:
                 celebration(robot)
+                TARGET_ANGLES =  {'shoulder_pan': -4.3076923076923075, 'shoulder_lift': -101.49450549450549, 'elbow_flex': 98.50549450549451, 'wrist_flex': -42.285714285714285, 'wrist_roll': 99.12087912087912, 'gripper': 25}
+                move_to_target_angles(robot, TARGET_ANGLES,step_delay=0.02)
+                time.sleep(.3)
             else:
                 wenen(robot)
             return opgepakt
@@ -446,7 +449,7 @@ def PID_sequentie2(robot):
 
         #R = math.sqrt(x*2+y*2)  +5 # 10 minder zodat grijper erboven staat -> vervang later de 10 nog met magic value MOTOR4_TO_GRIPPER
         #a = math.atan2(y,x) % math.pi
-        R = math.sqrt(start_x*2+start_y*2)
+        R = math.sqrt(start_x*2+start_y*2) + 5
         a = math.atan2(start_y,start_x) % math.pi
 
         conditie_PID = False
@@ -535,7 +538,12 @@ def PID_air_tracking_oud(robot, ball = True):
 
 def PID_air_tracking(robot, ball = True):
 
+    
     ball_tracking = False
+    TARGET_ANGLES = {'shoulder_pan': -4.21978021978022, 'shoulder_lift': 1.098901098901099, 'elbow_flex': -91.20879120879121, 'wrist_flex': 29.274725274725274, 'wrist_roll': 99.20879120879121, 'gripper': 25}
+    move_to_target_angles(robot, TARGET_ANGLES,step_delay=0.02)
+    time.sleep(.3)
+
     motor_names = list(robot.bus.motors.keys())
     current_obs = robot.get_observation()
     current_joints = {name: float(current_obs[f"{name}.pos"]) for name in motor_names}
@@ -550,7 +558,7 @@ def PID_air_tracking(robot, ball = True):
     My = My_perfect
     times_failed_PID = 0
     counter_ball_seen = 0
-    while times_failed_PID < 30:
+    while times_failed_PID < 15:
         print("air_tracking ...")
         a += -(Mx-Mx_perfect)*C2
         b += -(My-My_perfect)*C2
@@ -598,7 +606,7 @@ def PID_air_tracking(robot, ball = True):
                 times_failed_PID += 1
             else:
                 times_failed_PID = 0
-        if counter_ball_seen > 5:
+        if counter_ball_seen > 3:
             print("ball tracking starts")
             ball_tracking = True
     print("uit PID")
