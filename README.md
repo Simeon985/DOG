@@ -82,3 +82,4 @@ This robot serves as a platform to investigate:
 - Emotional recognizability on low-resolution displays
 - User response timing to robot emotions
 - Perceived intelligence and engagement during interaction
+# DOG_VOP_CLONE
